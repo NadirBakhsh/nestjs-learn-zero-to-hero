@@ -103,7 +103,40 @@ npm -v
   - Prettier - Code formatter
   - ESLint
 
-- Installing NestJS CLI
+7. Installing NestJS CLI <br />
+
+“NestJS CLI is the handy tool that you would require in order to develop with NestJS. When working with NestJS, I would recommend installing NestJS CLI globally. And in order to do so, you would use NPM. To use NPM to install in NestJS, navigate to your terminal. Again, I'm using ITERM as my terminal. You can use whatever terminal comes along with your operating system. Just navigate to the terminal and type in this command. You will use NPM, followed by install. And we want to install this package globally, so I will use a delete flag, followed by NestJS CLI.”
+<br />
+The NestJS CLI helps you create and manage NestJS applications easily. Run the following command in your terminal to install it globally
+
+```bash
+npm install -g @nestjs/cli
+```
+
+Check Version
+
+```bash
+nest -v
+```
+
+**_check all commands of nestjs_**
+
+```bash
+nest --help
+```
+![nest-cli-help](./images/nest-command-help.png)
+
+<br />
+
+After running the NestJS help command, you'll see a list of all available commands in a table format. Each command can be used individually, and you can get more details on any specific command by using the following syntax:
+
+```bash
+nest generate --help
+```
+
+This will show you additional options and usage information for the generate command specifically. You can do this with other commands as well to get detailed help on each one.
+
+
 - Creating Our First NestJS Application
 - Boilerplate Code in NestJS
 - Best Learning Path For The Course
