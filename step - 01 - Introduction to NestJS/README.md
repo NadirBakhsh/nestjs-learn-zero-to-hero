@@ -84,21 +84,24 @@ Open your terminal and verify the installation by checking the versions:
 
 ```bash
 node -v
-npm -v
+```
 
+```bash
+npm -v
 ```
 
 - **_Download Visual Studio Code_** <br />
+
   1. [Click here](https://code.visualstudio.com/) to download the latest version of Visual Studio Code.
   2. Follow the installation instructions.
   3. Install Extensions - [Click here](https://marketplace.visualstudio.com/)
-<br />
+     <br />
 
-- **_Extensions_** <br />
+- **_Extensions_**
+
   - Spell Checker
   - Prettier - Code formatter
   - ESLint
-
 
 - Installing NestJS CLI
 - Creating Our First NestJS Application
