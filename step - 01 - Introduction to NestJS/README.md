@@ -53,26 +53,53 @@
 <br />
 
 5. Varieties of Applications
-![varieties of applications](./images/varities-of-application.png)
+   ![varieties of applications](./images/varities-of-application.png)
 
--  **_REST APIs:_** REST (Representational State Transfer) APIs follow a standard architectural style that allows clients and servers to communicate through HTTP. REST is widely used for building web services and is often paired with frameworks like NestJS for structuring endpoints and managing HTTP requests.
-<br />
+- **_REST APIs:_** REST (Representational State Transfer) APIs follow a standard architectural style that allows clients and servers to communicate through HTTP. REST is widely used for building web services and is often paired with frameworks like NestJS for structuring endpoints and managing HTTP requests.
+  <br />
 
 - **_GraphQL:_** GraphQL is a query language for APIs that allows clients to request only the data they need. Unlike REST, which has fixed endpoints, GraphQL provides a single endpoint and more flexible data fetching. NestJS has support for GraphQL, making it easy to build GraphQL APIs.
-<br />
+  <br />
 
 - **_Microservices:_** Microservices architecture involves building a system as a collection of small, loosely coupled services, each responsible for specific functionalities. NestJS supports a microservices framework, enabling developers to create distributed systems that scale efficiently.
-<br />
+  <br />
 
 - **_MVC:_** MVC (Model-View-Controller) is an architectural pattern that separates application logic into three interconnected components. NestJS supports MVC development, helping structure applications that handle both data (Model) and user interactions (View and Controller).
-<br />
+  <br />
 
 - **_WebSockets:_** WebSockets enable real-time, bi-directional communication between a client and a server. This is useful for applications like chat apps or live notifications. NestJS has built-in support for WebSockets, allowing developers to create real-time features seamlessly.
-<br />
+  <br />
 
 - **_CLI Applications:_** CLI applications are text-based interfaces that allow users to interact with a program through commands. NestJS can be used to build CLI tools or command-line scripts for performing specific tasks.
+  <br />
 
-- Setting Up The Development Environment
+6. Setting Up The Development Environment
+
+- **_Download Node.js (LTS Version)_** <br />
+  1. Go to Node.js official website and download the LTS version.
+  2. Follow the installation instructions.
+  3. Check Node and npm Versions
+
+Open your terminal and verify the installation by checking the versions:
+
+```bash
+node -v
+npm -v
+
+```
+
+- **_Download Visual Studio Code_** <br />
+  1. [Click here](https://code.visualstudio.com/) to download the latest version of Visual Studio Code.
+  2. Follow the installation instructions.
+  3. Install Extensions - [Click here](https://marketplace.visualstudio.com/)
+<br />
+
+- **_Extensions_** <br />
+  - Spell Checker
+  - Prettier - Code formatter
+  - ESLint
+
+
 - Installing NestJS CLI
 - Creating Our First NestJS Application
 - Boilerplate Code in NestJS
