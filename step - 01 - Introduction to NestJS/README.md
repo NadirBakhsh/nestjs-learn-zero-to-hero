@@ -136,6 +136,8 @@ nest generate --help
 
 This will show you additional options and usage information for the generate command specifically. You can do this with other commands as well to get detailed help on each one.
 
+for full documentation of nestjs visit [NestJS CLI : click here](https://docs.nestjs.com/cli/overview)
+
 
 - Creating Our First NestJS Application
 - Boilerplate Code in NestJS
