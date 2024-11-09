@@ -207,7 +207,5 @@ This is a brief overview of the files generated in a new NestJS project, explain
 - **test/app.e2e-spec.ts**  
   An end-to-end test file for the application, testing routes and responses to ensure the system behaves correctly from the perspective of an end user.
 
-
-
 - Boilerplate Code in NestJS
 - Best Learning Path For The Course
