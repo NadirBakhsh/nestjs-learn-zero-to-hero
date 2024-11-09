@@ -213,4 +213,10 @@ Here, I’d like to take a bit of your time to explain what is meant by boilerpl
 
 For a quick overview, we get snippets of code for modules, controllers, and services. Just run nestjs/cli, will explain later. Now let’s move on to our next topic.
 
-- Best Learning Path For The Course
+### 10. Best Learning Path For The Course
+
+![incremental course path](./images/incremental-course.png)
+
+<br />
+
+ "Incremental Course" outlines a structured progression through various technical topics. Starting from foundational concepts like Introduction, Dependency Injection, and Environments, the course advances through Modules, Code Documentation, and Exception Handling. Finally, it covers more specialized areas like Validation Pipes, Working with Databases, and TypeORM. Each topic is connected sequentially, indicating a step-by-step approach to mastering these skills. The color scheme features vibrant purples, suggesting a modern, tech-focused learning path.
