@@ -207,5 +207,11 @@ This is a brief overview of the files generated in a new NestJS project, explain
 - **test/app.e2e-spec.ts**  
   An end-to-end test file for the application, testing routes and responses to ensure the system behaves correctly from the perspective of an end user.
 
-- Boilerplate Code in NestJS
+### 9 Boilerplate Code in NestJS
+
+Here, I’d like to take a bit of your time to explain what is meant by boilerplate code in NestJS. Recently, a significant change has been introduced where NestJS provides us with some boilerplate code snippets. By using these snippets, our backend development becomes faster and works smoothly. Additionally, this code is reliable and scalable. I’m not explaining how to use this code here, but over time, as you gain experience in coding, you’ll use it topic-wise, which will build an understanding of how much flexibility NestJS provides.
+<br/ >
+
+For a quick overview, we get snippets of code for modules, controllers, and services. Just run nestjs/cli, will explain later. Now let’s move on to our next topic.
+
 - Best Learning Path For The Course
