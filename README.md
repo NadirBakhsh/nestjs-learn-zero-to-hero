@@ -38,7 +38,7 @@ This section outlines the fundamental concepts of using modules in NestJS, focus
 - A default **AppModule** (**_app.module.ts_**) is created with each NestJS installation, serving as the **core module** of the application, linking to other modules.
 - The **_main.ts_** file acts as the starting point of a NestJS application. When the application is launched, **_main.ts_** references the **AppModule**, which then connects to all other declared modules.
 
----
+
 
 ### Structure of a Basic Module in NestJS
 
@@ -52,6 +52,8 @@ A typical module in NestJS includes the following files:
 ### Reflection
 
 The modular approach in NestJS promotes a clean structure, making it easier to develop and manage applications by grouping related files into dedicated modules. This structure improves readability and enhances reusability, as each module operates independently while integrating smoothly with others.
+
+---
 
 - How NestJS Bootstraps (main.ts)
 - Understanding the App Module
