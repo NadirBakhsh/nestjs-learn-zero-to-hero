@@ -7,6 +7,8 @@ This section outlines the fundamental concepts of using modules in NestJS, focus
 
 #### 1. Modules as Packages of Functionality
 
+![module package](./images/module-package.png)
+
 - In NestJS, **modules** are **_containers for specific functionalities_** within the application.
 - When a new functionality is introduced, it should be encapsulated within a dedicated module.
 - For instance, in a blog application, a **"Users"** module might handle everything related to user functionality, from routes to data handling.
@@ -38,6 +40,7 @@ This section outlines the fundamental concepts of using modules in NestJS, focus
 - A default **AppModule** (**_app.module.ts_**) is created with each NestJS installation, serving as the **core module** of the application, linking to other modules.
 - The **_main.ts_** file acts as the starting point of a NestJS application. When the application is launched, **_main.ts_** references the **AppModule**, which then connects to all other declared modules.
 
+![default files in module](./images/default-module-nest.png)
 
 
 ### Structure of a Basic Module in NestJS
@@ -48,6 +51,8 @@ A typical module in NestJS includes the following files:
 - **Service** (e.g., **_users.service.ts_**): Contains business logic.
 - **Entity** (e.g., **_users.entity.ts_**): Represents database models.
 - **Spec File** (e.g., **_users.controller.spec.ts_**): For testing the controller.
+
+![basic module structure](./images/files-in-module.png)
 
 ### Reflection
 
