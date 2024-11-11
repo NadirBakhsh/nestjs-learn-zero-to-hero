@@ -60,7 +60,54 @@ The modular approach in NestJS promotes a clean structure, making it easier to d
 
 ---
 
-- How NestJS Bootstraps (main.ts)
+## 2. How NestJS Bootstraps (main.ts)
+
+In a NestJS application, main.ts is the entry point. The bootstrap function is responsible for setting up the application. By using NestFactory.create(AppModule), it initializes the application with AppModule as the base, ensuring that all routes, dependencies, and configurations are correctly loaded.
+
+```typescript
+
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  await app.listen(3000);
+}
+
+bootstrap();
+
+```
+
+### Setting the Port with app.listen()
+
+The app.listen() method launches the server and listens on the specified port. By default, this guide uses port 3000, but it can be easily changed to another port, such as 3300.
+
+```typescript
+await app.listen(3300);
+
+```
+
+After updating and saving this line, restart the server to apply the new port configuration. Your application will then be accessible at http://localhost:3300.
+
+### Debugging with the app Object
+
+For deeper insights into the application’s structure and configuration, log the app object to the console. This reveals the various components of your NestJS app, aiding in debugging and customization.
+
+```typescript
+console.log(app);
+
+```
+
+### Summary
+
+1. NestFactory initializes the application.
+2. AppModule organizes the main structure of the application.
+3. app.listen(port) starts the server on the specified port.
+
+With these configurations in main.ts, your NestJS application is ready for further development, customization, and expansion!
+
+---
+
 - Understanding the App Module
 - Creating a New Users Module
 - What is a REST API
