@@ -151,7 +151,7 @@ export class AppModule {}
 - The filenames for controllers and services don’t need to explicitly contain the words "controller" or "service." Their functionality is determined by the use of @Controller() and @Injectable() decorators rather than by the filename.
 
 ### Additional Resources
-For further exploration, refer to the NestJS ![Resource Repository](), where you can review sample code and learn best practices for NestJS development.
+For further exploration, refer to the NestJS [Resource Repository](), where you can review sample code and learn best practices for NestJS development.
 
 ---
 
