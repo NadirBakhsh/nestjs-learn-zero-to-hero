@@ -108,7 +108,53 @@ With these configurations in main.ts, your NestJS application is ready for furth
 
 ---
 
-- Understanding the App Module
+## 3. Understanding the App Module
+
+![understanding app module](./images/understanding-app-module.png)
+
+### 1. Structure of the `src` Directory
+The `src` folder typically includes key files like `app.module.ts`, which serves as the root module for the entire application. This file is responsible for importing and organizing other modules, controllers, and services.
+
+
+
+![app module](./images/app-module.png)
+
+### 2. Main.ts - Application Entry Point
+The `main.ts` file uses the `bootstrap()` function to initialize and load the application’s main module, `app.module.ts`. This makes it the central point where the application starts running.
+
+### 3. App Module Naming Convention
+The `app.module.ts` file contains the word "module" by convention, making it easy for developers to recognize it as a module file. However, it’s not mandatory to name it this way. What makes a file a module is the use of the `@Module()` decorator within it, as shown in the example code below:
+
+```typescript
+import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+
+@Module({
+  imports: [],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
+```
+
+![app module](./images/app-module.png)
+
+### 4. Importing New Modules
+- As you add new modules to your NestJS application, they should be added to the imports array in app.module.ts. This makes them accessible within the application's module tree, centralizing the application configuration.
+
+
+### 5. Organizing Files within `src`
+- In the src folder, files like controllers and services can be stored directly or organized into separate directories. If you decide to reorganize them into folders, ensure that the import paths in main.ts and other files are updated to prevent errors
+
+### 6. Naming Conventions for Controllers and Services
+- The filenames for controllers and services don’t need to explicitly contain the words "controller" or "service." Their functionality is determined by the use of @Controller() and @Injectable() decorators rather than by the filename.
+
+### Additional Resources
+For further exploration, refer to the NestJS ![Resource Repository](), where you can review sample code and learn best practices for NestJS development.
+
+---
+
 - Creating a New Users Module
 - What is a REST API
 - Setting Up Postman and httpYac
