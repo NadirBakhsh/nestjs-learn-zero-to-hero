@@ -155,7 +155,94 @@ For further exploration, refer to the NestJS [Resource Repository](https://githu
 
 ---
 
-- Creating a New Users Module
+## 4. Creating a New Users Module
+
+![create modules](./images/create-modules.png)
+
+1. Start by creating a new folder inside the `src` directory named `users`.
+2. Inside the `users` folder, create a new file named `users.module.ts`. This file will serve as the main module file for the `Users` module.
+
+Here is the initial code for `users.module.ts`:
+
+```users.module.ts
+
+export class UsersModule{}
+
+```
+
+This code simply initializes a class named UsersModule. However, to make it behave like a NestJS module, we need to import and use the @Module decorator from @nestjs/common.
+
+### Step 2: Adding the @Module Decorator
+
+Modify the users.module.ts file as follows:
+
+```users.module.ts
+
+import { Module } from '@nestjs/common';
+
+@Module({})
+export class UsersModule {}
+
+```
+
+The @Module decorator allows us to define a NestJS module. It accepts an object as an argument, where we can specify the following properties:
+
+- imports: Modules that this module depends on.
+- controllers: Controllers associated with this module.
+- providers: Services/providers used by this module.
+
+At this stage, we have created a basic UsersModule.
+
+
+### Step 3: Adding the UsersModule to AppModule
+
+To make the UsersModule available across the application, we need to import and register it in the app.module.ts file.
+
+- Open the app.module.ts file.
+- Import the UsersModule.
+- Add it to the imports array of the @Module decorator.
+
+```app.module.ts
+
+import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+
+// Import the UsersModule
+import { UsersModule } from './users/users.module';
+
+@Module({
+  imports: [UsersModule], // Add the UsersModule here
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
+
+```
+
+### Step 4: Verifying the UsersModule
+
+To ensure the `UsersModule` is correctly initialized and working, you can check the terminal logs. If your application is running in development mode, you should see a log message indicating that the `UsersModule` has been `initialized` as part of the application’s dependencies.
+
+```bash
+[Nest] 12345   - UsersModule dependencies initialized
+```
+
+## Summary
+
+This guide explains how to create a `UsersModule` in a NestJS application, integrate it into the `AppModule`, and verify its functionality. Follow these steps:
+
+1. **Create Module**: Add a `users` folder in the `src` directory and create a `users.module.ts` file.
+2. **Initialize Module**: Use the `@Module` decorator from `@nestjs/common` to define the `UsersModule`.
+3. **Register Module**: Import the `UsersModule` into the `app.module.ts` and include it in the `imports` array.
+4. **Verify Module**: Check the terminal logs to ensure the `UsersModule` is initialized correctly.
+
+## Source Code
+
+View the full source code [Resource Code Repository](). *(Replace with your actual link)*
+
+---
+
 - What is a REST API
 - Setting Up Postman and httpYac
 - Creating Controllers
