@@ -228,6 +228,8 @@ To ensure the `UsersModule` is correctly initialized and working, you can check 
 [Nest] 12345   - UsersModule dependencies initialized
 ```
 
+![UsersModule Code working](./images/test-user-module-is-running.png)
+
 ## Summary
 
 This guide explains how to create a `UsersModule` in a NestJS application, integrate it into the `AppModule`, and verify its functionality. Follow these steps:
