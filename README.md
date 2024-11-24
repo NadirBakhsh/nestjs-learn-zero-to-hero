@@ -243,6 +243,84 @@ This guide explains how to create a `UsersModule` in a NestJS application, integ
 
 View the full source code [Resource Code Repository](https://github.com/NadirBakhsh/nestjs-resources-code/commit/206e9331aac14d950634b671c042a3a0ee726498)
 
+
+## 3. Creating a New Users Module Using Nest CLI - Part 2
+In this guide, we'll focus on creating a UsersModule using the Nest CLI, streamlining our workflow by replacing manual processes with CLI-generated code. Let's break it down step-by-step.
+
+### Removing the Manually Created Module
+Before proceeding, ensure that any manually created UserModule and its corresponding imports in `app.module.ts` are removed. This will help avoid conflicts when using the Nest CLI to generate the module.
+
+### What is Nest CLI?
+If you’re new or need a quick recap, Nest CLI is a command-line interface provided by NestJS that allows developers to:
+
+- Automate repetitive tasks like creating files, boilerplate code, or scaffolding modules, services, controllers, etc.
+- Save time by running predefined commands to generate consistent and correctly structured code.
+- Customize project generation behavior for specific needs.
+
+With Nest CLI, you can avoid manual creation and configuration of files, making your development faster and more efficient.
+
+### Generating a Module with the CLI
+
+To generate a UsersModule, follow these steps:
+
+Step 1: Preview the Output with --dry-run
+Run the following command in your terminal:
+
+```bash
+nest g module users --dry-run
+```
+Explanation:
+- The nest g module users command tells Nest CLI to generate a module named users.
+- The --dry-run flag ensures that the CLI doesn’t create files immediately. Instead, it outputs the files and code it 
+
+would generate, letting you preview the changes without committing them.
+This is a safe way to ensure that the command does what you expect before making any actual changes.
+
+Step 2: Create the Module Without --dry-run
+Once you're satisfied with the preview, run the command without the --dry-run flag:
+
+```bash
+nest g module users
+```
+
+- This creates a users directory inside the src folder and generates the users.module.ts file.
+
+### Handling File Locations
+If you’ve previously moved files like app.module.ts into a custom directory (e.g., app), you might encounter issues because Nest CLI defaults to the src directory for imports and updates.
+
+To ensure everything works seamlessly:
+
+1. Move Back to src Directory:
+
+- Ensure that all default NestJS files like app.module.ts are in the src root directory.
+- The CLI relies on this structure for automatic updates during module creation.
+
+2. Customize Nest CLI Behavior (Optional):
+
+- If you want Nest CLI to recognize a custom directory (e.g., app), modify the nest-cli.json file.
+- Update the sourceRoot property to point to your custom directory
+
+With this configuration, CLI commands will generate and update files in the app directory instead of src.
+
+### Visual Overview
+Below is an example of the CLI output when generating a UsersModule:
+![clie modaule create](/images/cli-module-create.png)
+
+### Summary
+Using the Nest CLI simplifies module creation and project management. Here's a quick recap:
+
+1. Remove manual files: Clean up any previously created modules and imports.
+2. Preview with --dry-run: Test the CLI command before applying changes.
+3. Generate modules: Run the command without --dry-run to create files.
+4. Handle custom directories:
+- Ensure files are in src by default, or
+- Modify nest-cli.json to match your directory structure.
+With these steps, you’ll efficiently create and manage modules in your NestJS project.
+
+### Source Code
+
+View the full source code [Resource Code Repository](https://github.com/NadirBakhsh/nestjs-resources-code/commit/16bb8436c839b278fb6bd66cb8eecdda0c9d60cf)
+
 ---
 
 - What is a REST API
