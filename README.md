@@ -241,7 +241,7 @@ This guide explains how to create a `UsersModule` in a NestJS application, integ
 
 ## Source Code
 
-View the full source code [Resource Code Repository](https://github.com/NadirBakhsh/nestjs-resources-code/commit/206e9331aac14d950634b671c042a3a0ee726498). *(Replace with your actual link)*
+View the full source code [Resource Code Repository](https://github.com/NadirBakhsh/nestjs-resources-code/commit/206e9331aac14d950634b671c042a3a0ee726498)
 
 ---
 
