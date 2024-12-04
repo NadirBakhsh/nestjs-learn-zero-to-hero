@@ -424,7 +424,86 @@ These principles collectively ensure that RESTful APIs are scalable, maintainabl
 ---
 
 
-- Setting Up Postman and httpYac
+## 5. Setting Up Postman and httpYac
+
+### Steps to Install and Use Postman and HTTP Yac for Sending Requests to a Server
+
+#### **Postman Installation and Usage**
+1. **Download Postman**:
+   - Visit [postman.com/downloads](https://www.postman.com/downloads).
+   - Select the appropriate version for your OS (e.g., Windows, Mac).
+   - Download and save the installer.
+
+2. **Install Postman**:
+   - **Mac**: Move the unzipped installer to the Applications folder.
+   - **Windows**: Run the installer to complete installation.
+
+3. **Run Postman**:
+   - Open Postman.
+   - Choose the lightweight API client option if you don’t want to sign up.
+
+4. **Send a Request with Postman**:
+   - Start your NestJS application:
+     ```bash
+     npm run start:dev
+     ```
+   - Open Postman and set up a **GET request** to `http://localhost:3000`.
+   - Send the request and view the response ("Hello from NestJS").
+
+5. **Explore Postman Features**:
+   - Use the dropdown to select HTTP verbs (GET, POST, PUT, DELETE, etc.).
+   - Add query parameters, headers, authorization, and request body using the UI.
+
+---
+
+#### **HTTP Yac Installation and Usage**
+1. **Install HTTP Yac in VS Code**:
+   - Open VS Code.
+   - Navigate to the Extensions view (`View > Extensions` or shortcut).
+   - Search for `httpyac`.
+   - Click **Install** and restart VS Code if needed.
+
+2. **Set Up HTTP Yac**:
+   - Create a file for requests with a `.http` extension (e.g., `app.endpoints.http`).
+   - Add your HTTP requests within this file.
+
+3. **Write a GET Request in the `.http` File**:
+   - Use a comment to describe the request:
+     ```http
+     # Get request for app controller
+     ```
+   - Add the HTTP verb and URL:
+     ```http
+     GET http://localhost:3000
+     ```
+   - Save the file.
+
+4. **Send a Request with HTTP Yac**:
+   - Click the **Play** button (▶) next to the request in the `.http` file.
+   - View the response (e.g., "Hello from NestJS").
+
+5. **Advantages of HTTP Yac**:
+   - Requests are saved as code, allowing them to be committed to a Git repository.
+   - Easily shareable among developers within the codebase.
+
+---
+
+#### **Comparison of Postman and HTTP Yac**
+- **Postman**:
+  - GUI-based tool for easy request creation.
+  - Useful for beginners or those already accustomed to Postman.
+  - Shareable via collections.
+
+- **HTTP Yac**:
+  - Code-based request handling directly within VS Code.
+  - Requests become part of the source code and Git-managed.
+  - Recommended for developers who prefer integration with code editors.
+
+--- 
+
+
+
+
 - Creating Controllers
 - Working With Routing Decorators
 - Params, Query, and Body
