@@ -323,7 +323,107 @@ View the full source code [Resource Code Repository](https://github.com/NadirBak
 
 ---
 
-- What is a REST API
+## 4. What is a REST API
+![what is rest api](./images/what-is-rest-api.png)
+
+#### 1. Definition
+ A REST API (Representational State Transfer API) is a type of Application Programming Interface (API). APIs allow different software applications to communicate with each other. A REST API follows specific design principles known as the REST architectural style.
+
+Key principles of REST APIs include:
+- Stateless communication: Each request from a client to a server must contain all the necessary information, and the server does not store any session state between requests.
+- Resource-based: REST uses unique URLs to identify resources (e.g., a user, file, or database entry).
+- HTTP Methods: It typically uses standard HTTP methods (like GET, POST, PUT, DELETE) to perform operations on resources.
+- Representation: Resources are represented in standard formats such as JSON or XML.
+- Client-Server Separation: The client (frontend) and server (backend) are independent, allowing for flexibility and scalability.
+
+
+#### 2. Rest Design Principles
+
+![rest design principles](./images/rest-design-principles.png)
+
+### REST Design Principles
+
+1. **Client-Server Decoupling:**
+   - The client (frontend) and server (backend) operate independently.
+   - The client only needs to know the URI of the resource, and the server handles the logic for providing the resource.
+   - This separation enhances flexibility and scalability.
+
+![decoupling](./images/decoupling.png)
+
+- GET: Retrieve data (e.g., read-only operations).
+- POST: Create a new resource.
+- DELETE: Remove a resource.
+- PUT: Replace an entire resource.
+- PATCH: Update part of a resource.
+
+![stateless](./images/sataeless-server.png)
+
+2. **Statelessness:**
+   - Each request from the client to the server must contain all the necessary information.
+   - The server does not store the state of the client session.
+   - This simplifies server design and allows for greater scalability.
+
+![cache](./images/cache.png)
+
+3. **Cacheability:**
+   - Responses from the server should explicitly state whether they are cacheable or not.
+   - Proper use of caching improves performance by reducing the need for repetitive client-server interactions.
+
+   ![uniform interface](./images/uniform-interface.png)
+
+4. **Uniform Interface:**
+   - Ensures consistent and standardized interaction between the client and server.
+   - This is achieved through the use of standard HTTP methods (e.g., GET, POST, PUT, DELETE) and resource representations.
+ 
+![Layered System](./images/Layered.png)
+
+5. **Layered System:**
+   - The API architecture can use intermediary layers (like load balancers, proxies, etc.) to manage system complexity.
+   - These layers are invisible to the client and help with scalability, security, and performance.
+
+![anatomy endpoint](./images/anatomy-endpoint.png)
+
+6. **Anatomy of an API Endpoint**
+
+### 1. **HTTP Verb: GET**
+- Specifies the HTTP method used for the request.
+- "GET" retrieves data from the server without modifying anything.
+
+### 2. **Domain: `https://apiurl.com`**
+- The base URL of the API, representing the server or service being accessed.
+- It's where the API is hosted.
+
+### 3. **Route: `/posts/`**
+- Defines the specific resource or collection being accessed.
+- Represents the endpoint for posts in this case.
+
+![Params vs Query](/images/Params-vs-Query.png)
+
+### 4. **Params: `/author/`**
+- Path parameters provide additional context or specify the targeted entity.
+- For example, it identifies a specific author.
+
+### 5. **Query: `?limit=10&offset=20`**
+- Key-value pairs that filter or customize the response.
+- Used here for pagination with `limit` (items per page) and `offset` (starting point).
+
+![Request Body](/images/request-body.png)
+
+### 6. **Body: `{"author": "John"}`**
+- Data sent in the request body, often in POST or PUT requests.
+- In this case, it specifies an author named "John".
+
+![code on demand](/images/code-on-demand.png)
+
+7. **Code on Demand (Optional):**
+   - Servers can provide executable code (e.g., JavaScript) to clients for enhancing their functionality.
+   - This is an optional feature in RESTful APIs and is used less frequently.
+
+These principles collectively ensure that RESTful APIs are scalable, maintainable, and efficient while maintaining simplicity and ease of use.
+
+---
+
+
 - Setting Up Postman and httpYac
 - Creating Controllers
 - Working With Routing Decorators
