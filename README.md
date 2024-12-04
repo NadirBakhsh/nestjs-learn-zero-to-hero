@@ -348,7 +348,7 @@ Key principles of REST APIs include:
    - The client only needs to know the URI of the resource, and the server handles the logic for providing the resource.
    - This separation enhances flexibility and scalability.
 
-![decoupling](./images/decoupling.png)
+![decoupling](./images/Decoupling.png)
 
 - GET: Retrieve data (e.g., read-only operations).
 - POST: Create a new resource.
