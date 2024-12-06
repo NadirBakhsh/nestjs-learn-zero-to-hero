@@ -501,10 +501,114 @@ These principles collectively ensure that RESTful APIs are scalable, maintainabl
 
 --- 
 
+## 6. Creating Controllers
+
+![Nest Controllers](./images/nest-controllers.png)
+
+#### A. Creating a Controller Manually
+
+**Step 1: Set Up the Users Directory**
+Navigate to the users directory within your project, where the users module is located. Ensure your users.module.ts file is properly created and imported into the app module.
+
+**Step 2: Create the Controller File**
+Create a new file named users.controller.ts inside the users directory. While the file name isn't mandatory for functionality, it’s a good practice to follow NestJS naming conventions.
+
+```
+users
+
+├── users.module.ts
+├── users.controller.ts
+
+```
+
+**Step 3: Define the Controller Class**
+1. Export a Class: Define a class and export it.
+2. Decorate the Class: Use the @Controller() decorator from @nestjs/common to mark the class as a controller.
+
+```
+import { Controller } from '@nestjs/common';
+
+@Controller('users')
+export class UsersController {}
+
+```
+
+- The @Controller('users') decorator tells NestJS that this controller handles requests to the /users endpoint.
+
+**Step 4: Link the Controller to the Module**
+Add the `UsersController` to the `controllers` array in` users.module.ts`:
+
+```
+import { Module } from '@nestjs/common';
+import { UsersController } from './users.controller';
+
+@Module({
+  controllers: [UsersController],
+})
+export class UsersModule {}
+
+```
+
+This step ensures that the users module recognizes and uses the `UsersController`.
+
+#### B. Creating a Controller Using NestJS CLI
+
+The CLI simplifies the creation process by automating the linking of controllers to modules.
+
+**Step 2: Use the --dry-run Flag**
+The --dry-run flag lets you preview the changes without applying them. Run the command:
+
+```
+nest generate controller users --dry-run
+```
+
+Output:
+- A users.controller.ts file is created.
+- The users.module.ts is updated automatically.
+- A .spec.ts test file is also created by default.
 
 
+**Step 3: Disable Test File Generation**
+If you don’t need test files, use the --no-spec flag:
 
-- Creating Controllers
+```
+nest generate controller users --no-spec
+```
+
+This will create only the controller file and update the module.
+
+**Generated Controller Structure**
+The CLI-generated users.controller.ts file looks like this:
+
+```
+import { Controller } from '@nestjs/common';
+
+@Controller('users')
+export class UsersController {}
+```
+
+Additionally, the users.module.ts file is updated:
+
+```
+import { Module } from '@nestjs/common';
+import { UsersController } from './users.controller';
+
+@Module({
+  controllers: [UsersController],
+})
+export class UsersModule {}
+
+```
+
+**Conclusion**
+Now you know:
+- What a controller is and why it's essential in NestJS.
+- How to create a controller manually by defining a class and linking it to a module.
+- How to leverage the NestJS CLI to streamline the creation process.
+
+Ans: In the next step, we’ll explore how to define methods within the controller to handle different HTTP requests (GET, POST, DELETE, etc.). Stay tuned!
+
+
 - Working With Routing Decorators
 - Params, Query, and Body
 - Additional Request Components
