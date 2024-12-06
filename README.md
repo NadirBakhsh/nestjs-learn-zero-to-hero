@@ -608,6 +608,10 @@ Now you know:
 
 Ans: In the next step, we’ll explore how to define methods within the controller to handle different HTTP requests (GET, POST, DELETE, etc.). Stay tuned!
 
+Code example from the [Resource Code Repository](https://github.com/NadirBakhsh/nestjs-resources-code/commit/2ff1504b797e37bb136c83d5a25bf64418b021c6)
+
+---
+
 
 - Working With Routing Decorators
 - Params, Query, and Body
