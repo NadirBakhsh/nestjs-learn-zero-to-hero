@@ -613,7 +613,114 @@ Code example from the [Resource Code Repository](https://github.com/NadirBakhsh/
 ---
 
 
-- Working With Routing Decorators
+## 7. Working With Routing Decorators
+
+#### Step 1: Create an HTTP Directory
+
+- Inside the users directory, create a folder called HTTP.
+- This folder will contain HTTP request files.
+- For example, create a file named users.get.endpoints.http. This file will handle all GET requests related to users.
+
+#### Step 2: Write a GET Request
+
+In the `users.get.endpoints.http` file:
+
+```http
+GET http://localhost:3000/users
+```
+
+This sends a simple GET request to the /users endpoint.
+
+#### Step 3: Create a Method in the Controller
+
+In `users.controller.ts`:
+1. Create a public method called getUsers.
+2. Add a message that returns when the method is called.
+
+```typescript
+public getUsers() {
+  return "You sent a GET request to the users endpoint.";
+}
+```
+
+#### Step 4: Use a Decorator to Bind the GET Request
+- Import the `@Get` decorator from @nestjs/common.
+- Use the `@Get` decorator above the getUsers method.
+
+```
+import { Get } from '@nestjs/common';
+
+@Get()
+public getUsers() {
+  return "You sent a GET request to the users endpoint.";
+}
+
+```
+
+This ensures that all `GET` requests to /users are routed to this method.
+
+#### Step 5: Create a POST Request
+- Create another file: users.post.endpoints.http.
+- Add a POST request to the /users endpoint with a JSON body.
+
+```http
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{}
+```
+
+#### Step 6: Add a Method for POST in the Controller
+- Create a new method called createUsers.
+- Use the @Post decorator to route POST requests.
+
+```
+import { Post } from '@nestjs/common';
+
+@Post()
+public createUsers() {
+  return "You sent a POST request to the users endpoint.";
+}
+```
+
+#### Step 7: Add Other HTTP Methods
+
+NestJS provides decorators for other HTTP methods like:
+
+`@Patch()` for PATCH
+`@Put()` for PUT
+`@Delete()` for DELETE
+
+```typescript
+import { Patch, Put, Delete } from '@nestjs/common';
+
+@Patch()
+public updateUser() {
+  return "You sent a PATCH request to update the user.";
+}
+
+@Put()
+public replaceUser() {
+  return "You sent a PUT request to replace the user.";
+}
+
+@Delete()
+public deleteUser() {
+  return "You sent a DELETE request to delete the user.";
+}
+
+```
+
+#### Summary
+- Create HTTP files for each method (GET, POST, etc.).
+- Add request examples in those files.
+- Use appropriate decorators (@Get, @Post, etc.) in the controller to handle each request type.
+- Respond with simple messages for testing and build upon them as needed.
+
+code Example from the [Resource Code Repository](https://github.com/NadirBakhsh/nestjs-resources-code/commit/25866075d3e7109d850b677e3fff674aa5b2ef13)
+
+---
+
 - Params, Query, and Body
 - Additional Request Components
 - Providers in NestJS
