@@ -721,6 +721,137 @@ code Example from the [Resource Code Repository](https://github.com/NadirBakhsh/
 
 ---
 
-- Params, Query, and Body
+## 8. Understanding the Anatomy of a NestJS API Endpoint
+
+![anatomy Nest js](./images/anatomy-endpoint.png)
+
+NestJS, a powerful framework for building server-side applications, provides extensive features to create robust RESTful APIs.
+
+####  Params, Query, and Body
+
+
+#### Handling HTTP Verbs and Routes
+
+In NestJS, decorators are used to define the HTTP verbs (e.g., GET, POST) and routes for API endpoints. This allows developers to handle incoming requests and define specific methods for the required actions.
+
+For example, you can use the @Get() decorator for handling GET requests:
+```typescript
+@Get('users')
+getUsers() {
+  return 'Fetching users';
+}
+```
+
+In the example above, the @Get() decorator specifies that the getUsers method is triggered when a GET request is sent to the /users route.
+
+#### Defining Required and Optional Parameters
+
+Parameters can be included in routes using the @Param() decorator. For instance, to fetch a user by their ID:
+
+```typescript
+@Get('users/:id')
+getUser(@Param('id') id: string) {
+  console.log(`User ID: ${id}`);
+}
+```
+
+- Required Parameters: Defined as :paramName. For example, /users/:id requires an id to be sent.
+
+- Optional Parameters: Appended with a question mark in the TypeScript definition. Optional parameters are not mandatory in the route.
+
+Example of optional parameters:
+```typescript
+@Get('users/:id?')
+getUser(@Param('id') id?: string) {
+  console.log(`User ID: ${id || 'No ID provided'}`);
+}
+```
+
+##### Working with Query Strings
+
+Query strings can be retrieved using the @Query() decorator. Query parameters are part of the URL but not included in the route.
+
+```typescript
+@Get('users')
+getUsers(@Query() query: any) {
+  console.log(`Query Params:`, query);
+}
+```
+For example, sending a GET request to /users?limit=10&offset=20 will print:
+
+```
+{ "limit": "10", "offset": "20" }
+```
+
+Query strings can also be broken into multiple lines for readability:
+
+```
+/users?
+limit=10&
+offset=20
+```
+
+#### Retrieving the Request Body
+
+The @Body() decorator allows you to grab the request body sent in POST or PUT requests.
+
+```typescript
+@Post('users')
+createUser(@Body() body: any) {
+  console.log(`Request Body:`, body);
+}
+```
+
+Example request body:
+
+```json
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john.doe@example.com",
+  "password": "securepassword"
+}
+```
+
+This request body is automatically converted into a JavaScript object, making it easy to use within your methods.
+
+#### Accessing the Raw Express Request
+
+NestJS uses Express.js under the hood. While it is generally recommended to use decorators, you can directly access the raw Express request object if needed using the @Req() decorator and the Request interface from Express.
+
+```typescript
+import { Req } from '@nestjs/common';
+import { Request } from 'express';
+
+@Post('users')
+createUser(@Req() req: Request) {
+  console.log(`Raw Request:`, req);
+}
+``` 
+
+However, this approach bypasses some of NestJS’s built-in features like automatic exception handling and is not recommended unless absolutely necessary.
+
+
+#### Summary
+
+NestJS simplifies the process of working with API endpoints by providing powerful decorators:
+
+@Get(), @Post(), etc., for defining HTTP verbs and routes.
+
+@Param() for handling route parameters.
+
+@Query() for working with query strings.
+
+@Body() for retrieving the request body.
+
+@Req() for accessing the raw Express request object (use sparingly).
+
+These tools provide full control over incoming requests, making NestJS a highly efficient framework for building APIs.
+
+---
+
+
+
+
 - Additional Request Components
 - Providers in NestJS
