@@ -848,6 +848,8 @@ NestJS simplifies the process of working with API endpoints by providing powerfu
 
 These tools provide full control over incoming requests, making NestJS a highly efficient framework for building APIs.
 
+code Example from the [Resource Code Repository](https://github.com/NadirBakhsh/nestjs-resources-code/commit/54e89034cb121a0a5bb288d1632e66a236c9096b)
+
 ---
 
 
