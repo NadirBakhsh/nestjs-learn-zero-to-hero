@@ -852,8 +852,45 @@ code Example from the [Resource Code Repository](https://github.com/NadirBakhsh/
 
 ---
 
+## 9. Additional Request Components
+
+![Additional-request-components](./images/Additional-request-components.png)
+
+1. Extracting Specific Parameters: You can extract specific parameters from the request URL, query, or body using decorators like @Param(), @Query(), and @Body().
+
+2. Validation: It's generally easier to validate the entire object rather than individual parameters.
+
+3. Additional Decorators: NestJS provides other useful decorators like @Headers() and @Ip() to extract headers and the IP address of the request.
+
+**Example Code**
+Here is an example of how you can use these decorators in a NestJS controller:
+
+```typescript
+import { Controller, Get, Post, Param, Query, Body, Headers, Ip } from '@nestjs/common';
+
+@Controller('users')
+export class UsersController {
+  @Get(':id')
+  getUser(@Param('id') id: string, @Query('limit') limit: string) {
+    console.log('ID:', id);
+    console.log('Limit:', limit);
+    return `User ID: ${id}, Limit: ${limit}`;
+  }
+
+  @Post()
+  createUser(@Body('email') email: string, @Headers() headers: any, @Ip() ip: string) {
+    console.log('Email:', email);
+    console.log('Headers:', headers);
+    console.log('IP:', ip);
+    return `User created with email: ${email}`;
+  }
+}
+```
+
+code Example from the [ReproResource Code Repository](https://github.com/NadirBakhsh/nestjs-resources-code/commit/3016b02dee22a907e184a904ce237d0bd3e05850)
+
+---
 
 
 
-- Additional Request Components
 - Providers in NestJS
