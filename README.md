@@ -891,4 +891,36 @@ code Example from the [ReproResource Code Repository](https://github.com/NadirBa
 
 ---
 
-- Providers in NestJS
+## 10. Providers in NestJS
+![providers in nest js](./images/providers-in-nestjs.png)
+
+### Understanding Providers
+
+Think of providers as additional classes in your module that help you add business logic. While controllers handle routing logic, providers handle the business logic. This separation ensures that controllers remain focused on routing.
+
+**Role of Providers**
+Controllers: Handle routing logic.
+Providers: Handle business logic.
+
+**For example, in a user module:**
+![providers example](./images/providers-examples.png)
+
+- The controller handles HTTP requests.
+- The service provider (users.service.ts) handles business logic, such as interacting with the database or other providers.
+
+**Example Use Cases**
+- Database Interaction: The service provider connects to the database.
+- Third-Party API Interaction: Separate providers handle interactions with third-party APIs, such as checking a blacklist or fetching user details from Gravatar.
+
+**Types of Providers**
+
+- Service: Connects to the database.
+- Repository: Manages data persistence.
+- Factory: Creates instances of objects.
+- Helper: Provides utility functions.
+
+**Benefits of Providers**
+
+- Separation of Concerns: Each provider handles a specific functionality.
+- Modularity: Providers make the codebase more modular and maintainable.
+
