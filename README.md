@@ -64,10 +64,12 @@ Query page - integer, default value 1
 /users/1223 -> returns one user whose id is 1223  
 /users?limit=10&page=2 -> return page 2 with limit of pagination 10
 
+code: example where we need to validate and transform the incoming request data
+[GitHub Repository](https://github.com/NadirBakhsh/nestjs-resources-code/commit/6b04e6c3d7582c89e95078356877405e0c9efb40#diff-f50bd3ad4287f192c56e363ab00244f9f773705f9e41b8214b1a22804e40659cR28)
+
 ---
 
-
-## 3. Validating Params with Built## 2.in Pipes
+## 3. Validating Params with Built-in Pipes
 ## 4. Validating Query Params
 ## 5. Introduction to DTO
 ## 6. Creating Our First DTO
