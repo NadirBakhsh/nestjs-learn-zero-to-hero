@@ -53,6 +53,20 @@ Examples:
 
 ## 2. Validation and Transformation Needs
 
+Final Endpoint - /users/id?limit=10&page=1
+
+Param id - optional, convert to integer, cannot have a default value  
+Query limit - integer, default 10  
+Query page - integer, default value 1  
+
+==> USE CASES  
+/users/ -> return all users with default pagination  
+/users/1223 -> returns one user whose id is 1223  
+/users?limit=10&page=2 -> return page 2 with limit of pagination 10
+
+---
+
+
 ## 3. Validating Params with Built## 2.in Pipes
 ## 4. Validating Query Params
 ## 5. Introduction to DTO
