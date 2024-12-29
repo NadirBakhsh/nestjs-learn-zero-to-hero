@@ -99,6 +99,68 @@ code example: [Validating Params with Built-in Pipes](https://github.com/NadirBa
 ---
 
 ## 4. Validating Query Params
+
+### Validating and Transforming Query Parameters in NestJS
+
+**Overview**
+
+- Use NestJS's query decorators to grab parameters from incoming requests.
+- Apply transformation and validation pipes to query parameters.
+- Assign default values to parameters when they are not provided by the client.
+
+Start by grabbing `limit` and `page` from the query string using the `@Query()` decorator.
+
+```typescript
+@Query('limit', ParseIntPipe) limit: number,
+@Query('page', ParseIntPipe) page: number,
+
+```
+
+**Applying Validation**
+Use ParseIntPipe to ensure that both limit and page are converted into integers. If a non-convertible value is provided, NestJS will throw a validation error.
+
+ **Setting Default Values**
+To make the parameters optional and assign default values:
+
+Import DefaultValuePipe from NestJS.
+Assign default values using the new DefaultValuePipe(value) syntax.
+
+```typescript
+@Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+@Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+
+```
+
+**Handling Requests**
+
+Test the endpoint by:
+Sending requests with valid limit and page parameters.
+Omitting limit and page to observe default values being assigned.
+Sending invalid data to see validation errors in action.
+
+ **Additional Pipes**
+NestJS offers various other pipes for transformation and validation:
+
+ParseFloatPipe - Validates and converts floating-point numbers.
+ParseBoolPipe - Converts true/false or 1/0 into boolean values.
+Custom pipes can also be created for specific use cases.
+Example Endpoint
+
+```typescript
+@Get('users')
+findAll(
+  @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+  @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number
+) {
+  console.log({ limit, page });
+  return { limit, page };
+}
+```
+
+github code: [Validating Query Params](https://github.com/NadirBakhsh/nestjs-resources-code/commit/3e263d6a0494484e73707fe306d1a8fd88192a21)
+
+---
+
 ## 5. Introduction to DTO
 ## 6. Creating Our First DTO
 ## 7. Connecting DTO to Route Method
