@@ -162,6 +162,18 @@ github code: [Validating Query Params](https://github.com/NadirBakhsh/nestjs-res
 ---
 
 ## 5. Introduction to DTO
+
+A data transfer object, commonly called a DTO, is an object used to validate data and define data structure sent into your Nest applications. DTOs are similar to interfaces, but differ from interfaces in the following ways:
+
+![nestjs dto classes](./images/dto-classes.png)
+
+- Interfaces are used for type-checking and structure definition.
+- A DTO is used for type-checking, structure definition, and data validation.
+- Interfaces disappear during compilation, as it’s native to TypeScript and doesn't exist in JavaScript.
+- DTOs are defined using classes that are supported in native JavaScript. Hence, it remains after compilation.
+
+---
+
 ## 6. Creating Our First DTO
 ## 7. Connecting DTO to Route Method
 ## 8. Global Pipes and Avoiding Malicious Requests
