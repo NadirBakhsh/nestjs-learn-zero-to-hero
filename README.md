@@ -70,6 +70,32 @@ code: example where we need to validate and transform the incoming request data
 ---
 
 ## 3. Validating Params with Built-in Pipes
+
+### *ParseIntPipe*
+
+```typescript
+import { Controller, Get, Param, Query, ParseIntPipe } from '@nestjs/common';
+
+export class UsersController {
+  @Get('/:userId?')
+  public getUser(
+    @Param('userId', ParseIntPipe) userId: number | undefined, 
+    @Query() query: any
+    ) {
+    if (userId) {
+      console.log('type of id', userId);
+      console.log('userId', userId);
+      console.log('limit', typeof query?.limit);
+      console.log('offset', typeof query?.offset);
+      return `Get user with ID ${userId}`;
+    }
+    return `Get all users`;
+  }
+}
+```
+
+---
+
 ## 4. Validating Query Params
 ## 5. Introduction to DTO
 ## 6. Creating Our First DTO
