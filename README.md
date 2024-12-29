@@ -94,6 +94,8 @@ export class UsersController {
 }
 ```
 
+code example: [Validating Params with Built-in Pipes](https://github.com/NadirBakhsh/nestjs-resources-code/commit/b1a4c8b32b796a74ef866552a26dff97e35949ff)
+
 ---
 
 ## 4. Validating Query Params
