@@ -175,6 +175,76 @@ A data transfer object, commonly called a DTO, is an object used to validate dat
 ---
 
 ## 6. Creating Our First DTO
+
+step-by-step guide on creating a DTO (Data Transfer Object) in NestJS using the class-validator package
+
+### 1. Setup the Environment:
+
+```bash
+npm install class-validator
+```
+
+### 2. Create the DTO File:
+
+- In your users module, create a directory named dtos.
+- Inside it, create a file named create-user.dto.ts.
+
+### 3. Define the Class:
+- Create and export a class named CreateUserDto.
+- Define properties for the class (e.g., firstName, lastName, email, password).
+
+### 4. Add Type Annotations:
+- Use TypeScript types for each property to specify their data types.
+- Use Validation Decorators:
+
+Apply decorators from class-validator to validate the input data.
+
+- Use @IsString() to ensure a property is a string.
+- Use @IsNotEmpty() to ensure required properties are not empty.
+- Use @IsOptional() for optional properties.
+- Use @IsEmail() for validating email addresses.
+- Use @MinLength() and @MaxLength() for length constraints.
+- Use @Matches() for complex patterns (e.g., password validation).
+
+### 5. Customize Validation Messages:
+Add custom error messages using an object with a message property in decorators like @Matches().
+Example Implementation:
+
+```typescript
+import { IsString, IsNotEmpty, IsOptional, IsEmail, MinLength, MaxLength, Matches } from 'class-validator';
+
+export class CreateUserDto {
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(3)
+  @MaxLength(96)
+  firstName: string;
+
+  @IsString()
+  @IsOptional()
+  @MinLength(3)
+  @MaxLength(96)
+  lastName?: string;
+
+  @IsString()
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(8)
+  @Matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/, {
+    message: 'Password must be at least 8 characters long, contain one letter, one number, and one special character.',
+  })
+  password: string;
+}
+```
+- alidation Flexibility: Use class-validator for robust validations in NestJS DTOs.
+- Custom Error Messages: Improve user experience with detailed validation messages.
+- Documentation: Refer to Class Validator GitHub for more complex scenarios and decorators.
+
+
 ## 7. Connecting DTO to Route Method
 ## 8. Global Pipes and Avoiding Malicious Requests
 ## 9. Converting to an Instance of DTO
