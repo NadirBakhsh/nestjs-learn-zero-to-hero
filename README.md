@@ -244,6 +244,9 @@ export class CreateUserDto {
 - Custom Error Messages: Improve user experience with detailed validation messages.
 - Documentation: Refer to Class Validator GitHub for more complex scenarios and decorators.
 
+Github code: [Creating Our First DTO](https://github.com/NadirBakhsh/nestjs-resources-code/commit/c358af5efce7ac1089b7e983e352ccc3a88257b6)
+
+---
 
 ## 7. Connecting DTO to Route Method
 ## 8. Global Pipes and Avoiding Malicious Requests
