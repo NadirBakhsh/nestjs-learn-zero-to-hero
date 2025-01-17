@@ -249,6 +249,46 @@ Github code: [Creating Our First DTO](https://github.com/NadirBakhsh/nestjs-reso
 ---
 
 ## 7. Connecting DTO to Route Method
+
+- Use the @Body() decorator to extract the request body.
+- Assign the DTO class as the type annotation to the @Body() parameter.
+- Enable validation by attaching the ValidationPipe.
+
+```typescript
+
+import {
+  Controller,
+  Post,
+  Body,
+  Headers,
+  Ip,
+  ParseIntPipe,
+  ValidationPipe,
+} from '@nestjs/common';
+import { CreateUserDto } from './dtos/create-user.dtos';
+
+@Controller('users')
+export class UsersController {
+ @Post()
+  public createUser(
+    @Body(new ValidationPipe()) createUserDto: CreateUserDto,
+    @Headers() headers: any,
+    @Ip() ip: string,
+  ) {
+    const userData = createUserDto;
+    console.log(userData);
+    console.log('Headers:', headers);
+    console.log('ip:', ip);
+    return `Create user with data: ${JSON.stringify(userData)}`;
+  }
+}
+
+```
+code example: [Connecting DTO to Route Method](https://github.com/NadirBakhsh/nestjs-resources-code/commit/c098f530f59031e698bdd01bcc644b7e1fab6b23)
+
+---
+
+
 ## 8. Global Pipes and Avoiding Malicious Requests
 ## 9. Converting to an Instance of DTO
 ## 10. Using DTOs with Params
