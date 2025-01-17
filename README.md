@@ -290,6 +290,41 @@ code example: [Connecting DTO to Route Method](https://github.com/NadirBakhsh/ne
 
 
 ## 8. Global Pipes and Avoiding Malicious Requests
+!['Global Pipes and Avoiding Malicious Requests'](./images/global-pipes.png)
+
+To avoid repetitive code, you can enable the ValidationPipe globally in the main.ts file.
+
+```main.ts
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
+  await app.listen(3000);
+}
+bootstrap();
+
+```
+
+- whitelist: true
+Removes any extra properties from the request body that are not defined in the DTO.
+Prevents unnecessary or malicious data from entering the application.
+
+- forbidNonWhitelisted: true
+Throws a 400 Bad Request error if any additional property not defined in the DTO is sent in the request.
+
+- transform: true
+Automatically converts plain request objects into instances of the specified DTO class.
+
+code Example: [Global Pipes and Avoiding Malicious Requests](https://github.com/NadirBakhsh/nestjs-resources-code/commit/b372f61c6982c7b66c6e643ec3c52fdad1dd6234)
+
 ## 9. Converting to an Instance of DTO
 ## 10. Using DTOs with Params
 ## 11. Using Mapped Types to Avoid Code Duplication
