@@ -325,6 +325,8 @@ Automatically converts plain request objects into instances of the specified DTO
 
 code Example: [Global Pipes and Avoiding Malicious Requests](https://github.com/NadirBakhsh/nestjs-resources-code/commit/b372f61c6982c7b66c6e643ec3c52fdad1dd6234)
 
+---
+
 ## 9. Converting to an Instance of DTO
 ## 10. Using DTOs with Params
 ## 11. Using Mapped Types to Avoid Code Duplication
