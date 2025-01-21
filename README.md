@@ -328,5 +328,26 @@ code Example: [Global Pipes and Avoiding Malicious Requests](https://github.com/
 ---
 
 ## 9. Converting to an Instance of DTO
+![converting the instance of DTO](./images/converting-to-an-instanc-of-DTO.png)
+
+- **Issue**: In the `createUser` method, the `createUserDTO` type annotation suggests it's an instance of the `CreateUserDTO` class. However, it's actually a plain object matching the class's shape, not an instance of the class. This lack of transformation reduces type safety.
+
+- **Proof**: Sending a request and printing the type of `createUserDTO` to the terminal shows it as an object, not an instance. Using `instanceof` confirms this returns false.
+
+- **Need for Transformation**: Transforming the plain object into an instance of the `CreateUserDTO` class ensures better type safety and enables working with the object confidently as a class instance.
+
+- **Solution with NestJS**: By enabling the `transform` property in the `ValidationPipe` in `main.ts`:
+
+```typescript
+app.useGlobalPipes(new ValidationPipe({ transform: true }));
+```
+
+NestJS automatically transforms incoming request data into an instance of the DTO class after validation.
+
+- **Result**: After enabling transform, sending the same request and checking the type confirms the object is now an instance of the CreateUserDTO class (instanceof returns true).
+
+---
+
+
 ## 10. Using DTOs with Params
 ## 11. Using Mapped Types to Avoid Code Duplication
