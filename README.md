@@ -346,6 +346,8 @@ NestJS automatically transforms incoming request data into an instance of the DT
 
 - **Result**: After enabling transform, sending the same request and checking the type confirms the object is now an instance of the CreateUserDTO class (instanceof returns true).
 
+Code Example: [Converting to an Instance of DTO](https://github.com/NadirBakhsh/nestjs-resources-code/commit/52d3bb88a76e22833da9b1b1208fc6712c66ed78)
+
 ---
 
 
