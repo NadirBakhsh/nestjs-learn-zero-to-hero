@@ -350,6 +350,72 @@ Code Example: [Converting to an Instance of DTO](https://github.com/NadirBakhsh/
 
 ---
 
-
 ## 10. Using DTOs with Params
+
+![using-dtos-with-params.png](./images/using-dtos-with-params.png)
+
+### Overview
+In this guide, we explore how to use Data Transfer Objects (DTOs) to validate and transform request parameters in a NestJS application. Specifically, we address making an optional id parameter an integer while ensuring proper validation using class-validator and class-transformer.
+
+### Problem Statement
+When using the ParseIntPipe to validate route parameters, it forces the id parameter to be required. However, we want the id to remain optional while still being an integer if provided.
+
+1. **Create a DTO for Params**
+Navigate to your DTO directory and create a new file named get-users-param.dto.ts:
+
+```typescript
+import { IsOptional, IsInt } from 'class-validator';
+import { Type } from 'class-transformer';
+
+export class GetUsersParamDto {
+  @IsOptional()
+  @IsInt()
+  @Type(() => Number) // Ensures automatic conversion from string to number
+  id?: number;
+}
+```
+
+2. **Update Controller to Use DTO**
+Modify your controller method to accept the DTO instead of manually extracting id:
+
+```typescript
+import { Controller, Get, Param, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import { GetUsersParamDto } from './dto/get-users-param.dto';
+
+@Controller('users')
+export class UsersController {
+  @Get(':id?')
+  getUsers(@Param() params: GetUsersParamDto) {
+    console.log(params); // Logs { id: 123 } or an empty object if no id is provided
+    return { message: 'Request successful', params };
+  }
+}
+```
+
+3. **Explanation**
+
+@IsOptional(): Allows id to be omitted from the request.
+
+@IsInt(): Ensures the value is always an integer.
+
+@Type(() => Number): Automatically converts the id (which is received as a string) into a number.
+
+4. **Testing the API**
+
+✅ Valid Requests:
+
+GET /users/123 → { id: 123 }
+
+GET /users → {} (ID is optional)
+
+❌ Invalid Requests:
+
+GET /users/abc → ❌ Error: id must be an integer
+
+Conclusion
+
+By using DTOs, we can validate and transform request parameters efficiently in NestJS. This method ensures type safety while maintaining the flexibility of optional parameters.
+
+---
+
 ## 11. Using Mapped Types to Avoid Code Duplication
