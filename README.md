@@ -421,3 +421,102 @@ Code Example: [Using DTOs with Params](https://github.com/NadirBakhsh/nestjs-res
 ---
 
 ## 11. Using Mapped Types to Avoid Code Duplication
+
+### Mapped Types in NestJS
+
+### Introduction
+Mapped types in NestJS help in organizing DTOs efficiently while following the **DRY (Don't Repeat Yourself) Principle**. They allow us to inherit and modify DTOs dynamically, reducing code redundancy and improving maintainability.
+
+### Why Use Mapped Types?
+When creating DTOs, duplication of properties across different DTOs (e.g., `CreateUserDTO` and `PatchUserDTO`) can lead to redundant code. Mapped types solve this by allowing partial modifications, selections, and extensions of DTOs.
+
+### Example: Implementing a PATCH API with Mapped Types
+
+### 1. Create a PATCH Method in the User Controller
+```typescript
+@Patch(':id')
+async patchUser(
+  @Param('id') id: string,
+  @Body() patchUserDto: PatchUserDTO,
+) {
+  return patchUserDto; // Returning the DTO to observe changes
+}
+```
+
+### 2. Define the `PatchUserDTO` Using Mapped Types
+Instead of copying all properties from `CreateUserDTO`, we extend it using `PartialType`.
+
+```typescript
+import { PartialType } from '@nestjs/mapped-types';
+import { CreateUserDTO } from './create-user.dto';
+
+export class PatchUserDTO extends PartialType(CreateUserDTO) {}
+```
+
+### 3. Installing `@nestjs/mapped-types`
+To use mapped types, install the package:
+```sh
+npm install @nestjs/mapped-types@2.0.5
+```
+
+### 4. Testing the PATCH API
+- Send a PATCH request with a subset of properties (e.g., only `email` and `password`).
+- Observe that validation rules from `CreateUserDTO` still apply.
+
+```json
+{
+  "email": "test@example.com",
+  "password": "securePass123"
+}
+```
+
+If an invalid email format is sent, NestJS will return:
+```json
+{
+  "statusCode": 400,
+  "message": "email must be an email",
+  "error": "Bad Request"
+}
+```
+
+### Benefits of Mapped Types
+- **Reduces Code Duplication**: No need to manually redefine properties.
+- **Maintains Validation**: Validation rules from `CreateUserDTO` are inherited.
+- **Adapts to Changes**: If `CreateUserDTO` is updated, `PatchUserDTO` remains up-to-date automatically.
+
+### Other Mapped Type Utilities
+NestJS provides additional mapped type utilities that can be useful in different scenarios:
+
+### `PickType`
+Use `PickType` to select specific properties from a DTO.
+```typescript
+import { PickType } from '@nestjs/mapped-types';
+import { CreateUserDTO } from './create-user.dto';
+
+export class LimitedUserDTO extends PickType(CreateUserDTO, ['email', 'password']) {}
+```
+
+### `OmitType`
+Use `OmitType` to exclude specific properties from a DTO.
+```typescript
+import { OmitType } from '@nestjs/mapped-types';
+import { CreateUserDTO } from './create-user.dto';
+
+export class UserWithoutPasswordDTO extends OmitType(CreateUserDTO, ['password']) {}
+```
+
+### `IntersectionType`
+Use `IntersectionType` to combine multiple DTOs into one.
+```typescript
+import { IntersectionType } from '@nestjs/mapped-types';
+import { CreateUserDTO } from './create-user.dto';
+import { AdditionalInfoDTO } from './additional-info.dto';
+
+export class FullUserDTO extends IntersectionType(CreateUserDTO, AdditionalInfoDTO) {}
+```
+
+### Conclusion
+Mapped types in NestJS are powerful tools for efficiently managing DTOs, reducing redundancy, and maintaining cleaner code. By using them, you ensure better maintainability and scalability in your NestJS applications.
+
+For further details, refer to the [NestJS Mapped Types Documentation](https://docs.nestjs.com).
+
