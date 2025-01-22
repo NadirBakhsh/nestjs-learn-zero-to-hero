@@ -416,6 +416,8 @@ Conclusion
 
 By using DTOs, we can validate and transform request parameters efficiently in NestJS. This method ensures type safety while maintaining the flexibility of optional parameters.
 
+Code Example: [Using DTOs with Params](https://github.com/NadirBakhsh/nestjs-resources-code/commit/a0c299dc971cd8eba453ce3b5705dcf0ccf64f89)
+
 ---
 
 ## 11. Using Mapped Types to Avoid Code Duplication
