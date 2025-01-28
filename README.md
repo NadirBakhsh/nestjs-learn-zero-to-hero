@@ -30,7 +30,8 @@ Dependency occurs when one class relies on another class to function.
 
 ### Code Example
 
-```without DI
+without DI
+```typescript
 class User {
   constructor() {
     console.log("User was instantiated");
@@ -55,7 +56,8 @@ const post = new Post();
 const page = new Page();
 ```
 
-```with DI
+with DI
+```typescript
 class User {
   constructor() {
     console.log("User was instantiated");
