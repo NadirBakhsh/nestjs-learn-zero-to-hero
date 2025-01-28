@@ -8,11 +8,14 @@ Dependency Injection (DI) is one of the most crucial concepts in NestJS, forming
 
 - **Dependency Injection:** A design pattern used to manage dependencies by providing them to classes rather than letting the classes instantiate them directly.
 
+
 - **Inversion of Control (IoC):** Shifts the responsibility of creating and managing dependencies from the class to an external framework or tool (e.g., NestJS).
 
 ### What is a Dependency?
 **Example:** A User class required by both Post and Page classes to associate posts/pages with a user.
 Dependency occurs when one class relies on another class to function.
+
+![dependency injection](./images/dependency.png)
 
 ### Benefits of Dependency Injection
 
@@ -30,25 +33,27 @@ Dependency occurs when one class relies on another class to function.
 
 ### Code Example
 
+![without dependency injection](./images/without-dependency.png)
+
 without DI
 ```typescript
 class User {
   constructor() {
-    console.log("User was instantiated");
+      console.log("User was instantiated");
   }
 }
 
 class Post {
-  private user = new User(); // Creates a new instance
+    private user = new User(); // Creates a new instance
   constructor() {
-    console.log("Post class was instantiated");
+      console.log("Post class was instantiated");
   }
 }
 
 class Page {
-  private user = new User(); // Creates another new instance
+    private user = new User(); // Creates another new instance
   constructor() {
-    console.log("Page class was instantiated");
+      console.log("Page class was instantiated");
   }
 }
 
@@ -56,17 +61,20 @@ const post = new Post();
 const page = new Page();
 ```
 
+![without dependency injection](./images/with-dependency.png)
+
+
 with DI
 ```typescript
 class User {
-  constructor() {
-    console.log("User was instantiated");
+    constructor() {
+        console.log("User was instantiated");
   }
 }
 
 class Post {
-  constructor(private user: User) {
-    console.log("Post class was instantiated");
+    constructor(private user: User) {
+        console.log("Post class was instantiated");
   }
 }
 
