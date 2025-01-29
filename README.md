@@ -95,6 +95,103 @@ Dependency injection in NestJS not only simplifies dependency management but als
 
 
 ## 2. Dependency Injection in NestJS
+
+# Dependency Injection in NestJS
+
+![dependency injection](./images/dependency-injection.png)
+
+### Understanding Dependency Injection (DI)
+Dependency Injection (DI) is the backbone of a NestJS application, making it modular and scalable. It follows the principle of **Inversion of Control (IoC)**, allowing NestJS to manage dependencies and their lifecycle.
+
+![NestJS dependency injection](images/how-dependency-injection.png)
+
+
+### How NestJS Handles Dependency Injection
+- NestJS creates a **dependency graph**, determining the order of instantiation.
+- Dependencies are instantiated only once (Singleton pattern) and injected where required.
+- NestJS ensures that dependent classes (e.g., `Post` and `Page`) do not create multiple instances of `User`, optimizing memory usage.
+
+![advantages of dependency injection](./images/advantages-of-di.png)
+
+### Advantages of Dependency Injection
+1. **Decoupling of Components**  
+   - Dependencies are injected rather than instantiated inside the class.
+   - Promotes modularity and flexibility in the application.
+
+2. **Easier Testing**  
+   - Allows mocking dependencies for unit tests.
+   - Enables testing individual modules without requiring real dependencies.
+
+3. **Reusability**  
+   - A single instance of a dependency is shared across multiple modules.
+   - Reduces redundant instantiations and improves performance.
+
+![modules manage dependency injection](images/module-encapsulates-everything.png)
+
+### How Modules Manage Dependency Injection
+- **Modules encapsulate services and providers**
+- **Providers** can be **provided** within the module for internal use.
+- **Exports** allow sharing providers with other modules.
+
+![MRFC](images/MRFC.png)
+
+### Example: User Module & Post Module
+```typescript
+@Module({
+  providers: [UserService],
+  exports: [UserService], // Allows PostModule to use UserService
+})
+export class UserModule {}
+
+@Module({
+  imports: [UserModule],
+  providers: [PostService],
+})
+export class PostModule {}
+```
+
+![injection-steps](./images/injection-steps.png)
+
+### Steps to Implement Dependency Injection
+1. **Declare an Injectable Provider**
+   ```typescript
+   @Injectable()
+   export class AppService {
+     getHello(): string {
+       return 'Hello World!';
+     }
+   }
+   ```
+
+2. **Register Provider in a Module**
+   ```typescript
+   @Module({
+     providers: [AppService],
+   })
+   export class AppModule {}
+   ```
+
+3. **Inject Provider into a Controller**
+   ```typescript
+   @Controller()
+   export class AppController {
+     constructor(private readonly appService: AppService) {}
+     
+     @Get()
+     getHello(): string {
+       return this.appService.getHello();
+     }
+   }
+   ```
+
+
+
+### Conclusion
+- DI in NestJS simplifies module dependencies and improves code maintainability.
+- Understanding **Providers, Modules, and Injection** is key to mastering DI.
+- As you practice, the concepts will become second nature.
+
+
 ## 3. Create a Users Service
 ## 4. findAll Users Method
 ## 5. findOneById Users Method
