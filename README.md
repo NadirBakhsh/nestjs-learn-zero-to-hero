@@ -184,13 +184,12 @@ export class PostModule {}
    }
    ```
 
-
-
 ### Conclusion
 - DI in NestJS simplifies module dependencies and improves code maintainability.
 - Understanding **Providers, Modules, and Injection** is key to mastering DI.
 - As you practice, the concepts will become second nature.
 
+---
 
 ## 3. Create a Users Service
 ## 4. findAll Users Method
