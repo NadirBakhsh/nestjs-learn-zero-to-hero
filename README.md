@@ -192,6 +192,73 @@ export class PostModule {}
 ---
 
 ## 3. Create a Users Service
+
+### Overview
+This guide covers the implementation of Dependency Injection within a module in NestJS. We create a `UsersService` provider and integrate it into the `UsersModule`, making it available for use in the `UsersController`.
+
+### Steps to Implement Dependency Injection
+
+### 1. Create the `UsersService`
+- Navigate to the `users` directory.
+- Create a new directory named `providers`.
+- Inside `providers`, create a file called `users.service.ts`.
+- Add the `@Injectable()` decorator to make it a provider.
+
+#### `users.service.ts`
+```typescript
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class UsersService {
+  constructor() {}
+  
+  // Define business logic methods here
+}
+```
+
+### 2. Connect `UsersService` to `UsersModule`
+- Import `UsersService` into `users.module.ts`.
+- Add `UsersService` to the `providers` array.
+
+#### `users.module.ts`
+```typescript
+import { Module } from '@nestjs/common';
+import { UsersService } from './providers/users.service';
+import { UsersController } from './users.controller';
+
+@Module({
+  providers: [UsersService],
+  controllers: [UsersController],
+})
+export class UsersModule {}
+```
+
+### 3. Inject `UsersService` into `UsersController`
+- Import `UsersService` into `users.controller.ts`.
+- Inject it using the constructor.
+
+#### `users.controller.ts`
+```typescript
+import { Controller } from '@nestjs/common';
+import { UsersService } from './providers/users.service';
+
+@Controller('users')
+export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
+  
+  // Define routes that utilize usersService methods here
+}
+```
+
+### Summary
+- **Step 1**: Created `UsersService` with `@Injectable()`.
+- **Step 2**: Registered `UsersService` in `UsersModule`.
+- **Step 3**: Injected `UsersService` into `UsersController`.
+- Now, `UsersService` is available in `UsersController` for handling business logic while keeping the controller focused on routing.
+
+---
+
+
 ## 4. findAll Users Method
 ## 5. findOneById Users Method
 ## 6. Practice: Create a Posts Module
