@@ -256,6 +256,8 @@ export class UsersController {
 - **Step 3**: Injected `UsersService` into `UsersController`.
 - Now, `UsersService` is available in `UsersController` for handling business logic while keeping the controller focused on routing.
 
+[service injection](https://github.com/NadirBakhsh/nestjs-resources-code/commit/129e001f1ac8e57a13a3a95a4c9b77c9b8d7fb14)
+
 ---
 
 
