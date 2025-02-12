@@ -262,7 +262,97 @@ export class UsersController {
 
 
 ## 4. findAll Users Method
+
+![findall-users](./images/findall-users.png)
+
+### Overview
+In NestJS, controllers should only handle routing logic, while business logic should reside inside services (also known as providers). This separation improves maintainability, scalability, and code organization.
+
+
+### Moving Business Logic to a Service
+- The `UsersController` should **only** receive requests, validate them using DTOs, and delegate processing to the `UsersService`.
+- The `UsersService` should handle business logic such as fetching data from the database.
+
+### Implementing `findAll` in `UsersService`
+- The `findAll` method retrieves users from the database.
+- It takes query parameters (`limit`, `page`) and a DTO (`GetUsersParamDto`).
+- Initially, it returns mock user data until database integration is implemented.
+
+### Example Implementation:
+```typescript
+@Injectable()
+export class UsersService {
+  findAll(params: GetUsersParamDto, limit: number, page: number) {
+    return [
+      { firstName: 'John', email: 'john@example.com' },
+      { firstName: 'Alice', email: 'alice@example.com' },
+    ];
+  }
+}
+```
+### Injecting UsersService into UsersController
+- The controller injects the UsersService using dependency injection.
+- The findAll method is called inside the controller, passing required parameters.
+
+Example Controller:
+```typescript
+@Controller('users')
+export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
+
+  @Get()
+  getUsers(@Query() params: GetUsersParamDto, @Query('limit') limit: number, @Query('page') page: number) {
+    return this.usersService.findAll(params, limit, page);
+  }
+}
+```
+
+### Benefits of This Approach
+- Cleaner Controllers – Only handle request validation and delegation.
+- Reusable Services – Business logic can be reused in multiple parts of the application.
+- Easier Testing – Services can be tested independently without HTTP concerns.
+- Improved Scalability – Adding new logic becomes easier without modifying controllers.
+
+[findall Users Method](https://github.com/NadirBakhsh/nestjs-resources-code/commit/805515670efde9c8dbb08d18dab3b167608bdebe)
+
+---
+
 ## 5. findOneById Users Method
+
+#### Implement findOneById in UsersService
+Since you're not using a database yet, we'll use a simple array of users.
+
+```typescript
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class UsersService {
+
+  public findOneById(id: number) {
+    return { id: 1, name: 'John Doe', email: 'john@example.com' };
+  }
+
+}
+``` 
+
+### Use the New Method in UsersController
+Now, expose this method via an API endpoint.
+
+```typescript
+import { Controller, Get, Param } from '@nestjs/common';
+import { UsersService } from './users.service';
+
+@Controller('users')
+export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.usersService.findOneById(Number(id));
+  }
+}
+```
+
 ## 6. Practice: Create a Posts Module
 ## 7. Solution: Create a Posts Module
 ## 8. Types of Dependencies
