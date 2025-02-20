@@ -354,7 +354,15 @@ export class UsersController {
 ```
 
 ## 6. Practice: Create a Posts Module
+
+ - Posts Controller
+ - Posts Service
+ - Inject Posts Service inside Posts Controller as a dependency
+ 
 ## 7. Solution: Create a Posts Module
+
+
+
 ## 8. Types of Dependencies
 ## 9. Create a GET Posts Route with DTO
 ## 10. Return Posts From Posts Service
