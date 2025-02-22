@@ -362,8 +362,83 @@ export class UsersController {
 ## 7. Solution: Create a Posts Module
 code is available in [github](https://github.com/NadirBakhsh/nestjs-resources-code/commit/18cf95fce21ec8429599a248f558ec50bfc654d0)
 
-
 ## 8. Types of Dependencies
+
+![dependencies](./images/types-of-dependencies.png)
+
+### Dependency Injection in NestJS
+
+This document covers various types of dependency injections in NestJS, focusing on intra-module and inter-module dependencies, with a brief look at circular dependencies.
+
+---
+
+### Intra-Module Dependency
+
+![intra-module-dependency](./images/how-intera-modular.png)
+
+- **Definition:**  
+  Dependency injection within the same module.
+
+- **Example:**  
+  A user controller depending on a user service within the users module.
+
+- **Key Points:**
+  - Simplifies component interaction as all components reside in the same module.
+  - Handled automatically by NestJS through providers declared in the module.
+
+
+
+### Inter-Module Dependency
+
+![inter-module-dependency](./images/how-intera-modular.png)
+
+- **Definition:**  
+  Dependency injection where a component (service or controller) in one module depends on a service provided by another module.
+
+- **Example Scenario:**
+  - The **post service** in the posts module depends on the **user service** in the users module.
+  - This dependency is necessary because the posts module requires user information (such as determining which user a post belongs to) and that functionality is encapsulated within the users module.
+
+- **Key Points:**
+  - **Separation of Concerns:**  
+    Each module handles its domain-specific functionality. The users module manages user data, while the posts module focuses on posts.
+  - **Scalability:**  
+    Inter-module dependencies enable modularity, making it easier to maintain and scale the application.
+  - **Implementation:**  
+    NestJS allows importing one module into another to resolve these dependencies.
+
+
+### Circular Dependency (Preview)
+
+![circular-dependency](./images/circular-dependencies.png)
+
+- **Definition:**  
+  A situation where two modules depend on each other.
+
+- **Example Scenario:**
+  - An **auth service** in the authentication module depends on the user service.
+  - Simultaneously, the **user service** depends on the authentication service.
+
+- **Key Points:**
+  - Circular dependencies can introduce complexities and require special handling in NestJS.
+  - Detailed strategies for managing circular dependencies will be covered in subsequent discussions.
+
+
+### Summary
+
+- **Intra-Module Dependency:**  
+  Simple and straightforward dependency management within a single module.
+
+- **Inter-Module Dependency:**  
+  Enables clean separation of responsibilities by allowing modules to depend on services provided by other modules.
+
+- **Circular Dependency:**  
+  A special case of inter-module dependency that necessitates careful design to avoid pitfalls.
+
+---
+
+
+
 ## 9. Create a GET Posts Route with DTO
 ## 10. Return Posts From Posts Service
 ## 11. Use Users Service Inside Posts Service
