@@ -437,9 +437,49 @@ This document covers various types of dependency injections in NestJS, focusing 
 
 ---
 
-
-
 ## 9. Create a GET Posts Route with DTO
+![create a get posts route with dto](./images/create-posts-route.png)
+
+### Inter-Module Dependency Injection in NestJS
+
+### Overview
+
+This guide covers **Inter-Module Dependency Injection** in NestJS, demonstrating how the **Users Module** and **Posts Module** can interact using Dependency Injection (DI).
+
+
+### Creating a GET Endpoint for Posts
+
+1. **Define the Route**: Create a GET endpoint to fetch posts by `userId`.
+2. **Use NestJS Decorators**:
+   - `@Get(':userId')` – Defines the GET route.
+   - `@Param('userId')` – Extracts the user ID from the request.
+3. **Implement the Controller Method**:
+   ```ts
+   @Get(':userId')
+   getPosts(@Param('userId') userId: string) {
+       return this.postService.findAll(userId);
+   }
+
+   ```
+### 4. Define Service Method:
+- The findAll method in PostService fetches posts for the given userId.
+- The method is called inside the controller.
+
+
+### 4. Creating the PostService Method
+
+1. Define findAll Method in PostService
+
+```typescript
+findAll(userId: string) {
+    console.log(`Fetching posts for User ID: ${userId}`);
+}
+```
+1. Inject PostService into PostController to use this method.
+
+code is available in [github](https://github.com/NadirBakhsh/nestjs-resources-code/commit/3e4ea45bf9afea453953337d0bdce42b459af030)
+----
+
 ## 10. Return Posts From Posts Service
 ## 11. Use Users Service Inside Posts Service
 ## 12. Practice: Create an Auth Module
