@@ -360,7 +360,8 @@ export class UsersController {
  - Inject Posts Service inside Posts Controller as a dependency
  
 ## 7. Solution: Create a Posts Module
-code is available in [github](https://github.com/NadirBakhsh/nestjs-resources-code/commit/18cf95fce21ec8429599a248f558ec50bfc654d0)
+
+- code is available in [github](https://github.com/NadirBakhsh/nestjs-resources-code/commit/18cf95fce21ec8429599a248f558ec50bfc654d0)
 
 ## 8. Types of Dependencies
 
@@ -477,7 +478,8 @@ findAll(userId: string) {
 ```
 1. Inject PostService into PostController to use this method.
 
-code is available in [github](https://github.com/NadirBakhsh/nestjs-resources-code/commit/3e4ea45bf9afea453953337d0bdce42b459af030)
+- code is available in [github](https://github.com/NadirBakhsh/nestjs-resources-code/commit/3e4ea45bf9afea453953337d0bdce42b459af030)
+
 ----
 
 ## 10. Return Posts From Posts Service
