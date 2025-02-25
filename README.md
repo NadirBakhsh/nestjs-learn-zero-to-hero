@@ -538,4 +538,6 @@ code example [use-users-service-inside-posts-service](https://github.com/NadirBa
 
 ## 13. Solution: Create an Auth Module
 
+code example [github](https://github.com/NadirBakhsh/nestjs-resources-code/commit/09e08551a6d04b698eac12281d751ca9927f369b)
+
 ## 14. Circular Dependency
