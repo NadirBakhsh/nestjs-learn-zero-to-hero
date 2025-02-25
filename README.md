@@ -184,6 +184,7 @@ export class PostModule {}
    ```
 
 3. **Inject Provider into a Controller**
+
    ```typescript
    @Controller()
    export class AppController {
@@ -525,6 +526,15 @@ code example [github](https://github.com/NadirBakhsh/nestjs-resources-code/commi
 code example [use-users-service-inside-posts-service](https://github.com/NadirBakhsh/nestjs-resources-code/commit/48e6be4f56f4fc8e9f506cafcd19d984ee0c896b)
 
 ## 12. Practice: Create an Auth Module
+
+![auth-practice](./images/auth-practice.png)
+
+### Steps:
+
+- Create an Auth Module.
+- Add Auth Service and Auth Controller.
+- Inject Auth Service into Auth Controller.
+- Ensure Circular Dependency Handling.
 
 ## 13. Solution: Create an Auth Module
 
