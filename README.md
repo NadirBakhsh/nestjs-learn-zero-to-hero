@@ -8,10 +8,10 @@ Dependency Injection (DI) is one of the most crucial concepts in NestJS, forming
 
 - **Dependency Injection:** A design pattern used to manage dependencies by providing them to classes rather than letting the classes instantiate them directly.
 
-
 - **Inversion of Control (IoC):** Shifts the responsibility of creating and managing dependencies from the class to an external framework or tool (e.g., NestJS).
 
 ### What is a Dependency?
+
 **Example:** A User class required by both Post and Page classes to associate posts/pages with a user.
 Dependency occurs when one class relies on another class to function.
 
@@ -20,12 +20,15 @@ Dependency occurs when one class relies on another class to function.
 ### Benefits of Dependency Injection
 
 1. **Single Instance:**
+
    - Dependencies, such as a User instance, are created once and reused across different parts of the application. This promotes efficient memory usage and ensures consistency.
 
 2. **Loose Coupling:**
+
    - Classes depend on abstractions (interfaces) rather than concrete implementations. This makes it easier to change the implementation of a dependency without affecting the classes that use it.
 
 3. **Simplified Testing:**
+
    - Dependencies can be replaced with mock objects during testing. This allows for isolated tests and ensures that the behavior of a class can be tested without involving external dependencies.
 
 4. **Efficient Resource Usage:**
@@ -36,63 +39,63 @@ Dependency occurs when one class relies on another class to function.
 ![without dependency injection](./images/without-dependency.png)
 
 without DI
+
 ```typescript
 class User {
   constructor() {
-      console.log("User was instantiated");
+    console.log("User was instantiated")
   }
 }
 
 class Post {
-    private user = new User(); // Creates a new instance
+  private user = new User() // Creates a new instance
   constructor() {
-      console.log("Post class was instantiated");
+    console.log("Post class was instantiated")
   }
 }
 
 class Page {
-    private user = new User(); // Creates another new instance
+  private user = new User() // Creates another new instance
   constructor() {
-      console.log("Page class was instantiated");
+    console.log("Page class was instantiated")
   }
 }
 
-const post = new Post();
-const page = new Page();
+const post = new Post()
+const page = new Page()
 ```
 
 ![without dependency injection](./images/with-dependency.png)
 
-
 with DI
+
 ```typescript
 class User {
-    constructor() {
-        console.log("User was instantiated");
+  constructor() {
+    console.log("User was instantiated")
   }
 }
 
 class Post {
-    constructor(private user: User) {
-        console.log("Post class was instantiated");
+  constructor(private user: User) {
+    console.log("Post class was instantiated")
   }
 }
 
 class Page {
   constructor(private user: User) {
-    console.log("Page class was instantiated");
+    console.log("Page class was instantiated")
   }
 }
 
-const user = new User(); // Single instance created
-const post = new Post(user); // Dependency injected
-const page = new Page(user); // Dependency injected
+const user = new User() // Single instance created
+const post = new Post(user) // Dependency injected
+const page = new Page(user) // Dependency injected
 ```
 
 Dependency injection in NestJS not only simplifies dependency management but also ensures better maintainability, testability, and scalability of applications.
 
 ---
-
 
 ## 2. Dependency Injection in NestJS
 
@@ -101,12 +104,13 @@ Dependency injection in NestJS not only simplifies dependency management but als
 ![dependency injection](./images/dependency-injection.png)
 
 ### Understanding Dependency Injection (DI)
+
 Dependency Injection (DI) is the backbone of a NestJS application, making it modular and scalable. It follows the principle of **Inversion of Control (IoC)**, allowing NestJS to manage dependencies and their lifecycle.
 
 ![NestJS dependency injection](images/how-dependency-injection.png)
 
-
 ### How NestJS Handles Dependency Injection
+
 - NestJS creates a **dependency graph**, determining the order of instantiation.
 - Dependencies are instantiated only once (Singleton pattern) and injected where required.
 - NestJS ensures that dependent classes (e.g., `Post` and `Page`) do not create multiple instances of `User`, optimizing memory usage.
@@ -114,21 +118,25 @@ Dependency Injection (DI) is the backbone of a NestJS application, making it mod
 ![advantages of dependency injection](./images/advantages-of-di.png)
 
 ### Advantages of Dependency Injection
-1. **Decoupling of Components**  
+
+1. **Decoupling of Components**
+
    - Dependencies are injected rather than instantiated inside the class.
    - Promotes modularity and flexibility in the application.
 
-2. **Easier Testing**  
+2. **Easier Testing**
+
    - Allows mocking dependencies for unit tests.
    - Enables testing individual modules without requiring real dependencies.
 
-3. **Reusability**  
+3. **Reusability**
    - A single instance of a dependency is shared across multiple modules.
    - Reduces redundant instantiations and improves performance.
 
 ![modules manage dependency injection](images/module-encapsulates-everything.png)
 
 ### How Modules Manage Dependency Injection
+
 - **Modules encapsulate services and providers**
 - **Providers** can be **provided** within the module for internal use.
 - **Exports** allow sharing providers with other modules.
@@ -136,16 +144,17 @@ Dependency Injection (DI) is the backbone of a NestJS application, making it mod
 ![MRFC](images/MRFC.png)
 
 ### Example: User Module & Post Module
+
 ```typescript
 @Module({
   providers: [UserService],
-  exports: [UserService], // Allows PostModule to use UserService
+  exports: [UserService] // Allows PostModule to use UserService
 })
 export class UserModule {}
 
 @Module({
   imports: [UserModule],
-  providers: [PostService],
+  providers: [PostService]
 })
 export class PostModule {}
 ```
@@ -153,20 +162,23 @@ export class PostModule {}
 ![injection-steps](./images/injection-steps.png)
 
 ### Steps to Implement Dependency Injection
+
 1. **Declare an Injectable Provider**
+
    ```typescript
    @Injectable()
    export class AppService {
      getHello(): string {
-       return 'Hello World!';
+       return "Hello World!"
      }
    }
    ```
 
 2. **Register Provider in a Module**
+
    ```typescript
    @Module({
-     providers: [AppService],
+     providers: [AppService]
    })
    export class AppModule {}
    ```
@@ -176,15 +188,16 @@ export class PostModule {}
    @Controller()
    export class AppController {
      constructor(private readonly appService: AppService) {}
-     
+
      @Get()
      getHello(): string {
-       return this.appService.getHello();
+       return this.appService.getHello()
      }
    }
    ```
 
 ### Conclusion
+
 - DI in NestJS simplifies module dependencies and improves code maintainability.
 - Understanding **Providers, Modules, and Injection** is key to mastering DI.
 - As you practice, the concepts will become second nature.
@@ -194,63 +207,71 @@ export class PostModule {}
 ## 3. Create a Users Service
 
 ### Overview
+
 This guide covers the implementation of Dependency Injection within a module in NestJS. We create a `UsersService` provider and integrate it into the `UsersModule`, making it available for use in the `UsersController`.
 
 ### Steps to Implement Dependency Injection
 
 ### 1. Create the `UsersService`
+
 - Navigate to the `users` directory.
 - Create a new directory named `providers`.
 - Inside `providers`, create a file called `users.service.ts`.
 - Add the `@Injectable()` decorator to make it a provider.
 
 #### `users.service.ts`
+
 ```typescript
-import { Injectable } from '@nestjs/common';
+import { Injectable } from "@nestjs/common"
 
 @Injectable()
 export class UsersService {
   constructor() {}
-  
+
   // Define business logic methods here
 }
 ```
 
 ### 2. Connect `UsersService` to `UsersModule`
+
 - Import `UsersService` into `users.module.ts`.
 - Add `UsersService` to the `providers` array.
 
 #### `users.module.ts`
+
 ```typescript
-import { Module } from '@nestjs/common';
-import { UsersService } from './providers/users.service';
-import { UsersController } from './users.controller';
+import { Module } from "@nestjs/common"
+import { UsersService } from "./providers/users.service"
+import { UsersController } from "./users.controller"
 
 @Module({
   providers: [UsersService],
-  controllers: [UsersController],
+  controllers: [UsersController]
 })
 export class UsersModule {}
 ```
 
 ### 3. Inject `UsersService` into `UsersController`
+
 - Import `UsersService` into `users.controller.ts`.
 - Inject it using the constructor.
 
 #### `users.controller.ts`
-```typescript
-import { Controller } from '@nestjs/common';
-import { UsersService } from './providers/users.service';
 
-@Controller('users')
+```typescript
+import { Controller } from "@nestjs/common"
+import { UsersService } from "./providers/users.service"
+
+@Controller("users")
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-  
+
   // Define routes that utilize usersService methods here
 }
 ```
 
 ### Summary
+
 - **Step 1**: Created `UsersService` with `@Injectable()`.
 - **Step 2**: Registered `UsersService` in `UsersModule`.
 - **Step 3**: Injected `UsersService` into `UsersController`.
@@ -260,54 +281,64 @@ export class UsersController {
 
 ---
 
-
 ## 4. findAll Users Method
 
 ![findall-users](./images/findall-users.png)
 
 ### Overview
+
 In NestJS, controllers should only handle routing logic, while business logic should reside inside services (also known as providers). This separation improves maintainability, scalability, and code organization.
 
-
 ### Moving Business Logic to a Service
+
 - The `UsersController` should **only** receive requests, validate them using DTOs, and delegate processing to the `UsersService`.
 - The `UsersService` should handle business logic such as fetching data from the database.
 
 ### Implementing `findAll` in `UsersService`
+
 - The `findAll` method retrieves users from the database.
 - It takes query parameters (`limit`, `page`) and a DTO (`GetUsersParamDto`).
 - Initially, it returns mock user data until database integration is implemented.
 
 ### Example Implementation:
+
 ```typescript
 @Injectable()
 export class UsersService {
   findAll(params: GetUsersParamDto, limit: number, page: number) {
     return [
-      { firstName: 'John', email: 'john@example.com' },
-      { firstName: 'Alice', email: 'alice@example.com' },
-    ];
+      { firstName: "John", email: "john@example.com" },
+      { firstName: "Alice", email: "alice@example.com" }
+    ]
   }
 }
 ```
+
 ### Injecting UsersService into UsersController
+
 - The controller injects the UsersService using dependency injection.
 - The findAll method is called inside the controller, passing required parameters.
 
 Example Controller:
+
 ```typescript
-@Controller('users')
+@Controller("users")
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  getUsers(@Query() params: GetUsersParamDto, @Query('limit') limit: number, @Query('page') page: number) {
-    return this.usersService.findAll(params, limit, page);
+  getUsers(
+    @Query() params: GetUsersParamDto,
+    @Query("limit") limit: number,
+    @Query("page") page: number
+  ) {
+    return this.usersService.findAll(params, limit, page)
   }
 }
 ```
 
 ### Benefits of This Approach
+
 - Cleaner Controllers – Only handle request validation and delegation.
 - Reusable Services – Business logic can be reused in multiple parts of the application.
 - Easier Testing – Services can be tested independently without HTTP concerns.
@@ -320,45 +351,45 @@ export class UsersController {
 ## 5. findOneById Users Method
 
 #### Implement findOneById in UsersService
+
 Since you're not using a database yet, we'll use a simple array of users.
 
 ```typescript
-import { Injectable } from '@nestjs/common';
+import { Injectable } from "@nestjs/common"
 
 @Injectable()
 export class UsersService {
-
   public findOneById(id: number) {
-    return { id: 1, name: 'John Doe', email: 'john@example.com' };
+    return { id: 1, name: "John Doe", email: "john@example.com" }
   }
-
 }
-``` 
+```
 
 ### Use the New Method in UsersController
+
 Now, expose this method via an API endpoint.
 
 ```typescript
-import { Controller, Get, Param } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { Controller, Get, Param } from "@nestjs/common"
+import { UsersService } from "./users.service"
 
-@Controller('users')
+@Controller("users")
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOneById(Number(id));
+  @Get(":id")
+  findOne(@Param("id") id: string) {
+    return this.usersService.findOneById(Number(id))
   }
 }
 ```
 
 ## 6. Practice: Create a Posts Module
 
- - Posts Controller
- - Posts Service
- - Inject Posts Service inside Posts Controller as a dependency
- 
+- Posts Controller
+- Posts Service
+- Inject Posts Service inside Posts Controller as a dependency
+
 ## 7. Solution: Create a Posts Module
 
 - code is available in [github](https://github.com/NadirBakhsh/nestjs-resources-code/commit/18cf95fce21ec8429599a248f558ec50bfc654d0)
@@ -387,8 +418,6 @@ This document covers various types of dependency injections in NestJS, focusing 
   - Simplifies component interaction as all components reside in the same module.
   - Handled automatically by NestJS through providers declared in the module.
 
-
-
 ### Inter-Module Dependency
 
 ![inter-module-dependency](./images/how-intera-modular.png)
@@ -397,6 +426,7 @@ This document covers various types of dependency injections in NestJS, focusing 
   Dependency injection where a component (service or controller) in one module depends on a service provided by another module.
 
 - **Example Scenario:**
+
   - The **post service** in the posts module depends on the **user service** in the users module.
   - This dependency is necessary because the posts module requires user information (such as determining which user a post belongs to) and that functionality is encapsulated within the users module.
 
@@ -408,7 +438,6 @@ This document covers various types of dependency injections in NestJS, focusing 
   - **Implementation:**  
     NestJS allows importing one module into another to resolve these dependencies.
 
-
 ### Circular Dependency (Preview)
 
 ![circular-dependency](./images/circular-dependencies.png)
@@ -417,13 +446,13 @@ This document covers various types of dependency injections in NestJS, focusing 
   A situation where two modules depend on each other.
 
 - **Example Scenario:**
+
   - An **auth service** in the authentication module depends on the user service.
   - Simultaneously, the **user service** depends on the authentication service.
 
 - **Key Points:**
   - Circular dependencies can introduce complexities and require special handling in NestJS.
   - Detailed strategies for managing circular dependencies will be covered in subsequent discussions.
-
 
 ### Summary
 
@@ -439,6 +468,7 @@ This document covers various types of dependency injections in NestJS, focusing 
 ---
 
 ## 9. Create a GET Posts Route with DTO
+
 ![create a get posts route with dto](./images/create-posts-route.png)
 
 ### Inter-Module Dependency Injection in NestJS
@@ -447,7 +477,6 @@ This document covers various types of dependency injections in NestJS, focusing 
 
 This guide covers **Inter-Module Dependency Injection** in NestJS, demonstrating how the **Users Module** and **Posts Module** can interact using Dependency Injection (DI).
 
-
 ### Creating a GET Endpoint for Posts
 
 1. **Define the Route**: Create a GET endpoint to fetch posts by `userId`.
@@ -455,6 +484,7 @@ This guide covers **Inter-Module Dependency Injection** in NestJS, demonstrating
    - `@Get(':userId')` – Defines the GET route.
    - `@Param('userId')` – Extracts the user ID from the request.
 3. **Implement the Controller Method**:
+
    ```ts
    @Get(':userId')
    getPosts(@Param('userId') userId: string) {
@@ -462,10 +492,11 @@ This guide covers **Inter-Module Dependency Injection** in NestJS, demonstrating
    }
 
    ```
+
 ### 4. Define Service Method:
+
 - The findAll method in PostService fetches posts for the given userId.
 - The method is called inside the controller.
-
 
 ### 4. Creating the PostService Method
 
@@ -476,11 +507,12 @@ findAll(userId: string) {
     console.log(`Fetching posts for User ID: ${userId}`);
 }
 ```
+
 1. Inject PostService into PostController to use this method.
 
 - code is available in [github](https://github.com/NadirBakhsh/nestjs-resources-code/commit/3e4ea45bf9afea453953337d0bdce42b459af030)
 
-----
+---
 
 ## 10. Return Posts From Posts Service
 
@@ -490,9 +522,10 @@ code example [github](https://github.com/NadirBakhsh/nestjs-resources-code/commi
 
 ## 11. Use Users Service Inside Posts Service
 
-code  example [use-users-service-inside-posts-service](https://github.com/NadirBakhsh/nestjs-resources-code/commit/48e6be4f56f4fc8e9f506cafcd19d984ee0c896b)
-
+code example [use-users-service-inside-posts-service](https://github.com/NadirBakhsh/nestjs-resources-code/commit/48e6be4f56f4fc8e9f506cafcd19d984ee0c896b)
 
 ## 12. Practice: Create an Auth Module
+
 ## 13. Solution: Create an Auth Module
+
 ## 14. Circular Dependency
