@@ -483,7 +483,16 @@ findAll(userId: string) {
 ----
 
 ## 10. Return Posts From Posts Service
+
+Dependency Injection (DI) is a design pattern used to manage dependencies between classes efficiently. In the context of a Post Controller, DI helps inject the required services without directly instantiating them.
+
+code example [github](https://github.com/NadirBakhsh/nestjs-resources-code/commit/3e4ea45bf9afea453953337d0bdce42b459af030)
+
 ## 11. Use Users Service Inside Posts Service
+
+code  example [use-users-service-inside-posts-service](https://github.com/NadirBakhsh/nestjs-resources-code/commit/48e6be4f56f4fc8e9f506cafcd19d984ee0c896b)
+
+
 ## 12. Practice: Create an Auth Module
 ## 13. Solution: Create an Auth Module
 ## 14. Circular Dependency
