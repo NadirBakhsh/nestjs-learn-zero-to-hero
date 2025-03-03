@@ -67,6 +67,15 @@ By leveraging these tools, developers can maintain well-structured, self-explana
 
 ---
 ## 2. Open API Specification
+
+![OpenAPI-Specification](./images/open-api-specification.png)
+
+### What is OpenAPI Specification?
+OpenAPI Specification (OAS) is a standardized format for describing REST APIs. It defines how an API should be documented, ensuring consistency across different platforms and tools.
+
+### What is Swagger?
+Swagger UI: A user-friendly interface for exploring and testing APIs.
+
 ---
 ## 3. Enabling Swagger in NestJS
 ---
