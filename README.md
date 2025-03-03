@@ -120,6 +120,7 @@ This will expose the Swagger UI at **`http://localhost:3000/api`**.
   ```
 - Open **`http://localhost:3000/api`** in your browser to view the API documentation.
 
+code example [Enabling-Swagger](https://github.com/NadirBakhsh/nestjs-resources-code/commit/1ed8ae48b12074490b135827a5d2e77eecba5ab7)
 
 ---
 ## 4. Adding Configuration Methods to Swagger
