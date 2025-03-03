@@ -1,6 +1,70 @@
 # Step 05 - Documenting Code
 
 ## 1. Documentation with NestJS
+
+![Documentation Image](./images/Documentation-nestjs.png)
+
+### Introduction
+NestJS provides built-in tools for documenting both code and API endpoints. This documentation helps both developers and clients interact with the system efficiently.
+
+### Types of Documentation
+NestJS supports two primary types of documentation:
+1. **API Documentation** (for developers and clients)
+2. **Code Documentation** (for developers)
+
+![Documentation-types](./images/Documentation-types.png)
+
+### 1. API Documentation with OpenAPI (Swagger)
+NestJS leverages **OpenAPI (Swagger)** to document APIs. This allows developers and clients to explore API endpoints, understand request/response structures, and even test APIs interactively.
+
+#### Features:
+- Automatically generated documentation based on decorators.
+- Hosted at `localhost:3000/api` (by default).
+- Documents modules, controllers, routes, query parameters, and request/response bodies.
+- Interactive **Try Out** feature to test API requests.
+
+#### Example:
+```typescript
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+
+const config = new DocumentBuilder()
+  .setTitle('API Documentation')
+  .setDescription('API description')
+  .setVersion('1.0')
+  .build();
+const document = SwaggerModule.createDocument(app, config);
+SwaggerModule.setup('api', app, document);
+```
+
+### 2. Code Documentation with Compodoc
+**Compodoc** generates documentation for the internal structure of a NestJS application, providing an overview of modules, services, controllers, and dependencies.
+
+#### Features:
+- Provides a detailed map of modules and their dependencies.
+- Displays methods, properties, and class structures.
+- Helps track code coverage for documentation completeness.
+
+#### Example Usage:
+```bash
+npm install -g @compodoc/compodoc
+compodoc -p tsconfig.json -s
+```
+
+### Key Differences
+| Feature           | API Documentation (Swagger) | Code Documentation (Compodoc) |
+|------------------|---------------------------|-----------------------------|
+| Audience        | Developers & Clients      | Developers Only            |
+| Purpose        | Describe API Endpoints    | Describe Internal Code Structure |
+| Hosting        | Hosted with API           | Generated locally          |
+| Format         | OpenAPI Specification     | HTML-based Documentation   |
+
+### Conclusion
+NestJS simplifies both API and code documentation:
+- **Swagger** helps document and test APIs interactively.
+- **Compodoc** provides an internal view of the codebase for developers.
+By leveraging these tools, developers can maintain well-structured, self-explanatory applications.
+
+
 ---
 ## 2. Open API Specification
 ---
