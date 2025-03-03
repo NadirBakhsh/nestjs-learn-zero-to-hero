@@ -79,6 +79,8 @@ Swagger UI: A user-friendly interface for exploring and testing APIs.
 ---
 ## 3. Enabling Swagger in NestJS
 
+![Enabling-Swagger](./images/enabling-swagger.png)
+
 ### 1. Install Swagger
 Run the following command to install a specific version of `@nestjs/swagger`:
 ```sh
