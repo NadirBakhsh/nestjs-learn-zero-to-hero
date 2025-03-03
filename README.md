@@ -78,6 +78,47 @@ Swagger UI: A user-friendly interface for exploring and testing APIs.
 
 ---
 ## 3. Enabling Swagger in NestJS
+
+### 1. Install Swagger
+Run the following command to install a specific version of `@nestjs/swagger`:
+```sh
+npm install @nestjs/swagger@<version>
+```
+### 2. Import Required Modules
+Open `main.ts` and import the required modules:
+```ts
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+```
+
+### 3. Configure Swagger
+#### Create a Swagger config using `DocumentBuilder`:
+```ts
+const config = new DocumentBuilder()
+  .setTitle('API Documentation')
+  .setDescription('NestJS Swagger API documentation')
+  .setVersion('1.0')
+  .build();
+  ```
+
+#### Generate a Swagger document using `SwaggerModule.createDocument`:
+```ts
+const document = SwaggerModule.createDocument(app, config);
+```
+#### Setup Swagger in the app using `SwaggerModule.setup`:
+```ts
+SwaggerModule.setup('api', app, document);
+```
+This will expose the Swagger UI at **`http://localhost:3000/api`**.
+
+
+### 4. Run the App & Access Swagger
+- Start your NestJS app:
+  ```sh
+  npm run start
+  ```
+- Open **`http://localhost:3000/api`** in your browser to view the API documentation.
+
+
 ---
 ## 4. Adding Configuration Methods to Swagger
 ---
