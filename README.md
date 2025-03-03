@@ -622,3 +622,5 @@ export class UsersModule {}
 ### Conclusion
 Using `forwardRef()` resolves circular dependencies in NestJS by allowing lazy evaluation of module imports, ensuring that dependencies load properly. Always use `Inject()` and `forwardRef()` when modules depend on each other.
 
+code example [github](https://github.com/NadirBakhsh/nestjs-resources-code/commit/f964a4d9022b20d9227087739ced3a065f88da3d)
+
