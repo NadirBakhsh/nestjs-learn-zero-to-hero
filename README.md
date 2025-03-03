@@ -541,3 +541,84 @@ code example [use-users-service-inside-posts-service](https://github.com/NadirBa
 code example [github](https://github.com/NadirBakhsh/nestjs-resources-code/commit/09e08551a6d04b698eac12281d751ca9927f369b)
 
 ## 14. Circular Dependency
+
+### Introduction
+Circular dependencies occur when two or more modules depend on each other, leading to errors in NestJS. To resolve this, NestJS provides the `forwardRef()` function.
+
+### Scenario
+We are implementing an authentication system where:
+- `AuthService` needs `UserService` to verify users.
+- `UserService` needs `AuthService` to check authentication status.
+
+### Steps to Handle Circular Dependency
+
+### 1. **Inject `UserService` into `AuthService`**
+- Import `UsersModule` into `AuthModule`.
+- Inject `UserService` in `AuthService`.
+- Use `forwardRef()` in `AuthModule`:
+
+```typescript
+import { forwardRef, Inject } from '@nestjs/common';
+import { UsersService } from '../users/users.service';
+
+@Injectable()
+export class AuthService {
+  constructor(
+    @Inject(forwardRef(() => UsersService))
+    private readonly usersService: UsersService,
+  ) {}
+}
+```
+
+### 2. **Inject `AuthService` into `UserService`**
+- Export `AuthService` in `AuthModule`.
+- Import `AuthModule` in `UsersModule` using `forwardRef()`.
+- Inject `AuthService` into `UserService`:
+
+```typescript
+import { forwardRef, Inject } from '@nestjs/common';
+import { AuthService } from '../auth/auth.service';
+
+@Injectable()
+export class UsersService {
+  constructor(
+    @Inject(forwardRef(() => AuthService))
+    private readonly authService: AuthService,
+  ) {}
+}
+```
+
+### 3. **Modify Module Imports**
+#### `auth.module.ts`
+```typescript
+import { forwardRef } from '@nestjs/common';
+import { UsersModule } from '../users/users.module';
+
+@Module({
+  imports: [forwardRef(() => UsersModule)],
+  providers: [AuthService],
+  exports: [AuthService],
+})
+export class AuthModule {}
+```
+
+#### `users.module.ts`
+```typescript
+import { forwardRef } from '@nestjs/common';
+import { AuthModule } from '../auth/auth.module';
+
+@Module({
+  imports: [forwardRef(() => AuthModule)],
+  providers: [UsersService],
+  exports: [UsersService],
+})
+export class UsersModule {}
+```
+
+### Execution
+- Running the application should now work without circular dependency errors.
+- The `AuthService` can use `UserService`, and `UserService` can use `AuthService`.
+
+### Conclusion
+Using `forwardRef()` resolves circular dependencies in NestJS by allowing lazy evaluation of module imports, ensuring that dependencies load properly. Always use `Inject()` and `forwardRef()` when modules depend on each other.
+
