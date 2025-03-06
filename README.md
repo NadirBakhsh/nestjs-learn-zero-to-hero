@@ -124,6 +124,62 @@ code example [Enabling-Swagger](https://github.com/NadirBakhsh/nestjs-resources-
 
 ---
 ## 4. Adding Configuration Methods to Swagger
+
+![Adding-Configuration-Methods-to-Swagger](./images/methods-to-add-swagger.png)
+
+### Adding Basic Information
+
+#### Set Title
+
+```ts
+const config = new DocumentBuilder()
+  .setTitle('NestJS Master Class Blog App API')
+  .build();
+```
+#### Set Description
+
+```ts
+.setDescription('Use API URL as http://localhost:3000')
+```
+#### Set Terms of Service
+
+```ts
+.setTermsOfService('https://example.com/terms')
+```
+
+#### Set License
+
+```ts
+.setLicense('MIT', 'https://opensource.org/licenses/MIT')
+```
+#### Adding Server Configuration
+
+```ts
+.addServer('http://localhost:3000')
+```
+
+#### Organizing API Endpoints with Tags
+
+By default, all endpoints are under a general collapsible. To organize them into meaningful groups, we use @ApiTags.
+
+```ts
+@ApiTags('users')
+@Controller('users')
+export class UsersController {}
+```
+
+```ts
+@ApiTags('posts')
+@Controller('posts')
+export class PostsController {}
+```
+
+code example [Adding-Configuration-Methods-to-Swagger](https://github.com/NadirBakhsh/nestjs-resources-code/commit/0c7ae75b0253d4effd4723c4f7ef273cb62e143d)
+
+
+
+
+
 ---
 ## 5. Documenting GET Users
 ---
