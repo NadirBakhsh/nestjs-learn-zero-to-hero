@@ -210,6 +210,97 @@ code example [Adding-Configuration-Methods-to-Swagger](https://github.com/NadirB
 
 ## 5. Documenting GET Users
 
+![Documenting-GET-Users](./images/doc-get-users.png)
+
+### Steps to Document API with Swagger
+
+#### 1. Adding Swagger Decorators
+
+Swagger decorators can be used within **DTOs** and **controllers** to define API documentation.
+
+#### 1.1 Documenting Parameters in DTOs
+
+To document an `ID` parameter:
+
+```typescript
+import { ApiPropertyOptional } from "@nestjs/swagger"
+
+export class GetUsersParamDTO {
+  @ApiPropertyOptional({
+    description: "Get user with a specific ID",
+    example: 1234
+  })
+  id: number
+}
+```
+
+- `ApiPropertyOptional` marks the property as optional.
+- `description` provides details about the parameter.
+- `example` gives an example value.
+
+#### 1.2 Documenting Query Parameters in Controllers
+
+Query parameters are documented using `@ApiQuery`.
+
+```typescript
+import { ApiQuery } from '@nestjs/swagger';
+
+@ApiQuery({
+  name: 'limit',
+  type: Number,
+  required: false,
+  description: 'Number of entries returned per query',
+  example: 10,
+})
+@ApiQuery({
+  name: 'page',
+  type: Number,
+  required: false,
+  description: 'Page number to return',
+  example: 1,
+})
+```
+
+- `name` specifies the query parameter.
+- `type` defines its data type.
+- `required: false` makes it optional.
+- `description` and `example` provide additional details.
+
+#### 2. Adding API Endpoint Descriptions
+
+Use `@ApiOperation` to provide a summary of the API.
+
+```typescript
+import { ApiOperation } from '@nestjs/swagger';
+
+@ApiOperation({ summary: 'Fetches a list of registered users.' })
+```
+
+#### 3. Documenting API Responses
+
+Use `@ApiResponse` to specify the possible API responses.
+
+```typescript
+import { ApiResponse } from '@nestjs/swagger';
+
+@ApiResponse({
+  status: 200,
+  description: 'Users fetched successfully based on the query.',
+})
+```
+
+- You can add multiple `@ApiResponse` decorators for different response statuses.
+
+### Testing in Swagger UI
+
+Once decorated, Swagger UI will automatically generate interactive documentation where developers can test the API using predefined example values.
+
+### Conclusion
+
+By using Swagger decorators in DTOs and controllers, we can create well-structured, interactive API documentation, making it easier for developers to understand and use our APIs effectively.
+
+Code example [Documenting-GET-Users](https://github.com/NadirBakhsh/nestjs-resources-code/commit/ea19f3ffbaa852c545eaaf1032952e7ccd4e8dda)
+
 ---
 
 ## 6. Practice: POST Endpoint and DTO for Posts Controller
