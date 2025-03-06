@@ -305,6 +305,33 @@ Code example [Documenting-GET-Users](https://github.com/NadirBakhsh/nestjs-resou
 
 ## 6. Practice: POST Endpoint and DTO for Posts Controller
 
+```bash
+/**
+ * Structure of request body to create a new post
+ ******
+
+ * title: string
+
+ * postType: enum (post, page, story, series)
+
+ * slug: string
+
+ * status: enum (draft, scheduled, review, published)
+
+ * content?: string 
+
+ * schema?: string
+
+ * featuredImageUrl?: string
+
+ * publishOn: Date
+
+ * tags: string[]
+
+ * metaOptions: [{key:value}]
+ */
+```
+
 ---
 
 ## 7. Solution: POST Endpoint and DTO for Posts Controller
