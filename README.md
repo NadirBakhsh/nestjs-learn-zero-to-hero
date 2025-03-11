@@ -389,15 +389,8 @@ Code example [Documenting-GET-Users](https://github.com/NadirBakhsh/nestjs-resou
 
 ---
 
-### ✅ Suggested Next Steps:
-- Implement service logic inside `createPost()` controller method.
-- Add class-validator decorators to `CreatePostDto` for input validation.
-
-
-
----
-
 ## 8. Adding Validations to CreatePostDto
+
 
 ---
 
