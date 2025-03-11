@@ -391,6 +391,33 @@ Code example [Documenting-GET-Users](https://github.com/NadirBakhsh/nestjs-resou
 
 ## 8. Adding Validations to CreatePostDto
 
+### Commit Summary: Adding Validations to CreatePostDto
+
+### ✅ Commit: [cf24b05](https://github.com/NadirBakhsh/nestjs-resources-code/commit/cf24b05bc142e60c99f1b9ed9a8a6ff405f248e5)
+
+#### 1. Enhanced Validation for `CreatePostDto`
+- **File:** `src/posts/dtos/createPost.dto.ts`
+- Added `class-validator` decorators to validate incoming data:
+
+| Property | Validation Decorators |
+|---------|-----------------------|
+| `title` | `@IsString()`, `@MinLength(3)`, `@IsNotEmpty()` |
+| `postType` | `@IsEnum(postType)`, `@IsNotEmpty()` |
+| `slug` | `@IsString()`, `@IsNotEmpty()`, `@Matches()` (slug pattern validation) |
+| `status` | `@IsEnum(postStatus)`, `@IsNotEmpty()` |
+| `content` | `@IsString()`, `@IsOptional()` |
+| `schema` | `@IsOptional()`, `@IsJSON()` |
+| `featuredImageUrl` | `@IsOptional()`, `@IsUrl()` |
+| `publishOn` | `@IsISO8601()`, `@IsOptional()` |
+| `tags` | `@IsOptional()`, `@IsArray()`, `@IsString({ each: true })`, `@MinLength(3, { each: true })` |
+| `metaOptions` | Custom structure — no decorators yet |
+
+### 📁 File Changed:
+- `src/posts/dtos/createPost.dto.ts` ✍ Modified
+  - **+56 additions, -12 deletions**
+
+### 🔗 Preview:
+- [Reader View of Commit](https://r.1lm.io/p/https://github.com/NadirBakhsh/nestjs-resources-code/commit/cf24b05bc142e60c99f1b9ed9a8a6ff405f248e5)
 
 ---
 
