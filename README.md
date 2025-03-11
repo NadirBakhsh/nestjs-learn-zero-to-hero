@@ -336,6 +336,65 @@ Code example [Documenting-GET-Users](https://github.com/NadirBakhsh/nestjs-resou
 
 ## 7. Solution: POST Endpoint and DTO for Posts Controller
 
+### Commit Summary: Solution - POST Endpoint and DTO for Posts Controller
+
+### ✅ Commit: [c18d878](https://github.com/NadirBakhsh/nestjs-resources-code/commit/c18d878732d70e36c88a3af9f07aa8d1de910cc5)
+
+### 🔍 Key Changes Introduced:
+
+#### 1. CreatePostDto DTO Added
+- **File:** `src/posts/dtos/createPost.dto.ts`
+- **Fields:**
+  - `title: string`
+  - `postType: postType`
+  - `slug: string`
+  - `status: postStatus`
+  - `content?: string`
+  - `schema?: string`
+  - `featuredImageUrl?: string`
+  - `publishOn?: Date`
+  - `tags: string[]`
+  - `metaOptions: [{ key: 'sidebarEnabled', value: true }]`
+
+#### 2. Enums Introduced
+- **File:** `src/posts/enums/postStatus.enum.ts`
+  - `postStatus`
+    - `DRAFT = 'draft'`
+    - `SCHEDULED = 'scheduled'`
+    - `REVIEW = 'review'`
+    - `PUBLISHED = 'published'`
+
+- **File:** `src/posts/enums/postType.enum.ts`
+  - `postType`
+    - `POST = 'post'`
+    - `PAGE = 'page'`
+    - `SERIES = 'series'`
+    - `STORY = 'story'`
+
+#### 3. Posts Controller Updated
+- **File:** `src/posts/posts.controller.ts`
+- **Changes:**
+  - New POST endpoint added: `@Post()`
+  - Accepts: `@Body() createPostDto: CreatePostDto`
+  - Controller logic pending implementation
+
+### 📁 Files Changed:
+- `src/posts/dtos/createPost.dto.ts` ➕ Added
+- `src/posts/enums/postStatus.enum.ts` ➕ Added
+- `src/posts/enums/postType.enum.ts` ➕ Added
+- `src/posts/posts.controller.ts` ✍ Modified
+
+### 🔗 Preview:
+- [Reader View of Commit](https://r.1lm.io/p/https://github.com/NadirBakhsh/nestjs-resources-code/commit/c18d878732d70e36c88a3af9f07aa8d1de910cc5)
+
+---
+
+### ✅ Suggested Next Steps:
+- Implement service logic inside `createPost()` controller method.
+- Add class-validator decorators to `CreatePostDto` for input validation.
+
+
+
 ---
 
 ## 8. Adding Validations to CreatePostDto
