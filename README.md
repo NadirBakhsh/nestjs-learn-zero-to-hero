@@ -459,6 +459,27 @@ To enable scalable, clean nested object validation in incoming requests (e.g., m
 
 ## 11. Using Swagger for Documenting CreatePostDto
 
+### Description
+Integrated **Swagger decorators** into `CreatePostDto` class to enable automated API documentation.
+
+### Key Changes
+
+### 📄 File: `src/posts/dtos/createPost.dto.ts`
+- ✅ Added `@ApiProperty()` and `@ApiPropertyOptional()` decorators for all fields.
+- ✅ Included descriptions and example values.
+- ✅ Documented nested DTO `metaOptions` in Swagger schema.
+
+### Benefits
+- 📚 Improved API documentation in Swagger UI.
+- ✅ Enhances developer experience and onboarding.
+- 🔍 Clear visibility into expected request payload structure.
+
+#### Example Documented Fields
+- `title`, `postType`, `slug`, `status`, `tags`, `schema`, `metaOptions`, `featuredImageUrl`, `publishOn`
+
+#### Link
+[🔗 View Commit on GitHub](https://github.com/NadirBakhsh/nestjs-resources-code/commit/cce95c29af500d09eeb3fd4e25896aca44167d82)
+
 ---
 
 ## 12. Mapped Types Using Swagger
