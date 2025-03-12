@@ -480,6 +480,7 @@ Integrated **Swagger decorators** into `CreatePostDto` class to enable automated
 #### Link
 [🔗 View Commit on GitHub](https://github.com/NadirBakhsh/nestjs-resources-code/commit/cce95c29af500d09eeb3fd4e25896aca44167d82)
 
+![Swagger Api DOC](./images/doc-screen-shot.png)
 ---
 
 ## 12. Mapped Types Using Swagger
