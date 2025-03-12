@@ -418,6 +418,35 @@ Code example [Documenting-GET-Users](https://github.com/NadirBakhsh/nestjs-resou
 
 ## 9. Working with Nested DTOs
 
+### Description
+Added support for **nested DTOs** in post creation logic. Enhancements enable structured, validated data for nested `metaOptions` fields inside `CreatePostDto`.
+
+### Key Changes
+
+### 📄 File: `src/posts/dtos/createPost.dto.ts`
+- ✅ Added `metaOptions: CreatePostMetaOptionsDto[]` field.
+- ✅ Applied `@ValidateNested({ each: true })`, `@Type()` for transformation.
+- ✅ Enhanced validation using class-validator decorators.
+
+### 📄 File: `src/posts/dtos/createPostMetaOptions.dto.ts`
+- ✅ New DTO class `CreatePostMetaOptionsDto`.
+- ✅ Fields:
+  - `key: string` → Validated with `@IsString()` and `@IsNotEmpty()`
+  - `value: any` → Validated with `@IsNotEmpty()`
+
+#### Purpose
+To enable scalable, clean nested object validation in incoming requests (e.g., meta data config for posts).
+
+#### Benefits
+- 🔐 Strong type-checking and input validation
+- 📦 Cleaner and reusable DTO structure
+- 🚀 Easier expansion for more nested fields in future
+
+#### Link
+[🔗 View Commit on GitHub](https://github.com/NadirBakhsh/nestjs-resources-code/commit/acc07153510e45954ff26ad73d38f22c307e0a15)
+
+
+
 ---
 
 ## 10. Testing Validation
