@@ -445,11 +445,15 @@ To enable scalable, clean nested object validation in incoming requests (e.g., m
 #### Link
 [🔗 View Commit on GitHub](https://github.com/NadirBakhsh/nestjs-resources-code/commit/acc07153510e45954ff26ad73d38f22c307e0a15)
 
-
-
 ---
 
 ## 10. Testing Validation
+
+#### check result on terminal
+
+![post-api-test](./images/post-api-test.png)
+
+[code link](https://github.com/NadirBakhsh/nestjs-resources-code/commit/6dc64ff54f257a314fda631cc656995954246547)
 
 ---
 
