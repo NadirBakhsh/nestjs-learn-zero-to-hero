@@ -510,6 +510,28 @@ Integrated **Swagger decorators** into `CreatePostDto` class to enable automated
 
 ## 13. Getting Started with Compodoc
 
+![compodoc](./images/compodoc.png)
+
+**Config**
+
+1. Install Compodoc as a dev dependency (`@compodoc/compodoc`).
+2. Add documentation scripts in package.json.
+3. Run documentation generator via CLI.
+
+```JSON
+// package.json (partial snippet)
+{
+  "devDependencies": {
+    "@compodoc/compodoc": "^1.1.21" // or latest
+  },
+  "scripts": {
+    "doc": "npx @compodoc/compodoc -p tsconfig.json -s --port 3001 --watch -d ./documentation"
+  }
+
+}
+```
+[code link](https://github.com/NadirBakhsh/nestjs-resources-code/commit/d4a4c800c549a37e438d47803f877a0fcd29ac57)
+
 ---
 
 ## 14. Compodoc Coverage and JSDocs
