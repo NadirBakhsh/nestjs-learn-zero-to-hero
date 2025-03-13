@@ -485,6 +485,27 @@ Integrated **Swagger decorators** into `CreatePostDto` class to enable automated
 
 ## 12. Mapped Types Using Swagger
 
+## ✅ Update Summary: Mapped Types Using Swagger
+
+### Highlights:
+- **Added `PatchPostDto` using `PartialType(CreatePostDto)` for PATCH operations.**
+  - Utilized `@nestjs/swagger` and `class-validator`.
+  - Applied `@ApiProperty`, `@IsInt`, `@IsNotEmpty` for `id` field.
+
+- **New HTTP Endpoint Definition:**
+  - Added `src/posts/htttp/patch.post.endpoints.http` with `PATCH /posts` example.
+
+- **Controller Enhancements (`PostsController`):**
+  - Added `@Patch()` route handler for updating posts.
+  - Added `@ApiOperation` and `@ApiResponse` decorators for Swagger UI enhancement.
+
+### Affected Files:
+- `src/posts/dtos/patch-post-dto.ts` – New DTO for partial updates.
+- `src/posts/htttp/patch.post.endpoints.http` – Manual test request file.
+- `src/posts/posts.controller.ts` – Added `updatePost()` endpoint with Swagger docs.
+
+**Code Commit:** [`Code view`](https://github.com/NadirBakhsh/nestjs-resources-code/commit/e9a444b6572a8122fb66d438e6cb43a877b1c505)  
+
 ---
 
 ## 13. Getting Started with Compodoc
