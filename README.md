@@ -535,3 +535,13 @@ Integrated **Swagger decorators** into `CreatePostDto` class to enable automated
 ---
 
 ## 14. Compodoc Coverage and JSDocs
+Compodoc coverage is an additional feature for calculating the percentage of documented components.
+
+#### How it works
+1. Compodoc analyzes all the components, modules, controllers, services, etc. in your project.
+2. It then checks which of these components have comments.
+3. The percentage of commented components is then calculated.
+
+This feature is useful for enforcing code quality and ensuring that all components are documented.
+
+[JSDocs](https://jsdoc.app/) is a format for documenting JavaScript code. It is used by Compodoc to generate documentation.
