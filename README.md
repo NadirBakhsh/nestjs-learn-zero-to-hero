@@ -1,6 +1,13 @@
 # Step 06 - Working with SQL Databases
 
-- Working with Databases in NestJS
+## 1. Working with Databases in NestJS
+
+![working-with-db](./images/working-with-db.png)
+
+
+
+---
+
 - What is an ORM?
 - Installing PostgreSQL Locally
 - Adding `psql` to PATH
