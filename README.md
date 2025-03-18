@@ -171,8 +171,39 @@ ORM (Object-Relational Mapping) acts as an abstraction layer between your applic
   - Windows: Update the `PATH` environment variable to include the PostgreSQL bin directory, e.g., `C:\Program Files\PostgreSQL\13\bin`.
   - macOS (using Homebrew): Run `brew link --overwrite postgresql` and then `echo 'export PATH="/usr/local/opt/postgresql/bin:$PATH"' >> ~/.bashrc` (or `~/.zshrc` for zsh users). Restart your terminal for the changes to take effect.
 
+## Connecting NestJS to PostgreSQL
 
-- Connecting NestJS to PostgreSQL
+### Database Integration - PostgreSQL + TypeORM
+
+This project uses PostgreSQL as the database engine, integrated with [TypeORM](https://typeorm.io/) via NestJS `@nestjs/typeorm` package.
+
+### 🧩 Required Dependencies
+
+Installed via `package.json`:
+- `@nestjs/typeorm`
+- `typeorm`
+- `pg`
+
+### ⚙ Configuration in `app.module.ts`
+
+```ts
+TypeOrmModule.forRootAsync({
+  useFactory: () => ({
+    type: 'postgres',
+    host: 'localhost',
+    port: 5432,
+    username: 'postgres',
+    password: 'pg123',
+    database: 'nestjs-blog',
+    entities: [],
+    synchronize: true, // ⚠ Not recommended for production
+  }),
+}),
+```
+
+code example [github](https://github.com/NadirBakhsh/nestjs-resources-code/commit/d43a089b7c088797aa84b384ba22bd4ee503b0c9)
+
+---
 
 - Using Async Configuration
 - Theoretical Understanding of the Repository Pattern
