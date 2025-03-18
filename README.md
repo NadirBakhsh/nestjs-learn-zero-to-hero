@@ -157,7 +157,15 @@ ORM (Object-Relational Mapping) acts as an abstraction layer between your applic
 
 ---
 
-- Installing PostgreSQL Locally
+### Installing PostgreSQL Locally
+
+![postgresql](./images/postgresql-install.png)
+
+1. **Download** the installation package from the official website: https://www.postgresql.org/download/
+2. **Install** PostgreSQL on your local machine, following the instructions for your operating system.
+3. **Create a new user account** for PostgreSQL, e.g., `postgres` with password `secret`.
+4. **Create a new database** for your NestJS application, e.g., `myapp` owned by the `postgres` user.
+
 - Adding `psql` to PATH
 - Connecting NestJS to PostgreSQL
 - Using Async Configuration
