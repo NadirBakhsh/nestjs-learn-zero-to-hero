@@ -81,6 +81,82 @@ NestJS offers flexible database integration using ORMs like TypeORM and Mongoose
 ---
 
 - What is an ORM?
+
+# Overview: Understanding ORM & TypeORM in SaaS Applications
+
+## 🔍 What is an ORM?
+
+ORM (Object-Relational Mapping) acts as an abstraction layer between your application and the database, allowing developers to interact with databases using programming language constructs rather than SQL.
+
+![ ORM](./images/ORM-part.png)
+
+### 1. **Abstraction Layer**
+
+- ORM provides methods to perform DB operations (e.g., `.create()`, `.find()`), eliminating the need to manually write SQL queries.
+
+### 2. **TypeORM in Action**
+
+- We use **TypeORM** in a SaaS application.
+- Enables writing queries and managing DB schema using **TypeScript**.
+
+### 3. **Simplified Data Access**
+
+- Traditional SQL: `SELECT * FROM users WHERE id = 132;`
+- TypeORM: `userRepository.findOne({ where: { id: 132 } })`
+
+### 4. **Complex Queries Simplified**
+
+- TypeORM allows writing advanced conditions in TypeScript, not SQL.
+- Example: Filtering users with rating > 4, last active in 7 days, amount spent > 1200 — all handled via object-based query.
+
+### 5. **Relationships & Decorators**
+
+- Define relationships (e.g., OneToOne, ManyToOne) via decorators in TypeScript.
+- Example:
+  ```ts
+  @OneToOne(() => Profile)
+  profile: Profile;
+  ```
+
+### 6. **Schema Management in Code**
+
+- Table structure, indexes, and constraints are defined in code.
+- No separate SQL schema files required.
+- Example:
+  ```ts
+  @Index(['firstName', 'lastName'])
+  ```
+
+### 7. **Migrations and Syncing**
+
+- ORM syncs your application model to the database schema automatically.
+- Ensures consistency between app code and DB structure.
+
+### 8. **Database Portability**
+
+- Easily switch between DBs (MySQL, PostgreSQL, SQL Server).
+- Abstracted layer simplifies migration to other DB systems.
+
+### 9. **Fallback to Raw SQL**
+
+- For performance-critical or complex queries, raw SQL can still be executed.
+
+## ✅ Advantages
+
+- No SQL knowledge required.
+- Improved developer productivity.
+- Code-first schema definition.
+- Easy DB migrations.
+- Seamless DB switching.
+
+## ⚠️ Disadvantages
+
+- Less control over low-level query optimization.
+- Performance issues on complex queries.
+- Debugging ORM-generated SQL can be tricky.
+
+---
+
 - Installing PostgreSQL Locally
 - Adding `psql` to PATH
 - Connecting NestJS to PostgreSQL
