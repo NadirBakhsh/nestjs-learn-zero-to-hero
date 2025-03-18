@@ -167,7 +167,13 @@ ORM (Object-Relational Mapping) acts as an abstraction layer between your applic
 4. **Create a new database** for your NestJS application, e.g., `myapp` owned by the `postgres` user.
 
 - Adding `psql` to PATH
+- **Add `psql` to PATH on Windows and macOS**:
+  - Windows: Update the `PATH` environment variable to include the PostgreSQL bin directory, e.g., `C:\Program Files\PostgreSQL\13\bin`.
+  - macOS (using Homebrew): Run `brew link --overwrite postgresql` and then `echo 'export PATH="/usr/local/opt/postgresql/bin:$PATH"' >> ~/.bashrc` (or `~/.zshrc` for zsh users). Restart your terminal for the changes to take effect.
+
+
 - Connecting NestJS to PostgreSQL
+
 - Using Async Configuration
 - Theoretical Understanding of the Repository Pattern
 - Creating Our First Entity - `user.entity`
