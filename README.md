@@ -250,7 +250,137 @@ export class UserService {
 
 ---
 
-- Creating Our First Entity - `user.entity`
+### Creating Our First Entity - `user.entity`
+
+# 📦 User Entity - TypeORM + NestJS
+
+This document explains how to create a `User` entity using **TypeORM** in a **NestJS** application, mapping the entity structure to a database table and synchronizing it with a DTO for user creation.
+
+---
+
+## 📚 What is an Entity?
+An **Entity** in TypeORM represents a database table. It is defined as a **TypeScript class** with decorators to describe:
+- Table name
+- Column definitions
+- Column types and properties
+
+---
+
+## 🔨 Setup: Create `user.entity.ts`
+
+**File Location:**
+```
+src/users/user.entity.ts
+```
+
+**File Naming Convention:**
+- Singular form: `user.entity.ts`
+- Unlike plural naming for controllers/modules (e.g., `users.controller.ts`, `users.module.ts`)
+
+### 🧱 Step-by-Step Construction:
+
+#### 1. Define the Class
+```ts
+export class User {}
+```
+
+#### 2. Use the `@Entity()` Decorator
+```ts
+import { Entity } from 'typeorm';
+
+@Entity()
+export class User {}
+```
+
+#### 3. Add Properties from DTO
+Map your entity properties based on `CreateUserDto`:
+- `firstName`
+- `lastName`
+- `email`
+- `password`
+
+```ts
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+
+@Entity()
+export class User {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  firstName: string;
+
+  @Column()
+  lastName: string;
+
+  @Column()
+  email: string;
+
+  @Column()
+  password: string;
+}
+```
+
+#### 4. Add to `AppModule`
+Tell TypeORM that this entity exists:
+```ts
+TypeOrmModule.forRoot({
+  type: 'mysql',
+  host: 'localhost',
+  port: 3306,
+  username: 'root',
+  password: 'password',
+  database: 'your_database',
+  entities: [User], // Add this line
+  synchronize: true,
+})
+```
+
+> ✅ Don't forget to import the `User` entity manually if auto-import doesn't work.
+
+---
+
+## 🔁 Recap
+| Property     | Type   | Decorator                | Description                           |
+|--------------|--------|--------------------------|---------------------------------------|
+| `id`         | number | `@PrimaryGeneratedColumn()` | Auto-increment primary key            |
+| `firstName`  | string | `@Column()`              | User's first name                     |
+| `lastName`   | string | `@Column()`              | User's last name                      |
+| `email`      | string | `@Column()`              | User's email address                  |
+| `password`   | string | `@Column()`              | Encrypted password (hash it later)    |
+
+---
+
+## ✅ Best Practices
+- Match DTO and Entity fields to avoid mismatches.
+- Always register entities in TypeORM config.
+- Keep your naming conventions consistent.
+
+---
+
+## 📈 Next Steps
+In the next phase:
+- Add column options (length, nullable, unique)
+- Create the **UserRepository**
+- Insert users into the DB
+
+---
+
+## 📂 File Structure Preview
+```
+src/
+├── users/
+│   ├── user.entity.ts
+│   ├── users.module.ts
+│   ├── users.controller.ts
+│   └── users.service.ts
+├── app.module.ts
+```
+
+- GitHub: [Code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/96a2af8ef346ca84a4aedad1ced0fed84a5c3b75)
+
+---
+
 - Expanding Entity Definition
 - Creating First Repository
 - Practice: Creating Post Entity
