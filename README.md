@@ -206,7 +206,50 @@ TypeOrmModule.forRootAsync({
 
 ---
 
-- Theoretical Understanding of the Repository Pattern
+### Theoretical Understanding of the Repository Pattern
+
+![understanding](./images/understanding-structure.png)
+
+
+#### 🔍 What is Repository Pattern?
+A design pattern to abstract database operations and interact with entities via repositories instead of direct queries.
+
+#### 🏗 Key Concepts:
+- **Entity:** Represents a database table (e.g., `User` entity ↔ `users` table).
+- **Repository:** A TypeORM-provided abstraction to perform DB operations like `find`, `save`, `update`, `delete`.
+- **Service:** Business logic layer where repository is injected to perform database interactions.
+
+#### ⚙ Structure:
+1. **User Entity (`user.entity.ts`)**
+   - Defines columns using decorators like `@PrimaryGeneratedColumn`, `@Column`.
+2. **User Repository**
+   - Automatically managed by TypeORM.
+   - Injected using `@InjectRepository(User)` in the service constructor.
+3. **User Service (`user.service.ts`)**
+   - Uses injected repository to interact with the database (`this.userRepository.find()` etc).
+
+#### ✅ Example:
+```ts
+@Injectable()
+export class UserService {
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {}
+
+  async getAllUsers(): Promise<User[]> {
+    return this.userRepository.find();
+  }
+}
+```
+
+#### 📌 Summary:
+- Define entity ➝ Inject repository ➝ Use in service.
+- TypeORM handles repository creation internally.
+- Clean, maintainable, and scalable architecture.
+
+---
+
 - Creating Our First Entity - `user.entity`
 - Expanding Entity Definition
 - Creating First Repository
