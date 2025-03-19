@@ -381,7 +381,62 @@ src/
 
 ---
 
-- Expanding Entity Definition
+## Expanding Entity Definition
+
+### Add Properties from DTO
+
+Map your entity properties based on CreateUserDto:
+
+- firstName
+- lastName
+- email
+- password
+
+**Define Columns with Configuration Options**
+
+```ts
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+
+@Entity()
+export class User {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({ type: 'varchar', length: 96, nullable: false })
+  firstName: string;
+
+  @Column({ type: 'varchar', length: 96, nullable: true })
+  lastName: string;
+
+  @Column({ type: 'varchar', length: 96, nullable: false, unique: true })
+  email: string;
+
+  @Column({ type: 'varchar', length: 96, nullable: false })
+  password: string;
+}
+```
+
+**Add to AppModule**
+
+```ts
+TypeOrmModule.forRoot({
+  type: 'postgres',
+  host: 'localhost',
+  port: 5432,
+  username: 'your_username',
+  password: 'your_password',
+  database: 'your_database',
+  entities: [User],
+  synchronize: true,
+})
+```
+
+✅ Don't forget to import the User entity manually if auto-import doesn't work.
+
+GitHub: [Code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/3bc76b57dbe6c1c77c697c516b9cf35dac694d84)
+
+---
+
 - Creating First Repository
 - Practice: Creating Post Entity
 - Solution: Creating Post Entity
