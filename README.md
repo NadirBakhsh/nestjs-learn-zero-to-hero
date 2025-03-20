@@ -437,6 +437,63 @@ GitHub: [Code example](https://github.com/NadirBakhsh/nestjs-resources-code/comm
 
 ---
 
-- Creating First Repository
-- Practice: Creating Post Entity
-- Solution: Creating Post Entity
+## Creating First Repository
+
+### Commit Summary: Creating First Repository
+
+#### Overview
+ NestJS application. It includes the creation and integration of repository support, DTO improvements, controller updates, and service methods enhancements.
+
+### 🔧 Users Module Enhancements
+- Added `TypeOrmModule.forFeature([User])` in `UsersModule`
+- Reorganized module imports to include `User` entity repository injection.
+
+### 📦 Users Service Updates
+- Injected `usersRepository: Repository<User>` using `@InjectRepository(User)`
+- Added new method `createUser()`:
+  - Checks if user already exists by email.
+  - Creates and saves a new user using repository.
+- Minor constructor refactoring to support repository injection.
+
+### 📬 Controller Improvements
+- Replaced placeholder `console.log()` and dummy return in `createUser` controller method.
+- Now calls `this.usersService.createUser(createUserDto)` directly.
+
+### 📄 DTO Usage Improvements
+- Updated `POST /users` sample request body to use new data:
+```json
+{
+  "firstName": "Nadir",
+  "lastName": "Bakhsh",
+  "email": "Nadir@gmail.com",
+  "password": "N@123321"
+}
+```
+
+### 🏗 Entity Definition Tweaks
+- Slight code cleanup on `User` entity (line realignments)
+
+### 🧹 App Module Cleanup
+- Removed direct `User` import from AppModule
+- Replaced hardcoded entity imports with glob pattern: `entities: [__dirname + '/**/*.entity.{ts,js}']`
+
+
+## Files Modified
+- `users.module.ts`
+- `users.controller.ts`
+- `users.service.ts`
+- `user.entity.ts`
+- `app.module.ts`
+- Sample REST request (test.http)
+
+**Commit URL:** [View Commit on GitHub](https://github.com/NadirBakhsh/nestjs-resources-code/commit/8db46fc72ebe992493e35a5359e0b304075fb2a0)
+
+---
+
+
+
+
+
+## Practice: Creating Post Entity
+
+## Solution: Creating Post Entity
