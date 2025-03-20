@@ -499,6 +499,58 @@ GitHub: [Code example](https://github.com/NadirBakhsh/nestjs-resources-code/comm
 3. **Add columns** for `title`, `content`, `authorId` with `@Column()` decorator.
 4. **Add PrimaryGeneratedColumn** for `id` with `@PrimaryGeneratedColumn()` decorator.
 
-
-
 ## Solution: Creating Post Entity
+![Solution: Creating Post Entity](./images/Solution-Creating-Post-Entity.png)
+
+
+### 📄 **What was changed in this commit**
+#### 1. `src/posts/dtos/createPost.dto.ts`
+- Enhanced DTO validations using `class-validator`:
+  - `@MaxLength()` decorators were added:
+    - `title`: max 512 characters
+    - `slug`: max 256 characters
+    - `featuredImageUrl`: max 1024 characters
+
+#### 2. `src/posts/post.entity.ts` (✨ New File)
+- Introduced new `Post` entity:
+  - Fields added with `@Column()` decorators:
+    - `id`: Primary key
+    - `title`: `varchar(512)`
+    - `postType`: enum (from `postType.enum`)
+    - `slug`: unique `varchar(256)`
+    - `status`: enum (from `postStatus.enum`)
+    - `content`, `schema`: optional `text`
+    - `featuredImageUrl`: optional `varchar(1024)`
+    - `publishOn`: optional `timestamp`
+  - Placeholders for:
+    - `tags: string[]`
+    - `metaOptions?: CreatePostMetaOptionsDto[]`
+
+
+### 📚 Explanation
+This commit sets up the backend data schema and validation layer for a basic blogging/posting system:
+
+#### DTO Layer:
+Ensures incoming POST creation requests are validated:
+- Enforces title & slug constraints (`length`, `slug format`).
+- Validates optional fields like `featuredImageUrl`.
+
+#### Entity Layer:
+- Defines structure for database persistence using `typeorm`.
+- Matches DTO structure for smooth data mapping.
+
+
+### ✅ Good Practices Used
+- Separation of DTO & Entity logic
+- Strong validation at DTO level
+- Data normalization (`enum`, `nullable`, `length`)
+- TypeORM conventions followed cleanly
+
+### ✅ Commit Review Summary: `Creating Post Entity`  
+🔗 [View Commit on GitHub](https://r.1lm.io/p/https://github.com/NadirBakhsh/nestjs-resources-code/commit/12594c14d98474ee3d18a618daa77c1abef21e25)
+
+---
+
+
+
+
