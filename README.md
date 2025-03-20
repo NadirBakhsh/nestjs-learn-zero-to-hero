@@ -490,10 +490,15 @@ GitHub: [Code example](https://github.com/NadirBakhsh/nestjs-resources-code/comm
 
 ---
 
-
-
-
-
 ## Practice: Creating Post Entity
+
+### Step-by-Step Instructions
+
+1. **Create `post.entity.ts`** inside `src/posts` directory.
+2. **Define `Post` entity** with `@Entity()` decorator.
+3. **Add columns** for `title`, `content`, `authorId` with `@Column()` decorator.
+4. **Add PrimaryGeneratedColumn** for `id` with `@PrimaryGeneratedColumn()` decorator.
+
+
 
 ## Solution: Creating Post Entity
