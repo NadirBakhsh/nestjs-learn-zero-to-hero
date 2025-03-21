@@ -108,10 +108,76 @@ Stay tuned!
 
  Code: [View full commit](https://r.1lm.io/p/https://github.com/NadirBakhsh/nestjs-resources-code/commit/eb604d2b49a19fe3b56de4699fc899fc40a0650d)
 
-
-
 ---
 ## Creating the Meta Options Entity
+![alt text](./images/Creating%20the%20Meta%20Options%20Entity.png)
+
+## MetaOptions Module
+
+### Description
+This module introduces a new `MetaOption` entity designed to store dynamic JSON meta values in the database.
+
+### Entity Structure
+| Property     | Type   | Description                     |
+|--------------|--------|---------------------------------|
+| id           | number | Primary Key                     |
+| metaValue    | json   | JSON structured metadata field  |
+| createDate   | Date   | Auto timestamp on create        |
+| updateDate   | Date   | Auto timestamp on update        |
+
+### Module Structure
+- `meta-option.entity.ts`: Entity definition
+- `meta-options.controller.ts`: REST Controller (base path: `/meta-options`)
+- `meta-options.module.ts`: Module declaration
+
+### Files Added/Updated
+- `src/app.module.ts` – Imported `MetaOptionsModule`
+- `src/meta-options/meta-option.entity.ts` – Entity class `MetaOption`
+- `src/meta-options/meta-options.controller.ts` – Controller definition
+- `src/meta-options/meta-options.module.ts` – Module declaration
+
+### Entity Code
+```ts
+// src/meta-options/meta-option.entity.ts
+
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+
+@Entity()
+export class MetaOption {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({
+    type: 'json',
+    nullable: false,
+  })
+  metaValue: string;
+
+  @CreateDateColumn()
+  createDate: Date;
+
+  @UpdateDateColumn()
+  updateDate: Date;
+}
+```
+
+### Integration
+Ensure `MetaOptionsModule` is imported into `AppModule`:
+
+```ts
+import { MetaOptionsModule } from './meta-options/meta-options.module';
+
+@Module({
+  imports: [MetaOptionsModule, ...]
+})
+```
+
 ---
 ## Updating DTO Files
 ---
