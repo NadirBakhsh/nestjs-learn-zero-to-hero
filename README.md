@@ -66,9 +66,50 @@ Relational databases such as **PostgreSQL** and **MySQL** are powerful systems t
 ## 📌 What’s Next
 In the upcoming sections, we’ll learn **how to implement each relationship type** using **TypeORM decorators** inside a **NestJS** project.
 Stay tuned!
+
 ---
 
 ## Creating the Tags Entity
+
+![alt text](./images/Creating%20the%20Tags%20Entity.png)
+
+
+#### Files Added/Modified:
+
+1. `src/app.module.ts`
+- Registered `TagsModule by file path is not` into the main application module.
+
+2. `src/tags/tag.entity.ts`
+- Created `Tag` entity with the following fields:
+  - `id`: Primary key
+  - `name`: Unique, non-null, max length 256
+  - `slug`: Unique, non-null, max length 256
+  - `description`: Optional text
+  - `schema`: Optional text
+  - `featuredImageUrl`: Optional varchar(1024)
+  - `createDate`, `updateDate`, `deletedDate`: Timestamps
+
+3. `src/tags/tags.controller.ts`
+- Empty controller scaffold for future Tag routes.
+
+4. `src/tags/tags.module.ts`
+- Tag feature module created, controller registered.
+
+#### Notes:
+- Modular architecture pattern followed.
+- Entity includes soft delete support via `DeleteDateColumn`.
+- No service or repository layer created yet; controller is also empty.
+- Future enhancements expected: CRUD endpoints, DTOs, validation, services.
+
+#### Recommendations:
+- Implement `TagsService` for business logic.
+- Add input validation via DTOs.
+- Add unit tests for the entity schema.
+
+ Code: [View full commit](https://r.1lm.io/p/https://github.com/NadirBakhsh/nestjs-resources-code/commit/eb604d2b49a19fe3b56de4699fc899fc40a0650d)
+
+
+
 ---
 ## Creating the Meta Options Entity
 ---
