@@ -180,6 +180,84 @@ import { MetaOptionsModule } from './meta-options/meta-options.module';
 
 ---
 ## Updating DTO Files
+
+
+### Description
+This commit introduces updates and refactors to Data Transfer Object (DTO) structures across multiple modules.
+
+### Files Added/Updated
+- `src/meta-options/dtos/createPostMetaOptions.dto.ts` – ➕ New DTO for `metaValue` field validation.
+- `src/posts/dtos/createPost.dto.ts` – 🔁 Updated import path for `CreatePostMetaOptionsDto`.
+- `src/posts/dtos/createPostMetaOptions.dto.ts` – ❌ Removed duplicate DTO file.
+- `src/posts/post.entity.ts` – 🔁 Adjusted import path of DTO.
+- `src/tags/dtos/create-tag.dto.ts` – ➕ New tag creation DTO with detailed validations.
+
+### DTO: `CreatePostMetaOptionsDto`
+```ts
+import { IsJSON, IsNotEmpty } from 'class-validator';
+
+export class CreatePostMetaOptionsDto {
+  @IsNotEmpty()
+  @IsJSON()
+  metaValue: string;
+}
+```
+
+### DTO: `CreateTagDto`
+```ts
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  IsJSON,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUrl,
+  Matches,
+  MaxLength,
+  MinLength
+} from 'class-validator';
+
+export class CreateTagDto {
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(3)
+  @MaxLength(256)
+  name: string;
+
+  @ApiProperty({
+    description: 'Here it is the slug for the blog post',
+    example: 'post-url-slug',
+  })
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(256)
+  @Matches(/^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/, {
+    message: 'Slug must be a valid slug',
+  })
+  slug: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsJSON()
+  schema?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsUrl()
+  @MaxLength(1024)
+  featuredImageUrl?: string;
+}
+```
+## DTO Updates Commit Summary
+
+### Commit Ref: [Updating DTO Files](https://github.com/NadirBakhsh/nestjs-resources-code/commit/906a80e5645041d829e534cb7b9d4729952afabf)
+
 ---
 ## Autoloading Entities
 ---
