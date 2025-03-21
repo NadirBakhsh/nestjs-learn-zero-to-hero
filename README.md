@@ -260,6 +260,76 @@ export class CreateTagDto {
 
 ---
 ## Autoloading Entities
+
+### Description
+Initial implementation of the MetaOptions module including entity, controller, and module integration.
+
+### Files Added/Updated
+- `src/app.module.ts` – Imported `MetaOptionsModule` into AppModule.
+- `src/meta-options/meta-option.entity.ts` – New `MetaOption` entity class created.
+- `src/meta-options/meta-options.controller.ts` – Basic REST controller with base route `/meta-options`.
+- `src/meta-options/meta-options.module.ts` – Declared `MetaOptionsModule` and linked controller.
+
+### Entity Code: `MetaOption`
+```ts
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+
+@Entity()
+export class MetaOption {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({
+    type: 'json',
+    nullable: false,
+  })
+  metaValue: string;
+
+  @CreateDateColumn()
+  createDate: Date;
+
+  @UpdateDateColumn()
+  updateDate: Date;
+}
+```
+
+### Controller Code: `MetaOptionsController`
+```ts
+import { Controller } from '@nestjs/common';
+
+@Controller('meta-options')
+export class MetaOptionsController {}
+```
+
+### Module Code: `MetaOptionsModule`
+```ts
+import { Module } from '@nestjs/common';
+import { MetaOptionsController } from './meta-options.controller';
+
+@Module({
+  controllers: [MetaOptionsController],
+})
+export class MetaOptionsModule {}
+```
+
+### Integration Snippet in AppModule
+```ts
+import { MetaOptionsModule } from './meta-options/meta-options.module';
+
+@Module({
+  imports: [MetaOptionsModule, ...],
+})
+export class AppModule {}
+```
+
+### Commit Ref: [Autoloading Entities](https://github.com/NadirBakhsh/nestjs-resources-code/commit/7d0dbfdb4d3dd94893ea0b3fba371fec9209f240)
+
 ---
 ## One to One Relationships
 ---
