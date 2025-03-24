@@ -383,6 +383,104 @@ A **1-to-1 (one-to-one)** relationship occurs when **one record in a table is li
 
 ---
 ## Uni-Directional One to One Relationship
+
+![alt text](./images/uni-directional.png)
+
+
+A **Unidirectional One-to-One relationship** in TypeORM is when only one of the entities is aware of the relationship. This means the relationship is defined only in one entity class, and the other entity does not have any reference back to the first entity.
+
+
+In a **Unidirectional One-to-One**, we use two decorators:
+- `@OneToOne(() => TargetEntity)`
+- `@JoinColumn()`
+
+`@JoinColumn()` specifies which side owns the relationship and adds the foreign key column in that table.
+
+
+## GitHub Code Example
+
+### `post.entity.ts`
+```ts
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { postType } from './enums/postType.enum';
+import { postStatus } from './enums/postStatus.enum';
+import { MetaOption } from 'src/meta-options/meta-option.entity';
+
+@Entity()
+export class Post {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  title: string;
+
+  @Column()
+  content: string;
+
+  @OneToOne(() => MetaOption)
+  @JoinColumn() // foreign key created in Post table
+  metaOptions?: MetaOption;
+
+  // additional fields
+  @Column({ nullable: true })
+  publishOn?: Date;
+
+  @Column('simple-array')
+  tags: string[];
+}
+```
+
+### `meta-option.entity.ts`
+```ts
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+
+@Entity()
+export class MetaOption {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  seoTitle: string;
+
+  @Column()
+  seoDescription: string;
+}
+```
+
+
+## Schema Overview
+```
+Post Table:
+- id (PK)
+- title
+- content
+- metaOptionsId (FK -> MetaOption.id)
+- publishOn
+- tags
+
+MetaOption Table:
+- id (PK)
+- seoTitle
+- seoDescription
+```
+
+
+## Key Takeaways
+- `@JoinColumn()` used only on one side (Post).
+- Foreign Key column created in Post table.
+- MetaOption entity has no reference to Post (Unidirectional).
+
+
+
+## Code Reference:
+GitHub Commit Example: [nestjs-resources-code@6ebe58f](https://github.com/NadirBakhsh/nestjs-resources-code/commit/6ebe58feef72d3d9cea52509d91f6e6458045b41)
+
 ---
 ## Creating MetaOptions Service
 ---
