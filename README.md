@@ -397,9 +397,9 @@ In a **Unidirectional One-to-One**, we use two decorators:
 `@JoinColumn()` specifies which side owns the relationship and adds the foreign key column in that table.
 
 
-## GitHub Code Example
+### GitHub Code Example
 
-### `post.entity.ts`
+#### `post.entity.ts`
 ```ts
 import {
   Column,
@@ -436,7 +436,7 @@ export class Post {
 }
 ```
 
-### `meta-option.entity.ts`
+#### `meta-option.entity.ts`
 ```ts
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -454,7 +454,7 @@ export class MetaOption {
 ```
 
 
-## Schema Overview
+#### Schema Overview
 ```
 Post Table:
 - id (PK)
