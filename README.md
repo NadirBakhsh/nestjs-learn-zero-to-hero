@@ -331,7 +331,56 @@ export class AppModule {}
 ### Commit Ref: [Autoloading Entities](https://github.com/NadirBakhsh/nestjs-resources-code/commit/7d0dbfdb4d3dd94893ea0b3fba371fec9209f240)
 
 ---
+
 ## One to One Relationships
+
+A **1-to-1 (one-to-one)** relationship occurs when **one record in a table is linked to only one record in another table** — and vice versa.
+
+> **Example**: One `Post` has one `MetaOption`, and one `MetaOption` is linked to one `Post`.
+
+### 🔗 How is this Relationship Implemented?
+- In a 1-to-1 relationship, **one table’s primary key is used as a foreign key in another table**.
+- This foreign key acts as the **link between the two tables**.
+
+#### 📊 Example Schema:
+
+#### `Post` Table
+| post_id (PK) | title         | meta_option_id (FK) |
+|--------------|---------------|---------------------|
+| 1            | Hello World   | 1001                |
+
+#### `MetaOption` Table
+| meta_option_id (PK) | seo_title        | canonical_url         |
+|---------------------|------------------|------------------------|
+| 1001                | Welcome Post     | /welcome-post          |
+
+- `meta_option_id` in `Post` is a **foreign key**, referencing the `meta_option_id` **primary key** in `MetaOption`.
+
+
+### 📌 Why Use 1-to-1 Relationship?
+- When you want to **separate additional information** about an entity (like post metadata) but **keep it tied closely** to the original entity.
+- Helps in **data normalization**, improving data organization and clarity.
+
+### 🔄 Direction of Relationships
+
+#### ▶️ Unidirectional:
+- Only one side knows about the relationship.
+- **Post → MetaOption** (Post knows its MetaOption, but MetaOption doesn’t directly reference Post).
+
+#### 🔁 Bidirectional:
+- Both tables reference each other.
+- **Post ↔ MetaOption** (Each knows the other — e.g., MetaOption may include a `post_id` back-reference).
+
+
+
+### 📌 Summary
+| Concept                     | Description                                      |
+|----------------------------|--------------------------------------------------|
+| Relationship Type          | One-to-One                                       |
+| Foreign Key Location       | `meta_option_id` in `Post` references `MetaOption` |
+| Cardinality                | One Post → One MetaOption                        |
+| Directionality             | Can be Unidirectional or Bidirectional           |
+
 ---
 ## Uni-Directional One to One Relationship
 ---
