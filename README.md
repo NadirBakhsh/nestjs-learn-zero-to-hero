@@ -482,6 +482,7 @@ MetaOption Table:
 GitHub Commit Example: [nestjs-resources-code@6ebe58f](https://github.com/NadirBakhsh/nestjs-resources-code/commit/6ebe58feef72d3d9cea52509d91f6e6458045b41)
 
 ---
+
 ## Creating MetaOptions Service
 ![alt text](./images/metaOptions.png)
 
@@ -543,6 +544,8 @@ export class MetaOptionsService {
   }
 }
 ```
+
+code reference: [GitHub Commit Example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/2c095a4f1e736d80b2b769ab3244c68c580aae8c)
 
 ---
 ## Creating Post with Relationships
