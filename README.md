@@ -483,6 +483,67 @@ GitHub Commit Example: [nestjs-resources-code@6ebe58f](https://github.com/NadirB
 
 ---
 ## Creating MetaOptions Service
+![alt text](./images/metaOptions.png)
+
+1. meta-options.post.endpoints.http
+- 📌 Adds a sample HTTP request for testing the POST /meta-options endpoint.
+
+```http
+POST http://localhost:3000/meta-options
+Content-Type: application/json
+
+{
+  "metaValue": "{\"sidebarEnabled\": true, \"footerActive\": true}"
+}
+```
+
+2. meta-options.controller.ts
+
+- Imports Body, Post, and DTO.
+- Injects MetaOptionsService.
+- Defines @Post() endpoint.
+
+```ts
+@Post()
+public create(@Body() createPostMetaOptionsDto: CreatePostMetaOptionsDto) {
+  return this.metaOptionsService.create(createPostMetaOptionsDto);
+}
+```
+
+3. meta-options.module.ts
+
+- Adds MetaOptionsService as a provider.
+- Ensures TypeOrmModule is configured for the MetaOption entity.
+
+```ts
+@Module({
+  controllers: [MetaOptionsController],
+  imports: [TypeOrmModule.forFeature([MetaOption])],
+  providers: [MetaOptionsService],
+})
+export class MetaOptionsModule {}
+```
+
+4. providers/meta-options.service.ts
+
+- Implements MetaOptionsService with a create() method.
+- Uses TypeORM Repository to persist MetaOption entities.
+
+```ts
+@Injectable()
+export class MetaOptionsService {
+  constructor(
+    @InjectRepository(MetaOption)
+    private readonly metaOptionRepository: Repository<MetaOption>,
+  ) {}
+
+  public async create(createPostMetaOptionsDto: CreatePostMetaOptionsDto) {
+    const metaOption = this.metaOptionRepository.create(createPostMetaOptionsDto);
+    return await this.metaOptionRepository.save(metaOption);
+  }
+}
+```
+
 ---
 ## Creating Post with Relationships
 ---
