@@ -549,6 +549,58 @@ code reference: [GitHub Commit Example](https://github.com/NadirBakhsh/nestjs-re
 
 ---
 ## Creating Post with Relationships
+
+![alt text](./images/create-relationships.png)
+
+### 📦 Changes Overview
+
+#### 1. **DTO Modification**
+- Updated `CreatePostDto`:
+  - Replaced `metaOptions` array of objects with a single `metavalue` JSON object.
+  - Type changed to `object`, documented as a JSON string.
+  - Simplified the schema example.
+
+#### 2. **Controller Update**
+- `PostsController.createPost()`:
+  - Removed debug `console.log`.
+  - Delegates logic to `PostsService.create()`.
+
+#### 3. **Service Logic Enhancement**
+- `PostsService.create()`:
+  - Handles both `Post` and `MetaOption` creation.
+  - Saves meta options (if provided), then attaches them to the new post.
+  - Returns the saved post with relationships.
+
+#### 4. **Entity Injection**
+- Injected `MetaOption` repository using `@InjectRepository`.
+- Updated `PostsModule` to include `MetaOption` in `TypeOrmModule.forFeature`.
+
+---
+
+### ⚙️ Technical Benefits
+
+- Enables relational data handling (`Post` + `MetaOption`) in a single API call.
+- Clean and modular NestJS service structure.
+- Prepares DTO for flexible `metaOptions` usage via JSON.
+
+---
+
+### 📎 Related Files Modified
+
+- `createPost.dto.ts`
+- `posts.controller.ts`
+- `posts.service.ts`
+- `posts.module.ts`
+- Sample payload updated in comments
+
+---
+
+### 🔗 [View Commit on GitHub](https://github.com/NadirBakhsh/nestjs-resources-code/commit/ac9260f8f674fd2141182a30e23f1b5828d8cbf3)
+
+---
+
+
+
 ---
 ## Cascade Creation with Relationships
 ---
