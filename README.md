@@ -593,17 +593,76 @@ code reference: [GitHub Commit Example](https://github.com/NadirBakhsh/nestjs-re
 - `posts.module.ts`
 - Sample payload updated in comments
 
----
-
 ### 🔗 [View Commit on GitHub](https://github.com/NadirBakhsh/nestjs-resources-code/commit/ac9260f8f674fd2141182a30e23f1b5828d8cbf3)
-
----
-
 
 
 ---
 ## Cascade Creation with Relationships
+
+### What is Cascade in TypeORM?
+
+**Cascade** is a feature in TypeORM (and relational databases) that allows related entities to be automatically persisted, updated, or removed when you perform these actions on the parent entity. This is especially useful for relationships like One-to-One or One-to-Many, where you want to create or update related records in a single operation.
+
+### Why Use Cascade?
+
+- **Simplifies code:** You don't need to manually save related entities before saving the parent.
+- **Reduces dependencies:** No need to inject or use multiple repositories for related entities.
+- **Keeps logic clean:** All related data is handled together, making your service methods shorter and easier to test.
+
+### How to Enable Cascade
+
+To enable cascade, add the `cascade` option to your relationship decorator (e.g., `@OneToOne`, `@OneToMany`).  
+You can set `cascade: true` for all operations, or specify an array of actions (`['insert', 'update', 'remove', 'soft-remove', 'recover']`).
+
+**Example:**
+
+```ts
+@OneToOne(() => MetaOption, { cascade: true })
+@JoinColumn()
+metaOptions?: MetaOption;
+```
+
+Or for specific actions:
+
+```ts
+@OneToOne(() => MetaOption, { cascade: ['insert', 'remove'] })
+@JoinColumn()
+metaOptions?: MetaOption;
+```
+
+### How It Works
+
+With cascade enabled, you can include the related entity directly in your DTO or object graph when saving:
+
+```ts
+// In your service:
+const post = this.postRepository.create({
+  title: 'My Post',
+  content: '...',
+  metaOptions: {
+    metaValue: '{"sidebarEnabled": true, "footerActive": true}',
+  },
+});
+await this.postRepository.save(post);
+// Both Post and MetaOption are created in one operation!
+```
+
+### Benefits
+
+- **Single save operation**: Both the main entity and its related entities are created/updated together.
+- **No manual repository calls**: No need to separately create and link related entities.
+- **Cleaner tests and code**: Fewer dependencies and less boilerplate.
+
+### Key Points
+
+- Cascade can be enabled for all or specific actions.
+- Use cascade to simplify creation, update, and deletion of related entities.
+- Especially useful for tightly-coupled relationships (e.g., Post and MetaOption).
+
+Code reference: [GitHub Commit Example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/ee3bbbf84b024b5481e9b3633eae6f316095f696))
+
 ---
+
 ## Querying with Eager Loading
 ---
 ## Deleting Related Entities
