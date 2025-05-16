@@ -723,7 +723,65 @@ code reference: [GitHub Commit Example](https://github.com/NadirBakhsh/nestjs-re
 
 ---
 ## Deleting Related Entities
+
+When working with a **unidirectional one-to-one relationship** (e.g., `Post` → `MetaOption`), you cannot use cascade delete out-of-the-box. Instead, you must perform a **sequential deletion**:
+
+### Steps for Sequential Deletion
+
+1. **Find the Post**  
+   Retrieve the post by its ID to ensure it exists and to get the related `metaOptions` ID.
+
+2. **Delete the Post First**  
+   Delete the post entry. This is necessary because the post table holds the foreign key to `metaOptions`. Deleting the meta option first would violate the foreign key constraint.
+
+3. **Delete the Related MetaOption**  
+   After the post is deleted, delete the associated meta option using its ID.
+
+4. **Return Confirmation**  
+   Respond with a confirmation message (e.g., `{ deleted: true, id }`).
+
+### Example Service Method
+
+```ts
+// In your PostsService
+public async delete(id: number) {
+  // Step 1: Find the post (and get metaOptions id)
+  const post = await this.postRepository.findOneBy({ id });
+  // Step 2: Delete the post
+  await this.postRepository.delete(id);
+  // Step 3: Delete the related meta option
+  await this.metaOptionsRepository.delete(post.metaOptions.id);
+  // Step 4: Return confirmation
+  return { deleted: true, id };
+}
+```
+
+### Example Controller Endpoint
+
+```ts
+// In your PostsController
+@Delete()
+public deletePost(
+  @Query('id', ParseIntPipe) id: number,
+) {
+  return this.postsService.delete(id);
+}
+```
+
+- The `@Query('id', ParseIntPipe)` ensures the `id` is received as a number from the query string.
+
+### Why This Order?
+
+- **Foreign key constraint:** The post table references the meta option. You must delete the post first to avoid constraint errors.
+
+### Note
+
+- This approach is needed only for unidirectional relationships without cascade delete.
+- Exception handling (e.g., if the post does not exist) should be added for production code.
+
+code reference: [GitHub Commit Example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/de732373a98220f8aabddb8df5b723e8f43ba887)
 ---
+
 ## Bi-Directional One to One Relationship
 ---
 ## Creating a Bi-Directional Relationship
