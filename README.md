@@ -664,6 +664,63 @@ Code reference: [GitHub Commit Example](https://github.com/NadirBakhsh/nestjs-re
 ---
 
 ## Querying with Eager Loading
+
+When working with related entities in TypeORM, you often want to fetch not just the main entity (e.g., `Post`), but also its related data (e.g., `MetaOption`). There are two main ways to achieve this:
+
+### 1. Using the `relations` Option in Repository Methods
+
+You can specify which relationships to load by passing a `relations` object to methods like `find` or `findOne`. For example:
+
+```ts
+// In your PostsService
+async findAll() {
+  return this.postRepository.find({
+    relations: {
+      metaOptions: true, // loads the related MetaOption for each Post
+    },
+  });
+}
+```
+
+This will return all posts, each with its associated `metaOptions` property populated (or `null` if not present).
+
+### 2. Using Eager Loading in the Entity
+
+You can set a relationship to be loaded automatically every time the entity is fetched by adding `eager: true` to the relationship decorator in your entity:
+
+```ts
+@OneToOne(() => MetaOption, { cascade: true, eager: true })
+@JoinColumn()
+metaOptions?: MetaOption;
+```
+
+With `eager: true`, you don't need to specify `relations` in your queries—TypeORM will always include the related entity.
+
+### When to Use Each Approach
+
+- Use the `relations` option when you want to control relationship loading per-query.
+- Use `eager: true` when you always want the relationship loaded with the entity.
+
+**Note:** If you set `eager: true`, you cannot override this behavior per-query.
+
+### Example
+
+- Fetching all posts with their meta options using the `relations` option:
+
+  ```ts
+  const posts = await this.postRepository.find({ relations: { metaOptions: true } });
+  ```
+
+- Or, if `eager: true` is set in the entity, simply:
+
+  ```ts
+  const posts = await this.postRepository.find();
+  ```
+
+In both cases, the returned posts will include their related meta options.
+
+code reference: [GitHub Commit Example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/495b11fc0142f6cc597154e60a7013e5696fb12b)
+
 ---
 ## Deleting Related Entities
 ---
