@@ -783,10 +783,54 @@ code reference: [GitHub Commit Example](https://github.com/NadirBakhsh/nestjs-re
 ---
 
 ## Bi-Directional One to One Relationship
----
-## Creating a Bi-Directional Relationship
----
-## Cascade Delete with Bi-Directional Relationship
+
+In TypeORM, you can define both **unidirectional** and **bidirectional** relationships.  
+A **unidirectional** relationship is when only one entity (e.g., `Post`) knows about the other (`MetaOption`).  
+A **bidirectional** relationship is when both entities reference each other.
+
+### How Bidirectional One-to-One Works
+
+- The foreign key still resides in the table where you use the `@JoinColumn()` decorator.
+- You can choose which entity holds the foreign key by placing `@JoinColumn()` on that side.
+- In a bidirectional relationship, both entities have a property referencing the other, and both use relationship decorators.
+
+### Example
+
+Suppose you want `Post` and `MetaOption` to reference each other:
+
+```ts
+// post.entity.ts
+@OneToOne(() => MetaOption, metaOption => metaOption.post, { cascade: true })
+@JoinColumn()
+metaOptions: MetaOption;
+
+// meta-option.entity.ts
+@OneToOne(() => Post, post => post.metaOptions)
+post: Post;
+```
+
+- Here, `Post` holds the foreign key (because of `@JoinColumn()`).
+- You can now fetch a post and get its meta options, or fetch a meta option and get its post.
+
+### Why Use Bidirectional Relationships?
+
+- Enables navigation from both sides:  
+  - Fetch a post and its meta options.
+  - Fetch a meta option and its post.
+- Allows for cascade operations (like cascade delete) from either side.
+- Useful when you need to query or operate from both entities.
+
+### Foreign Key Placement
+
+- The foreign key is always in the entity where `@JoinColumn()` is used.
+- If you want the foreign key in `MetaOption`, use `@JoinColumn()` in `MetaOption` instead.
+
+### Summary
+
+- Bidirectional relationships provide more flexibility for querying and cascading.
+- Both entities reference each other, but the foreign key is only in one table.
+- Enables features like cascade delete and easier navigation in both directions.
+
 ---
 ## One to Many Relationships
 ---
