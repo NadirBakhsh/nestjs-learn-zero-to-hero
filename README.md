@@ -831,6 +831,8 @@ post: Post;
 - Both entities reference each other, but the foreign key is only in one table.
 - Enables features like cascade delete and easier navigation in both directions.
 
+[GitHub Commit Example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/69ecd0643833e5e0428e39947eda4e7a9d01951f)
+
 ---
 ## One to Many Relationships
 ---
