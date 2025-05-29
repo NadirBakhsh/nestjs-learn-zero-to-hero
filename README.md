@@ -892,8 +892,59 @@ With a **bi-directional one-to-one relationship** in TypeORM, you can enable tru
 
 ---
 ## One to Many Relationships
+
+![onetomany.png](./images/onetomany.png)
+
 ---
+
+## Theoretical Overview: One-to-Many & Many-to-One Relationships
+
+When modeling relational data, **One-to-Many** and **Many-to-One** relationships are among the most common patterns.
+
+### Example Entities
+
+- **User** (author)
+- **Post**
+
+#### Relationship Explanation
+
+- **User → Post (One-to-Many):**  
+  A single user can author multiple posts.
+- **Post → User (Many-to-One):**  
+  Each post is authored by exactly one user.
+
+#### Bidirectional Nature
+
+- In practice, One-to-Many and Many-to-One are typically modeled as a **bidirectional relationship**:
+  - The "many" side (e.g., `Post`) references the "one" side (e.g., `User`) with a foreign key.
+  - The "one" side (e.g., `User`) can have a collection of the "many" side (e.g., an array of `Post`).
+
+#### Foreign Key Placement
+
+- The **foreign key always resides on the "many" side** (here, the `Post` entity).
+- This means the `Post` table will have a `userId` (or similar) column referencing the `User` table.
+
+#### Decorators in TypeORM
+
+- **Many-to-One:**  
+  Defined on the "many" side (e.g., `Post`), and this is where the foreign key is created.
+- **One-to-Many:**  
+  Defined on the "one" side (e.g., `User`), referencing the collection of related entities.
+- **@JoinColumn:**  
+  Not required for Many-to-One/One-to-Many; TypeORM automatically manages the foreign key on the "many" side.
+
+#### Unidirectional vs. Bidirectional
+
+![image table](./images/oneToManyTabView.png)
+
+- You can define only a Many-to-One relationship (unidirectional), but in most cases, both sides are defined for easier navigation and querying (bidirectional).
+
+---
+
 ## Creating One to Many Relationship
+
+
+
 ---
 ## Create Post with Author
 ---
