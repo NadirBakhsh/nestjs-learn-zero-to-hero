@@ -834,6 +834,63 @@ post: Post;
 [GitHub Commit Example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/69ecd0643833e5e0428e39947eda4e7a9d01951f)
 
 ---
+## Cascade Delete With Bi-Directional Relationship
+
+With a **bi-directional one-to-one relationship** in TypeORM, you can enable true cascade delete—so that deleting a parent entity (like `Post`) will automatically delete its related entity (like `MetaOption`) in a single operation.
+
+### How Does It Work?
+
+- **Foreign Key Placement:**  
+  For cascade delete to work from `Post` to `MetaOption`, the foreign key must be in the `MetaOption` table. This is achieved by placing the `@JoinColumn()` decorator on the `MetaOption` entity's relationship property.
+
+- **Entity Setup Example:**
+
+  ```ts
+  // post.entity.ts
+  @OneToOne(() => MetaOption, metaOption => metaOption.post)
+  metaOptions: MetaOption;
+
+  // meta-option.entity.ts
+  @OneToOne(() => Post, post => post.metaOptions, { onDelete: 'CASCADE' })
+  @JoinColumn()
+  post: Post;
+  ```
+
+  - Here, `MetaOption` holds the foreign key to `Post` and specifies `onDelete: 'CASCADE'`.
+
+### What Changes in Practice?
+
+- **No More Manual Deletion:**  
+  You no longer need to manually delete the related `MetaOption` after deleting a `Post`. TypeORM and the database will handle it for you.
+
+- **Simplified Service Code:**  
+  Your delete method in the service can simply delete the post by ID:
+
+  ```ts
+  // In your PostsService
+  async delete(id: number) {
+    await this.postRepository.delete(id);
+    return { deleted: true, id };
+  }
+  ```
+
+- **Automatic Cleanup:**  
+  When you delete a post, the related meta option is automatically deleted due to the cascade rule.
+
+### Why Is the Foreign Key Placement Important?
+
+- If the foreign key is in the `Post` table, you cannot delete the post first (because of the foreign key constraint).
+- By moving the foreign key to the `MetaOption` table, you can safely delete the post, and the database will automatically delete the related meta option.
+
+### Summary
+
+- **Cascade delete** in a one-to-one relationship is possible when the foreign key is on the dependent entity (here, `MetaOption`).
+- Use `@JoinColumn()` and `onDelete: 'CASCADE'` on the dependent entity's relationship property.
+- This setup allows you to delete a post and have its meta option automatically deleted, reducing code and preventing orphaned records.
+
+[GitHub Commit Example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/69ecd0643833e5e0428e39947eda4e7a9d01951f)
+
+---
 ## One to Many Relationships
 ---
 ## Creating One to Many Relationship
