@@ -944,8 +944,19 @@ When modeling relational data, **One-to-Many** and **Many-to-One** relationships
 ## Creating One to Many Relationship
 
 
+### Creating One to Many Relationship
+
+![creating-on-to-many-relationship.png](./images/creating-on-to-many-relationship.png)
+
+In this section, we're going to create a one to many relationship between the user and the post entity.  A user can have multiple posts, and each post is associated with a user.  So let's start by opening the user entity first.  And over here I'm going to add a new property.  Let's call this property as posts because one user can have multiple posts.  And in this case the type of this property is going to be an array of posts.  So we import this post entity and we say that posts is an array of posts.
+
+@OneToMany(() => Post, post => post.author)
+posts: Post[];
+
+code example: [Creating One To Many Relationship](https://github.com/NadirBakhsh/nestjs-resources-code/commit/ae4d811231327d9accc0344762beeeed19921f15)
 
 ---
+
 ## Create Post with Author
 ---
 ## Eager Loading Author
