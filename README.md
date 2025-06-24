@@ -958,6 +958,110 @@ code example: [Creating One To Many Relationship](https://github.com/NadirBakhsh
 ---
 
 ## Create Post with Author
+
+![create post with author.png](./images/create-post-with-author.png)
+
+To implement the process of creating a new post and assigning an author using a one-to-many relationship, follow these steps:
+
+### Step 1: Update the CreatePost DTO
+
+In your `CreatePostDto`, add an `authorId` property to accept the ID of the author:
+
+```typescript
+import { IsInt, IsNotEmpty, ApiProperty } from 'class-validator';
+
+export class CreatePostDto {
+  @IsNotEmpty()
+  @IsInt()
+  @ApiProperty({
+    type: 'integer',
+    required: true,
+    example: 1,
+  })
+  authorId: number;
+
+  // other properties...
+}
+```
+
+### Step 2: Update the UserService
+
+Use `UserService` to find the author by ID:
+
+```typescript
+// user.service.ts
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from './user.entity';
+
+@Injectable()
+export class UserService {
+  constructor(
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
+  ) {}
+
+  async findOneById(id: number): Promise<User> {
+    return await this.usersRepository.findOneBy({ id });
+  }
+}
+```
+
+### Step 3: Inject UserService in PostService
+
+Inject `UserService` in `PostService` to use it for assigning the author:
+
+```typescript
+// post.service.ts
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Post } from './post.entity';
+import { CreatePostDto } from './dtos/create-post.dto';
+import { UserService } from '../users/user.service';
+
+@Injectable()
+export class PostService {
+  constructor(
+    @InjectRepository(Post)
+    private postsRepository: Repository<Post>,
+    private userService: UserService,
+  ) {}
+
+  async create(createPostDto: CreatePostDto): Promise<Post> {
+    const author = await this.userService.findOneById(createPostDto.authorId);
+    const post = this.postsRepository.create({
+      ...createPostDto,
+      author,
+    });
+
+    return await this.postsRepository.save(post);
+  }
+}
+```
+
+### Step 4: Verify the Relationship
+
+Ensure that the user exists in the database (e.g., John Doe with `ID=1`) and test creating a post with this user as the author.
+
+### Example Usage
+
+To create a new post with `authorId`:
+
+```json
+{
+  "title": "My New Post",
+  "content": "This is the content of the post.",
+  "authorId": 1
+}
+```
+
+This setup will create a post with the specified author, utilizing the one-to-many and many-to-one relationship between the `Post` and `User` entities in the database.
+
+
+[GitHub Commit Example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/a6eba4a9a2d480c7ef4af61a01a9929aa576947f)
+
 ---
 ## Eager Loading Author
 ---
