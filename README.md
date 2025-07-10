@@ -1188,6 +1188,11 @@ inside our application.
 
 ---
 ## Solution: TagsService
+![Tags Service](./images/tags-service.png)
+
+please check out the github code example
+[ GitHub code example ](https://github.com/NadirBakhsh/nestjs-resources-code/commit/8311db44fe5db188e5677be43819f4ecd9009b18)
+
 ---
 ## Testing Tags Service
 ---
