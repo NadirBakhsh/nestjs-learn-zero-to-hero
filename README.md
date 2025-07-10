@@ -929,7 +929,7 @@ When modeling relational data, **One-to-Many** and **Many-to-One** relationships
 - **Many-to-One:**  
   Defined on the "many" side (e.g., `Post`), and this is where the foreign key is created.
 - **One-to-Many:**  
-  Defined on the "one" side (e.g., `User`), referencing the collection of related entities.
+  Defined on the "one" side (e.g., `User`), referencing the collection of the "many" side.
 - **@JoinColumn:**  
   Not required for Many-to-One/One-to-Many; TypeORM automatically manages the foreign key on the "many" side.
 
@@ -1118,7 +1118,49 @@ With `eager: true`, you don't need to specify `relations` in your queries—Type
 ---
 
 ## Many to Many Relationships
+
+![ many to many](./images/many-to-many-relationship.png)
+
 ---
+
+## Theoretical Overview: Many-to-Many Relationships
+
+A **many-to-many relationship** occurs when multiple records in one table are associated with multiple records in another table.
+
+### Example Scenario
+
+- **Post** entity
+- **Tag** entity
+
+![many to many entity](./images/many-to-many-entity.png)
+
+Each **Post** can have multiple **Tags** (e.g., JavaScript, TypeScript), and each **Tag** can be assigned to multiple **Posts**.
+
+### How is it Implemented in SQL?
+
+- You cannot store all foreign keys directly in either table.
+- Instead, a **junction table** (also called a join table or pivot table) is created.
+- The junction table contains two columns:
+  - One referencing the primary key of the **Post**
+  - One referencing the primary key of the **Tag**
+- Each row in the junction table represents a relationship between a post and a tag.
+
+### How is it Modeled in TypeORM?
+
+- Use the `@ManyToMany` decorator in your entity classes.
+- TypeORM will automatically create the junction table for you.
+- You can define the relationship as **unidirectional** (only one entity knows about the relationship) or **bidirectional** (both entities reference each other).
+
+### Summary
+
+- Many-to-many relationships require a separate junction table to store associations.
+- Both entities can have collections referencing each other.
+- TypeORM provides decorators to easily define and manage these relationships.
+
+From the next sections, you'll see practical implementations of both unidirectional and bidirectional many-to-many relationships between `Post` and `Tag`.
+
+---
+
 ## Practice: Service to Create Tags
 ---
 ## Solution: TagsService
