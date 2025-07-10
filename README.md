@@ -1064,7 +1064,59 @@ This setup will create a post with the specified author, utilizing the one-to-ma
 
 ---
 ## Eager Loading Author
+![eager loading](./images/eager-loading.png)
+
 ---
+
+## Querying Data with One-to-One and One-to-Many Relationships
+
+When querying data with related entities (such as `Post` with its `author` or `metaOptions`), you have two main options in TypeORM:
+
+### 1. Using the `relations` Option in Repository Methods
+
+You can specify which relationships to load by passing a `relations` object to methods like `find` or `findOne`.  
+For example, to fetch posts with both `metaOptions` and `author`:
+
+```typescript
+// In your PostsService
+async findAll() {
+  return this.postRepository.find({
+    relations: {
+      metaOptions: true,
+      author: true, // key must match the property name in your entity
+    },
+  });
+}
+```
+
+This will return all posts, each with its associated `metaOptions` and `author` properties populated.
+
+### 2. Using Eager Loading in the Entity
+
+You can set a relationship to be loaded automatically every time the entity is fetched by adding `eager: true` to the relationship decorator in your entity:
+
+```typescript
+@OneToOne(() => MetaOption, { eager: true })
+@JoinColumn()
+metaOptions: MetaOption;
+
+@ManyToOne(() => User, user => user.posts, { eager: true })
+author: User;
+```
+
+With `eager: true`, you don't need to specify `relations` in your queries—TypeORM will always include the related entity.
+
+### When to Use Each Approach
+
+- Use the `relations` option for **per-query flexibility** (choose which relationships to load).
+- Use `eager: true` for **automatic loading** (always fetch the related entity).
+
+**Note:** The property name in the `relations` object must match the property defined in your entity.
+
+[Eager Loading Author code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/8311db44fe5db188e5677be43819f4ecd9009b18)
+
+---
+
 ## Many to Many Relationships
 ---
 ## Practice: Service to Create Tags
