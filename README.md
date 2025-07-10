@@ -1162,6 +1162,30 @@ From the next sections, you'll see practical implementations of both unidirectio
 ---
 
 ## Practice: Service to Create Tags
+
+![Service to Create Tags](./images/Service%20To%20Create%20Tags.png)
+
+We already have a tags module and we have created the tag entity as well as a tag DTO.
+
+So if you look inside this particular tags directory we have a create tag DTO in place.
+
+And we also have this tag entity.
+
+Now what I want you to do is based on this tag entity as well as the tag DTO.
+
+I want you to go ahead and create a new tag service.
+
+There has to be a method inside this tag service, which is a create method that lets you create new
+
+tags and insert them into the database.
+
+Also, update your controller over here to add a post method for the tag.
+
+So we need to have a post endpoint where we can use that particular endpoint in order to create tags
+
+inside our application.
+
+
 ---
 ## Solution: TagsService
 ---
