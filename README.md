@@ -1195,6 +1195,13 @@ please check out the github code example
 
 ---
 ## Testing Tags Service
+
+![Tags Service](./images/tags-service.png)
+
+Testing: http://localhost:3000/tags
+
+[code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/b4994a11e2d4ce16416ef53caeaf253e03517fe6)
+
 ---
 ## Uni-Directional Many to Many Relationship
 ---
