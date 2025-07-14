@@ -1203,7 +1203,178 @@ Testing: http://localhost:3000/tags
 [code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/b4994a11e2d4ce16416ef53caeaf253e03517fe6)
 
 ---
-## Uni-Directional Many to Many Relationship
+
+## Unidirectional Many-to-Many Relationship
+
+![uni-directional-many-to-many](./images/uni-directional-many-to-many.png)
+
+### Overview
+
+This document explains how to establish a **unidirectional many-to-many relationship** between a `Post` entity and a `Tag` entity using **TypeORM** with **NestJS**.
+
+We assume `Tag` is already defined as a separate entity with its own module, service, and controller, and one or more tags already exist in the database.
+
+---
+
+### Step-by-Step Implementation
+
+#### 1. **Update Post Entity**
+
+**File: `post.entity.ts`**
+
+```ts
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from 'typeorm';
+import { Tag } from '../../tags/entities/tag.entity';
+
+@Entity('posts')
+export class Post {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  // ... other columns
+
+  @ManyToMany(() => Tag)
+  @JoinTable()
+  tags: Tag[];
+}
+```
+
+#### 2. **Update DTO: `CreatePostDto`**
+
+**File: `create-post.dto.ts`**
+
+```ts
+import { IsArray, IsInt, IsOptional } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+
+export class CreatePostDto {
+  // ... other properties
+
+  @IsOptional()
+  @IsArray()
+  @IsInt({ each: true })
+  @ApiProperty({ example: [1, 2], description: 'Array of IDs of tags' })
+  tags?: number[];
+}
+```
+
+#### 3. **Implement TagService Method**
+
+**File: `tag.service.ts`**
+
+```ts
+import { In } from 'typeorm';
+
+async findMultipleTags(tagIds: number[]): Promise<Tag[]> {
+  return await this.tagsRepository.find({
+    where: { id: In(tagIds) },
+  });
+}
+```
+
+#### 4. **Inject TagService into PostService**
+
+#### Update `post.module.ts`
+
+```ts
+@Module({
+  imports: [TypeOrmModule.forFeature([Post]), TagModule],
+  providers: [PostService],
+  controllers: [PostController],
+})
+export class PostModule {}
+```
+
+#### Update `post.service.ts`
+
+```ts
+@Injectable()
+export class PostService {
+  constructor(
+    @InjectRepository(Post)
+    private readonly postRepository: Repository<Post>,
+    private readonly tagService: TagService,
+  ) {}
+
+  async create(createPostDto: CreatePostDto): Promise<Post> {
+    const tags = await this.tagService.findMultipleTags(createPostDto.tags || []);
+
+    const post = this.postRepository.create({
+      ...createPostDto,
+      tags,
+    });
+
+    return await this.postRepository.save(post);
+  }
+}
+```
+
+#### 5. **Export TagService from TagModule**
+
+**File: `tag.module.ts`**
+
+```ts
+@Module({
+  imports: [TypeOrmModule.forFeature([Tag])],
+  providers: [TagService],
+  controllers: [TagController],
+  exports: [TagService],
+})
+export class TagModule {}
+```
+
+#### 6. **Example Request**
+
+Send a POST request to `/posts` endpoint:
+
+```json
+{
+  "title": "NestJS with Tags",
+  "slug": "nestjs-tags",
+  "tags": [1, 2]
+}
+```
+
+#### 7. **Database Changes**
+
+* A join table `post_tags_tag` is automatically created by TypeORM.
+* This join table holds the relationship between `postId` and `tagId`.
+
+#### 8. **Verify with PGAdmin or Query**
+
+```sql
+SELECT * FROM post_tags_tag;
+```
+
+This will show rows like:
+
+```
+postId | tagId
+----------------
+7      | 1
+```
+
+---
+
+### Summary
+
+* Unidirectional many-to-many relation is defined **only** on the `Post` entity.
+* `@ManyToMany(() => Tag)` with `@JoinTable()` on `Post` side.
+* DTO changed to accept tag IDs.
+* Helper method in TagService to find tags by ID.
+* Dependency injected via TagModule export.
+* A join table auto-created by TypeORM to store relations.
+
+---
+
+### Next Steps
+
+* Implement bidirectional relation (if tag needs to access posts).
+* Add unit tests for `create` logic.
+* Add validation for tag existence or duplicate prevention.
+
+[Code example Github](https://github.com/NadirBakhsh/nestjs-resources-code/commit/27de40005e5e5c2e60fe0f56a35a2d9ab87fbe6f)
+
 ---
 ## Querying Many to Many Relationship
 ---
