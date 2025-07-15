@@ -1377,6 +1377,62 @@ postId | tagId
 
 ---
 ## Querying Many to Many Relationship
+
+![Querying Many to Many](./images/querying-many-to-many.png)
+
+## 📌 Fetching Many-to-Many `Tags` in Posts (TypeORM)
+
+In this application, `Post` and `Tag` entities have a **many-to-many** relationship. However, by default, when fetching posts from the database, related `tags` are **not included**.
+
+---
+
+### 🔍 Problem
+
+When querying posts (e.g., via `posts.get.ts`), only `meta` and `author` fields are returned — the `tags` are missing from the result.
+
+---
+
+### ✅ Solution: Two Ways to Include `Tags`
+
+We can fetch the associated `tags` using **either** of the following methods:
+
+---
+
+### 1. 🔗 Define `relations` in the Service Method
+
+In `post.service.ts`, update the `findAll()` method:
+
+```ts
+this.postRepository.find({
+  relations: {
+    author: true,
+    meta: true,
+    tags: true // ✅ Include tags here
+  }
+});
+```
+
+- The key tags must match the property name in the Post entity.
+- Use this when you want more explicit control over which relations to fetch.
+
+2. 🚀 Use Eager Loading in the Entity
+In post.entity.ts, update the relation definition to always load tags:
+
+```ts
+@ManyToMany(() => Tag, (tag) => tag.posts, { eager: true })
+@JoinTable()
+tags: Tag[];
+```
+
+- This makes TypeORM always include tags when querying posts.
+- Recommended if tags are frequently required with posts.
+
+### Which One Should You Use?
+Use eager loading for fields that are almost always needed.
+Use explicit relations for better control and optimized queries when tags are not always necessary.
+
+[Code example Github](https://github.com/NadirBakhsh/nestjs-resources-code/commit/2461cbbddbd86f7a6bbebc97180e9523793e9843)
+
 ---
 ## Updating Post with New Tags
 ---
