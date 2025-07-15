@@ -1435,6 +1435,63 @@ Use explicit relations for better control and optimized queries when tags are no
 
 ---
 ## Updating Post with New Tags
+
+![Updating Post with New Tag](./images/updating-post-with-new-tag.png)
+
+
+### Updating a Unidirectional Many-to-Many Relationship in NestJS (TypeORM)
+
+This section demonstrates how to update a Post entity along with its associated Tags using a unidirectional many-to-many relationship with TypeORM in a NestJS application.
+
+🔄 Update Flow
+1. Receive PatchPostDto
+PatchPostDto extends CreatePostDto partially with an added id field. It allows updating scalar properties and tag relationships.
+
+2. Fetch Tags from DB
+
+```ts
+const tags = await this.tagService.findMultipleTags(patchPostDto.tags);
+```
+
+3. Find the Existing Post
+
+```ts
+const post = await this.postRepository.findOneBy({ id: patchPostDto.id });
+```
+
+4. Update Scalar Properties
+
+```ts
+post.title = patchPostDto.title ?? post.title;
+post.content = patchPostDto.content ?? post.content;
+post.status = patchPostDto.status ?? post.status;
+post.slug = patchPostDto.slug ?? post.slug;
+post.postType = patchPostDto.postType ?? post.postType;
+post.featuredImageUrl = patchPostDto.featuredImageUrl ?? post.featuredImageUrl;
+post.publishedOn = patchPostDto.publishedOn ?? post.publishedOn;
+```
+
+5. Update Tags
+
+```ts
+post.tags = tags;
+```
+
+6. Save the Updated Post
+
+```ts
+await this.postRepository.save(post);
+```
+
+#### ✅ Best Practices
+ - Use ?? (nullish coalescing) to retain existing values when properties are not sent.
+ - Avoid using object spread ({ ...post, ...patchPostDto }) with TypeORM entities.
+ - Implement proper exception handling for missing or invalid IDs.
+
+
+[ Code example Github](https://github.com/NadirBakhsh/nestjs-resources-code/commit/295dca480b659d11dbb1748573e4ef22989a91d1)
+
+
 ---
 ## Deleting Post and Relationship
 ---
