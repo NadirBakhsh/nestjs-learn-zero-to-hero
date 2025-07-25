@@ -1645,6 +1645,149 @@ posts: Post[];
 
 ---
 ## Cascade Delete with Many to Many
+
+![cascade-delete-with-mtm](./images/cascade-delete-with-mtm.png)
+
+
+This section explains how to delete a `Tag` in a Many-to-Many relationship without breaking foreign key constraints, ensuring that associated `Post` relations are also removed from the join table.
+
+---
+
+### 🧠 Concept Overview
+
+- In a **Many-to-Many** relationship:
+  - Only one side is the **owning side**, defined using `@JoinTable()`.
+  - The other is the **inverse side** (no `@JoinTable()`).
+- Deleting from the owning side cascades relationship cleanup automatically.
+- Deleting from the **inverse side** **will throw a foreign key constraint error** unless handled manually.
+
+---
+
+### 🔥 Problem
+
+When trying to delete a `Tag` that is still associated with `Post` records:
+
+```
+ERROR: update or delete on table "tag" violates foreign key constraint
+```
+
+This happens because TypeORM **does not automatically remove** the join table entries if you delete from the **inverse side**.
+
+---
+
+### ✅ Solution
+
+To delete a `Tag` **safely**, you must:
+1. Set `onDelete: 'CASCADE'` in the inverse side of the `@ManyToMany()` relationship in the `Tag` entity.
+2. Ensure the related controller and service are properly defined to support deletion.
+
+---
+
+### 🧩 Example Entity Setup
+
+```ts
+// tag.entity.ts
+
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from 'typeorm';
+import { Post } from './post.entity';
+
+@Entity()
+export class Tag {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  name: string;
+
+  @ManyToMany(() => Post, (post) => post.tags, {
+    onDelete: 'CASCADE', // important fix!
+  })
+  posts: Post[];
+}
+```
+
+> 💡 Without `onDelete: 'CASCADE'`, deleting a tag will throw a DB error if it's still referenced in the join table.
+
+---
+
+### 🛠️ TagService: Delete Method
+
+```ts
+// tag.service.ts
+
+async delete(id: number) {
+  await this.tagRepository.delete(id);
+  return {
+    deleted: true,
+    tagId: id,
+  };
+}
+```
+
+---
+
+### 🌐 TagController: Delete Endpoint
+
+```ts
+// tag.controller.ts
+
+@Delete()
+async delete(@Query('id', ParseIntPipe) id: number) {
+  return this.tagService.delete(id);
+}
+```
+
+---
+
+### 🧪 Test Case: Deleting a Tag Assigned to Posts
+
+1. Assume `Tag` with ID `2` ("TypeScript") is assigned to Posts `8` and `9`.
+2. Deleting `Tag` ID `2` will:
+   - Remove `Tag` from the `tag` table.
+   - Automatically remove all `post_tag` entries referencing it.
+   - Leave `Post` entities untouched.
+
+---
+
+### ✅ Verification via PgAdmin
+
+- Before deletion:
+  - `post_tag` shows:
+    ```
+    post_id | tag_id
+    --------+--------
+    8       | 2
+    9       | 2
+    ```
+  - `tag` shows:
+    ```
+    id | name
+    ---+---------
+    2  | TypeScript
+    ```
+
+- After deletion:
+  - Entries with `tag_id = 2` are removed from `post_tag`.
+  - Tag `2` is removed from `tag` table.
+  - Posts `8` and `9` remain, still linked to any other tags.
+
+---
+
+### ✅ Summary Table
+
+| Delete From | Join Table Cleaned | Entity Deleted | Other Entity Affected |
+|-------------|--------------------|----------------|------------------------|
+| Post        | ✅ Yes             | ✅ Post        | ❌ Tags stay           |
+| Tag         | ✅ Yes (with cascade) | ✅ Tag     | ❌ Posts stay          |
+
+> 💡 `onDelete: 'CASCADE'` is **required** for deleting from the inverse side to clean up join relations.
+
+---
+
+**a.** Want to use soft deletes instead of hard deletes for safety?  
+**b.** Would you like a test case for this deletion flow using Jest or Supertest?
+
+
 ---
 ## Soft Delete Tags
 ---
