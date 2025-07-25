@@ -1495,6 +1495,103 @@ await this.postRepository.save(post);
 ---
 ## Deleting Post and Relationship
 
+## 🔁 Cascade Deletion in Many-to-Many Relationship (TypeORM)
+
+This section explains how **cascade behavior** works in a **Many-to-Many** relationship in TypeORM when deleting an entity from the **owning side**.
+
+---
+
+### 📌 Key Concepts
+
+- In a **Many-to-Many** relationship, one entity is the **owning side** (has `@JoinTable()`), and the other is the **inverse side**.
+- In our example:
+  - `Post` entity is the **owning side**.
+  - `Tag` entity is the **inverse side**.
+- When deleting a `Post`, TypeORM **automatically removes** all related entries in the **join table** (`post_tags`), but **does not delete** the related `Tag` records themselves.
+
+---
+
+### 🧩 Example Setup (Entities)
+
+```ts
+// post.entity.ts
+
+@ManyToMany(() => Tag, (tag) => tag.posts)
+@JoinTable()
+tags: Tag[];
+```
+
+```ts
+// tag.entity.ts
+
+@ManyToMany(() => Post, (post) => post.tags)
+posts: Post[];
+```
+
+---
+
+### 🗑️ Deleting a Post
+
+Inside your service or controller, you might have a basic `delete` method like this:
+
+```ts
+// post.service.ts
+
+async deletePost(id: number) {
+  const post = await this.postRepository.findOneBy({ id });
+  await this.postRepository.remove(post);
+  return { message: `Post with ID ${id} has been deleted.` };
+}
+```
+
+- You **do not need to configure cascading manually**.
+- TypeORM will:
+  - **Delete the post record**.
+  - **Remove all corresponding relationships** from the join table (`post_tags`).
+
+---
+
+### ⚠️ What Does *Not* Happen?
+
+- Tags in the `tag` table are **not deleted**.
+- Only the **relation entries** in the join table are removed.
+
+---
+
+### 🧪 Verification in PgAdmin (or any DB GUI)
+
+1. Check the `post_tags` table before deletion:
+   - You may see:  
+     ```
+     post_id | tag_id
+     --------+--------
+     7       | 1
+     7       | 2
+     ```
+
+2. Delete the post with `id = 7`.
+
+3. After deletion:
+   - The `post` with `id = 7` is gone.
+   - Entries in `post_tags` with `post_id = 7` are also gone.
+   - The `tag` table still contains tags with `id = 1` and `id = 2`.
+
+---
+
+### ✅ Summary
+
+| Action | Join Table Cleared | Tags Deleted |
+|--------|---------------------|--------------|
+| Delete `Post` | ✅ Yes | ❌ No |
+| Delete `Tag`  | ✅ Yes (if inverse removed) | ✅ Optional (if cascaded manually) |
+
+> 💡 You **don’t need to configure `cascade`** explicitly for this unlinking behavior to work — it's built-in for the owning side in Many-to-Many relationships with `@JoinTable()`.
+
+---
+
+**a.** Want to enable full cascade delete (e.g. delete tags as well)?  
+**b.** Need an example to show `cascade: true` for related entities in other relations like One-to-Many?
+
 
 ---
 ## Bi-Directional Many to Many Relationship
