@@ -1790,4 +1790,144 @@ async delete(@Query('id', ParseIntPipe) id: number) {
 
 ---
 ## Soft Delete Tags
+
+
+## 🧼 Soft Delete in TypeORM (Tag Entity)
+
+This section documents how to implement and use **soft delete** for the `Tag` entity in a Many-to-Many relationship using TypeORM, and how it behaves differently from hard deletes.
+
+---
+
+### ❓ What is Soft Delete?
+
+- Soft delete **does not remove a record** from the database.
+- Instead, it sets the `deletedAt` column (usually `timestamp`) with a deletion time.
+- This allows the entity to be restored or filtered out later.
+
+---
+
+### 📦 Requirements
+
+- TypeORM repository must support soft deletes.
+- The entity must use `@DeleteDateColumn`.
+
+---
+
+### 🧩 Modify Tag Entity for Soft Delete
+
+```ts
+// tag.entity.ts
+
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  DeleteDateColumn,
+  ManyToMany,
+} from 'typeorm';
+import { Post } from './post.entity';
+
+@Entity()
+export class Tag {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  name: string;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
+
+  @ManyToMany(() => Post, (post) => post.tags, {
+    onDelete: 'CASCADE',
+  })
+  posts: Post[];
+}
+```
+
+- `@DeleteDateColumn()` enables soft delete tracking.
+- The `deletedAt` field is automatically populated on soft delete.
+
+---
+
+### 🛠️ Service Method: Soft Delete
+
+```ts
+// tag.service.ts
+
+async softRemove(id: number) {
+  await this.tagRepository.softDelete(id);
+  return {
+    deleted: true,
+    tagId: id,
+  };
+}
+```
+
+---
+
+### 🌐 Controller Method: Soft Delete Endpoint
+
+```ts
+// tag.controller.ts
+
+@Delete('soft-delete')
+async softDelete(@Query('id', ParseIntPipe) id: number) {
+  return this.tagService.softRemove(id);
+}
+```
+
+- Soft delete is accessible via:  
+  `DELETE /tags/soft-delete?id=3`
+
+---
+
+### 📡 Sample HTTP Request
+
+```http
+DELETE http://localhost:3000/tags/soft-delete?id=3
+```
+
+---
+
+### 🧪 Behavior Verification (PgAdmin)
+
+#### Before:
+- `tag` table shows `deleted_at` as `NULL` for ID `3`.
+- `post_tag` join table has relationships:
+  ```
+  post_id | tag_id
+  --------+--------
+  8       | 3
+  9       | 3
+  ```
+
+#### After soft deleting tag ID `3`:
+- `tag` table:
+  - ID `3` still exists.
+  - `deleted_at` now has a timestamp.
+- `post_tag` join table:
+  - Still has references to tag ID `3`.
+  - Nothing is automatically removed.
+
+---
+
+### ⚠️ Important Notes
+
+- Soft delete **does not remove entries from the join table**.
+- Soft deleted tags still appear in posts **unless** filtered out manually.
+- It's up to the developer to add logic in `find` queries to exclude soft-deleted records.
+
+---
+
+### 🆚 Soft Delete vs Hard Delete
+
+| Behavior              | Soft Delete                  | Hard Delete                  |
+|-----------------------|------------------------------|------------------------------|
+| Record in DB          | ✅ Remains                   | ❌ Removed                   |
+| `deletedAt` set       | ✅ Yes
+
+
+[GitHub code example ](https://github.com/NadirBakhsh/nestjs-resources-code/commit/23c4c5bb32c07f034e503b6082eb7ffa81a4c136)
+
 ---
