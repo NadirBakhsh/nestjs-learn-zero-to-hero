@@ -1494,8 +1494,58 @@ await this.postRepository.save(post);
 
 ---
 ## Deleting Post and Relationship
+
+
 ---
 ## Bi-Directional Many to Many Relationship
+
+We are creating a bidirectional relationship between Post and Tag entities.
+
+#### ✅ Step 1: Setup in Post Entity
+
+We already have one side set up in the Post entity:
+
+```ts
+// post.entity.ts
+
+@ManyToMany(() => Tag, (tag) => tag.posts)
+@JoinTable()
+tags: Tag[];
+
+```
+
+- @ManyToMany is used to define the relation.
+- (tag) => tag.posts tells TypeORM how to find the inverse side on the Tag entity.
+- @JoinTable() is used only on one side, the owning side, here in the Post entity.
+
+#### Step 2: Add the Inverse Side in Tag Entity
+Now go to Tag entity and define the inverse relationship:
+```ts
+// tag.entity.ts
+
+@ManyToMany(() => Post, (post) => post.tags)
+posts: Post[];
+
+```
+
+- We define a property posts of type Post[].
+- The first argument is a function returning the related entity.
+- The second argument tells TypeORM where on Post it can find the related Tag[].
+
+#### Summary
+
+- This setup creates a bidirectional many-to-many relationship.
+- Post is the owning side (has @JoinTable()).
+- Tag is the inverse side (has reference back via post.tags).
+- TypeORM now knows how to navigate in both directions:
+
+-  - post.tags to access related tags.
+-  - tag.posts to access related posts.
+
+
+[Code example Github](https://github.com/NadirBakhsh/nestjs-resources-code/commit/cad2a338b428c6ece72f65392bdc3250b7627e8b)
+
+
 ---
 ## Cascade Delete with Many to Many
 ---
