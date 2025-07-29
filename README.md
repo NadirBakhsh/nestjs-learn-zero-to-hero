@@ -98,7 +98,56 @@ DB_PORT=5432
 
 
 
-- Using Config Service
+### Using Config Service
+
+The `ConfigService` in NestJS allows you to access environment variables and configuration settings throughout your application. By using the `ConfigService`, you can ensure that your application is configurable and environment-specific settings can be easily managed. Here's how you can use it in your NestJS application:
+
+1. **Inject ConfigService:**
+
+   To use the `ConfigService`, you need to inject it into your service or controller. This can be done using NestJS's dependency injection.
+
+   ```ts
+   import { Injectable } from '@nestjs/common';
+   import { ConfigService } from '@nestjs/config';
+
+   @Injectable()
+   export class AppService {
+     constructor(private configService: ConfigService) {}
+
+     getDatabaseHost(): string {
+       return this.configService.get<string>('DB_HOST');
+     }
+   }
+   ```
+
+2. **Access Environment Variables:**
+
+   You can easily access environment variables using the `get` method provided by the `ConfigService`. The `get` method takes the name of the environment variable as a parameter and returns its value.
+
+   ```ts
+   const dbHost = this.configService.get<string>('DB_HOST');
+   const dbPort = this.configService.get<number>('DB_PORT');
+   ```
+
+3. **Provide Default Values:**
+
+   You can also provide default values in case the environment variable is not set. This is helpful in ensuring that your application runs smoothly even if some configuration is missing.
+
+   ```ts
+   const dbPort = this.configService.get<number>('DB_PORT', 5432);
+   ```
+
+4. **Type Safety:**
+
+   The `ConfigService` provides strong typing support for environment variables, which helps in avoiding runtime errors and makes your code more predictable.
+
+By utilizing the `ConfigService`, your application becomes more flexible and easier to maintain, as configuration settings are centralized and separated from the codebase.
+
+[Source Code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/dd86502e088d83df1dbd30b0802806a2210f4370)
+
+---
+
+
 - Confirming `NODE_ENV` While Testing
 - Conditionally Loading Environments
 - Inject Database Details
