@@ -42,7 +42,62 @@ Different environments serve different purposes:
 
 
 
-- Installing Config Module
+### Installing Config Module
+
+In this guide, we will configure the @nestjs/config module to manage environment variables in a secure and scalable way.
+
+![installing-config-module](./images/installing-config-module.png)
+
+#### Why Use @nestjs/config?
+- Keeps sensitive data (e.g., database URLs, API keys) outside your source code
+- Enables environment-specific configurations (e.g., dev, test, prod)
+- Simplifies accessing .env variables throughout your app
+
+#### 📦 Installation
+```
+npm i @nestjs/config
+```
+#### 🛠 Setup in AppModule
+
+```ts
+// src/app.module.ts
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true, // Makes config available in all modules
+    }),
+    // other modules...
+  ],
+})
+export class AppModule {}
+```
+
+#### 📁 Create .env File
+Create a .env file at your project root:
+
+```bash
+# .env
+S3_BUCKET=my-s3-bucket
+DB_HOST=localhost
+DB_PORT=5432
+```
+
+#### 📌 Summary
+- Install @nestjs/config@3.2.2
+- Set up .env file in root
+- Use ConfigModule.forRoot({ isGlobal: true })
+- Access vars via ConfigService.get()
+
+
+[Source Code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/4c5203024f96d29c5f52771cbdfbce362da91034)
+
+---
+
+
+
 - Using Config Service
 - Confirming `NODE_ENV` While Testing
 - Conditionally Loading Environments
