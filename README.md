@@ -209,7 +209,73 @@ For example, if you want to load a different environment file depending on the `
 
 
 
-- Inject Database Details
+### Inject Database Details from Environment Variables
+
+To securely manage your database configuration in NestJS, you should load all database connection details from environment variables using the `@nestjs/config` module and `ConfigService`. This approach keeps sensitive information out of your source code and allows for easy environment-specific configuration.
+
+#### 1. Define Database Variables in `.env` Files
+
+Create the following variables in your environment file (e.g., `.env.development`):
+
+```
+DATABASE_PORT=5432
+DATABASE_USER=postgres
+DATABASE_PASSWORD=password
+DATABASE_HOST=localhost
+DATABASE_NAME=NestJSBlog
+```
+
+> **Tip:** If your password contains special characters (like `#`), wrap it in double quotes.
+
+#### 2. Use ConfigService in TypeORM Configuration
+
+Instead of hardcoding values or using `process.env` directly, inject `ConfigService` into your TypeORM configuration factory. This ensures all values are loaded from the environment and are type-safe.
+
+```typescript
+// src/app.module.ts
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        port: +configService.get<string>('DATABASE_PORT'),
+        username: configService.get<string>('DATABASE_USER'),
+        password: configService.get<string>('DATABASE_PASSWORD'),
+        host: configService.get<string>('DATABASE_HOST'),
+        database: configService.get<string>('DATABASE_NAME'),
+        // ...other TypeORM options
+      }),
+    }),
+    // ...other modules
+  ],
+})
+export class AppModule {}
+```
+
+- The `+` before `configService.get<string>('DATABASE_PORT')` ensures the port is converted to a number.
+
+#### 3. Why Use ConfigService?
+
+- **Centralized configuration:** All environment variables are managed in one place.
+- **Type safety:** Avoids runtime errors due to missing or mis-typed variables.
+- **Environment flexibility:** Easily switch between development, test, and production settings.
+
+#### 4. When to Use `process.env` Directly
+
+- Only use `process.env` directly inside configuration files or when setting up the `ConfigModule` itself.
+- For all other usages throughout your application, prefer `ConfigService`.
+
+[Source Code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/1db6c99b132961e67107532883c3f54f29fcb749)
+
+---
+
 - Custom Configuration Files
 - Config Files with Namespaces
 - Module Configuration and Partial Registration
