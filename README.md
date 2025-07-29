@@ -148,7 +148,51 @@ By utilizing the `ConfigService`, your application becomes more flexible and eas
 ---
 
 
-- Confirming `NODE_ENV` While Testing
+### Confirming `NODE_ENV` While Testing
+
+To handle different environment configurations in a NestJS application, you can use multiple `.env` files for different environments like development, testing, and production. Jest automatically sets the `NODE_ENV` environment variable to `test` during testing. Here’s how to configure your project to support this setup:
+
+1. **Create Environment Files:**
+   - Create separate `.env` files for each environment, e.g., `.env.development`, `.env.test`, etc.
+   - Ensure that your environment-specific variables are defined in each file.
+
+2. **Configure Jest:**
+   - Modify the `jest-e2e.json` file to update the `rootDir` to point to the root of your application directory.
+   - Add `modulePaths` to ensure Jest looks for modules in the correct directory.
+   ```json
+   {
+     "rootDir": "../",
+     "modulePaths": ["<rootDir>"]
+   }
+   ```
+
+3. **Update `package.json`:**
+   - In the Jest configuration inside `package.json`, set the `rootDir` to the application root and add `modulePaths`.
+   ```json
+   {
+     "jest": {
+       "rootDir": ".",
+       "modulePaths": ["<rootDir>"]
+     }
+   }
+   ```
+
+4. **Modify Test File:**
+   - In your `app.e2e-spec.ts` file, access the `NODE_ENV` using `process.env.NODE_ENV` and log it to verify its value.
+   ```ts
+   console.log(process.env.NODE_ENV);
+   ```
+
+5. **Run End-to-End Tests:**
+   - Use the script in `package.json` to run your end-to-end tests:
+   ```bash
+   npm run test:e2e
+
+[Source Code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/19c71c113951bd554615858a5b11917e0e1f5d45)
+
+---
+
+
 - Conditionally Loading Environments
 - Inject Database Details
 - Custom Configuration Files
