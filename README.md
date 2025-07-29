@@ -193,7 +193,22 @@ To handle different environment configurations in a NestJS application, you can 
 ---
 
 
-- Conditionally Loading Environments
+### Conditionally Loading Environments
+
+![cle](./images/cle.png)
+
+### Conditionally Loading Environments
+
+To conditionally load different environment variables based on different environments you can pass an expression to the `envFilePath` property of the `ConfigModule`.
+
+For example, if you want to load a different environment file depending on the `NODE_ENV` variable, you can do the following:
+
+[Source Code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/19c71c113951bd554615858a5b11917e0e1f5d45)
+
+---
+
+
+
 - Inject Database Details
 - Custom Configuration Files
 - Config Files with Namespaces
