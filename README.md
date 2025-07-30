@@ -276,7 +276,113 @@ export class AppModule {}
 
 ---
 
-- Custom Configuration Files
+### Custom Configuration Files
+
+![ccf](./images/ccf.png)
+
+---
+
+## Custom Configuration Files in NestJS
+
+Custom configuration files in NestJS provide an additional abstraction layer over environment variables. Instead of accessing environment variables directly throughout your application, you define configuration files (factory functions) that read from `process.env` and return structured configuration objects. This approach allows for:
+
+- Centralized and organized configuration management
+- Sensible defaults and type conversions
+- Module-specific configuration files for better separation of concerns
+
+### How to Create a Custom Configuration File
+
+1. **Create a Config Directory and File**
+
+   In your `src` directory, create a `config` folder and add a file, e.g., `app.config.ts`:
+
+   ```typescript
+   // src/config/app.config.ts
+   export default () => ({
+     database: {
+       host: process.env.DATABASE_HOST || 'localhost',
+       port: parseInt(process.env.DATABASE_PORT, 10) || 5432,
+       user: process.env.DATABASE_USER,
+       password: process.env.DATABASE_PASSWORD,
+       name: process.env.DATABASE_NAME,
+       synchronize: process.env.DATABASE_SYNC === 'true',
+       autoLoadEntities: process.env.DATABASE_AUTOLOAD === 'true',
+     },
+     environment: process.env.NODE_ENV || 'production',
+   });
+   ```
+
+   - You can set sensible defaults and perform type conversions (e.g., `parseInt` for port).
+   - Use `process.env` directly here, as this file is part of the config module setup.
+
+2. **Add Environment Variables**
+
+   In your `.env.development` (or other env files):
+
+   ```
+   DATABASE_PORT=5432
+   DATABASE_USER=postgres
+   DATABASE_PASSWORD=password
+   DATABASE_HOST=localhost
+   DATABASE_NAME=NestJSBlog
+   DATABASE_SYNC=true
+   DATABASE_AUTOLOAD=true
+   ```
+
+3. **Load the Config File in AppModule**
+
+   In your `AppModule`, load the config file using the `load` property of `ConfigModule`:
+
+   ```typescript
+   import { ConfigModule } from '@nestjs/config';
+   import appConfig from './config/app.config';
+
+   @Module({
+     imports: [
+       ConfigModule.forRoot({
+         isGlobal: true,
+         load: [appConfig],
+       }),
+       // ...
+     ],
+   })
+   export class AppModule {}
+   ```
+
+4. **Access Config Values via ConfigService**
+
+   When using `ConfigService`, you can now access nested properties from your config file:
+
+   ```typescript
+   // Example: Accessing database config in a factory
+   useFactory: (configService: ConfigService) => ({
+     type: 'postgres',
+     port: configService.get<number>('database.port'),
+     username: configService.get<string>('database.user'),
+     password: configService.get<string>('database.password'),
+     host: configService.get<string>('database.host'),
+     database: configService.get<string>('database.name'),
+     synchronize: configService.get<boolean>('database.synchronize'),
+     autoLoadEntities: configService.get<boolean>('database.autoLoadEntities'),
+   })
+   ```
+
+   - Use dot notation (e.g., `'database.port'`) to access nested config properties.
+
+### Benefits
+
+- **Centralization:** All configuration logic is in one place.
+- **Defaults & Type Conversion:** Easily set defaults and convert types as needed.
+- **Separation:** You can create module-specific config files for large applications.
+- **Safer Production:** Easily control settings like `synchronize` and `autoLoadEntities` per environment.
+
+> **Note:** Only use `process.env` directly inside config files. For the rest of your application, always use `ConfigService`.
+
+[Source Code example  Custom configuration Files](https://github.com/NadirBakhsh/nestjs-resources-code/commit/2e7760ce80dfa32b4cad29344e90ef8cc8a59a8f)
+
+
+---
+
 - Config Files with Namespaces
 - Module Configuration and Partial Registration
 - Validating Environment Variables
