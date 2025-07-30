@@ -383,6 +383,89 @@ Custom configuration files in NestJS provide an additional abstraction layer ove
 
 ---
 
-- Config Files with Namespaces
+### Config Files with Namespaces
+
+![namespaces](./images/namespaces.png)
+
+With NestJS ConfigModule, you can split your configuration into multiple files and assign each file a **namespace** using the `registerAs` function. This approach helps organize configuration for large applications and keeps related settings together.
+
+### How to Use Namespaces in Config Files
+
+1. **Create Namespaced Config Files**
+
+   - In your `src/config` directory, create files like `database.config.ts` and `app.config.ts`.
+
+   ```typescript
+   // src/config/database.config.ts
+   import { registerAs } from '@nestjs/config';
+
+   export default registerAs('database', () => ({
+     host: process.env.DATABASE_HOST || 'localhost',
+     port: parseInt(process.env.DATABASE_PORT, 10) || 5432,
+     user: process.env.DATABASE_USER,
+     password: process.env.DATABASE_PASSWORD,
+     name: process.env.DATABASE_NAME,
+     synchronize: process.env.DATABASE_SYNC === 'true',
+     autoLoadEntities: process.env.DATABASE_AUTOLOAD === 'true',
+   }));
+   ```
+
+   ```typescript
+   // src/config/app.config.ts
+   import { registerAs } from '@nestjs/config';
+
+   export default registerAs('app', () => ({
+     environment: process.env.NODE_ENV || 'production',
+   }));
+   ```
+
+2. **Register Config Files in AppModule**
+
+   - Import both config files and load them in the `ConfigModule`:
+
+   ```typescript
+   import { ConfigModule } from '@nestjs/config';
+   import appConfig from './config/app.config';
+   import databaseConfig from './config/database.config';
+
+   @Module({
+     imports: [
+       ConfigModule.forRoot({
+         isGlobal: true,
+         load: [appConfig, databaseConfig],
+       }),
+       // ...
+     ],
+   })
+   export class AppModule {}
+   ```
+
+3. **Access Namespaced Config Values**
+
+   - Use dot notation with the namespace to access config values via `ConfigService`:
+
+   ```typescript
+   // Example: Accessing database config
+   configService.get<number>('database.port');
+   configService.get<string>('database.user');
+   configService.get<boolean>('database.synchronize');
+
+   // Accessing app config
+   configService.get<string>('app.environment');
+   ```
+
+### Benefits
+
+- **Separation of concerns:** Each config file handles a specific part of your application's configuration.
+- **Scalability:** Easily add more config files and namespaces as your app grows.
+- **Clarity:** Namespaces make it clear where each config value comes from.
+
+> **Tip:** You can create as many global config files as needed, each under its own namespace.
+
+[Source Code example Config Files With Namespaces](https://github.com/NadirBakhsh/nestjs-resources-code/commit/58a0df201a7f9bc48ba04fbb5ad6713347e4c87b)
+
+
+---
+
 - Module Configuration and Partial Registration
 - Validating Environment Variables
