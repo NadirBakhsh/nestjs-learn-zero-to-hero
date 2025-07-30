@@ -467,5 +467,81 @@ With NestJS ConfigModule, you can split your configuration into multiple files a
 
 ---
 
-- Module Configuration and Partial Registration
+## Module Configuration and Partial Registration
+
+![M.C.P.R](./images/mcpr.png)
+
+With NestJS ConfigModule, you can create **module-specific configuration files** and register them only for the modules that need them. This is useful for large-scale applications where certain configuration should be isolated to a specific module.
+
+### Example: Module-Specific Config for Users Module
+
+1. **Add a Module-Specific Config File**
+
+   - In your `users` module directory, create a `config` folder and add a config file, e.g., `profile.config.ts`:
+
+   ```typescript
+   // src/users/config/profile.config.ts
+   import { registerAs } from '@nestjs/config';
+
+   export default registerAs('profileConfig', () => ({
+     apiKey: process.env.PROFILE_API_KEY,
+   }));
+   ```
+
+   - Add `PROFILE_API_KEY=your-api-key-value` to your environment file.
+
+2. **Register the Config File in the Module**
+
+   - In `users.module.ts`, import `ConfigModule` and use `forFeature` to register the config only for this module:
+
+   ```typescript
+   import { ConfigModule } from '@nestjs/config';
+   import profileConfig from './config/profile.config';
+
+   @Module({
+     imports: [
+       ConfigModule.forFeature(profileConfig),
+       // ...other imports
+     ],
+     // ...controllers, providers, etc.
+   })
+   export class UsersModule {}
+   ```
+
+3. **Inject the Module Config with Type Safety**
+
+   - In your service, use `ConfigType` and the `@Inject` decorator to inject the config object with full type safety:
+
+   ```typescript
+   import { Injectable, Inject } from '@nestjs/common';
+   import { ConfigType } from '@nestjs/config';
+   import profileConfig from './config/profile.config';
+
+   @Injectable()
+   export class UsersService {
+     constructor(
+       @Inject(profileConfig.KEY)
+       private readonly profileConfiguration: ConfigType<typeof profileConfig>,
+     ) {}
+
+     someMethod() {
+       console.log(this.profileConfiguration.apiKey); // type-safe access
+     }
+   }
+   ```
+
+   - `profileConfig.KEY` is automatically exported by `registerAs` and used for injection.
+
+### Benefits
+
+- **Isolation:** Only the module that registers the config can access it.
+- **Type Safety:** Direct object access with full TypeScript type safety (no string keys).
+- **No Global Pollution:** Other modules cannot access this config unless they explicitly register it.
+
+> **Tip:** Use this approach for third-party API keys or settings that should not be globally available.
+
+[Source Code example Module Configuration and Partial Registration](https://github.com/NadirBakhsh/nestjs-resources-code/commit/2758bcba9c2dd9cb68f1022a13666449fb98ad9f)
+
+---
+
 - Validating Environment Variables
