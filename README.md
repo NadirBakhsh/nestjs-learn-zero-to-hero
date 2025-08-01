@@ -544,4 +544,57 @@ With NestJS ConfigModule, you can create **module-specific configuration files**
 
 ---
 
-- Validating Environment Variables
+### Validating Environment Variables
+
+![validate env](./images/vev.png)
+
+---
+
+## Validating Environment Variables
+
+For large applications, validating environment variables is essential to catch missing or misconfigured values early. NestJS supports this using the [joi](https://joi.dev/) package.
+
+### How to Add Validation
+
+1. **Install joi**  
+   ```
+   npm install joi@17.12.2
+   ```
+
+2. **Create a Validation Schema**  
+   In `src/config/environment.validation.ts`:
+   ```typescript
+   import * as Joi from 'joi';
+
+   export default Joi.object({
+     NODE_ENV: Joi.string().valid('development', 'test', 'production', 'staging').default('development'),
+     DATABASE_PORT: Joi.number().port().default(5432),
+     DATABASE_PASSWORD: Joi.string().required(),
+     DATABASE_HOST: Joi.string().required(),
+     DATABASE_NAME: Joi.string().required(),
+     DATABASE_USER: Joi.string().required(),
+     PROFILE_API_KEY: Joi.string().required(),
+   });
+   ```
+
+3. **Register the Schema in ConfigModule**  
+   In `AppModule`, import the schema and set `validationSchema`:
+   ```typescript
+   import environmentValidation from './config/environment.validation';
+
+   ConfigModule.forRoot({
+     // ...other options
+     validationSchema: environmentValidation,
+   })
+   ```
+
+### Benefits
+
+- Prevents app startup if required variables are missing or invalid.
+- Gives clear error messages for missing/incorrect env vars.
+- Helps teams avoid config mistakes when sharing `.env` files.
+
+[Source Code example Validating Environment Variables](https://github.com/NadirBakhsh/nestjs-resources-code/commit/f52a8e337933fd65e15ccf330c6dc1c734e45b8c)
+
+---
+
