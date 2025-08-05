@@ -2,7 +2,7 @@
 
 ### Introduction to Exception Handling
 
-![Exception Handling](./images/introduction.png.png)
+![Exception Handling](./images/introduction.png)
 
 In NestJS, exception handling is a crucial part of the request and response lifecycle. NestJS provides a boundary to handle exceptions across different components such as guards, interceptors, pipes, controllers, and services. By default, exceptions are caught and translated into an HTTP response with a 500 Internal Server Error status. However, to provide meaningful error messages for easier debugging and better client communication, we should handle exceptions more elegantly.
 
@@ -22,7 +22,7 @@ The NestJS documentation provides a comprehensive guide to [built-in HTTP except
 
 When adding exception handling to your NestJS application, it's important to identify areas in your code that are prone to errors or "corner cases." Here are common scenarios where you should consider handling exceptions:
 
-![alt text](./images/handle-exceptions.png.png)
+![alt text](./images/handle-exceptions.png)
 - **Database Operations:**  
   Any time you interact with the database (querying, inserting, updating, deleting), errors can occur due to connection issues, invalid data, or constraint violations.
 
