@@ -40,7 +40,52 @@ Whenever your code interacts with external systems, enforces constraints, or per
 
 ---
 
-- Exception Handling Model Constraints
+### Exception Handling Model Constraints
+
+NestJS provides built-in exception classes (like BadRequestException, RequestTimeoutException, etc.) which ensure consistent, structured, and predictable error handling across your application.
+
+**Scenario Overview**
+
+When handling model constraints (such as unique fields) in your service logic, you should:
+
+- **Check for Existing Records:**  
+  Before creating a new user, check if a user with the same email already exists.
+
+- **Use Try-Catch for Database Operations:**  
+  Wrap database queries in a try-catch block to handle connection errors or query failures.
+
+- **Throw Specific Exceptions:**  
+  - If the database connection fails, throw a `RequestTimeoutException` with a helpful message and description.
+  - If a duplicate record is detected (e.g., email already exists), throw a `BadRequestException` with a clear error message.
+
+- **Consistent API Responses:**  
+  Using NestJS's built-in exceptions automatically sets the correct HTTP status code and error structure, making your API responses predictable and easy to debug.
+
+**Example:**
+```typescript
+try {
+  // Query for existing user
+  const existingUser = await this.userRepository.findOne({ where: { email } });
+  if (existingUser) {
+    throw new BadRequestException('User already exists. Please check your email.');
+  }
+  // ...create user logic...
+} catch (error) {
+  throw new RequestTimeoutException('Unable to process your request at the moment.', {
+    description: 'Error connecting to the database',
+  });
+}
+```
+
+**Benefits:**
+- Prevents 500 errors for known issues (like duplicates)
+- Provides meaningful error messages to clients
+- Handles both model constraint violations and database connectivity issues
+
+[code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/998a5d223f75370e0b1c32908c055eea0df3a829)
+
+---
+
 - Create User Exception Handling
 - Throw a Custom Exception
 - Practice: Exception Handling Post Update
