@@ -92,6 +92,9 @@ try {
 
 ---
 
-- Throw a Custom Exception
+### Throw a Custom Exception
+
+[code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/c96cdef05bb4414a16567ced23ef157de70809f2)
+
 - Practice: Exception Handling Post Update
 - Solution: Exception Handling Post Update
