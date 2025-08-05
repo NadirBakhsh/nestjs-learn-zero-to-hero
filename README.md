@@ -96,5 +96,9 @@ try {
 
 [code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/c96cdef05bb4414a16567ced23ef157de70809f2)
 
-- Practice: Exception Handling Post Update
-- Solution: Exception Handling Post Update
+### Practice: Exception Handling Post Update
+
+- Task: Handle Exception in Post Update
+
+### Solution: Exception Handling Post Update
+[code example Exception Handling Post](https://github.com/NadirBakhsh/nestjs-resources-code/commit/c3008132f943501201810e7b103b4d0b80792d82)
