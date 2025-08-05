@@ -86,7 +86,12 @@ try {
 
 ---
 
-- Create User Exception Handling
+### Create User Exception Handling
+
+[code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/f206c8c633431945a230ad2dce8e1c9dc57f40a0)
+
+---
+
 - Throw a Custom Exception
 - Practice: Exception Handling Post Update
 - Solution: Exception Handling Post Update
