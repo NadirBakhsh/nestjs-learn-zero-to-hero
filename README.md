@@ -38,9 +38,69 @@
 Summary:
 Use transactions when you need to perform multiple related database operations that must all succeed together. Transactions help maintain data integrity and consistency by ensuring that either all operations are applied or none are.
 
+---
 
-- TypeORM QueryRunner
-- Creating First Transaction
+### TypeORM QueryRunner
+
+**QueryRunner** is a TypeORM class that allows you to manage a single database connection for advanced operations like transactions. Instead of using the default connection pool, QueryRunner gives you one dedicated connection for the entire transaction, ensuring all related operations are executed together.
+
+![query-runner-class](./images/query-runner-class.png)
+
+#### How to Use QueryRunner for Transactions
+
+![pp-transaction](./images/pp-transaction.png)
+
+1. **Create a QueryRunner instance:**  
+   Use `dataSource.createQueryRunner()` to get a new QueryRunner.
+
+2. **Connect to the database:**  
+   Call `queryRunner.connect()`.
+
+3. **Start the transaction:**  
+   Use `queryRunner.startTransaction()`.
+
+4. **Perform your CRUD operations:**  
+   Use `queryRunner.manager` to run your queries.
+
+5. **Commit or rollback:**  
+   - If all operations succeed, call `queryRunner.commitTransaction()`.
+   - If any operation fails, call `queryRunner.rollbackTransaction()`.
+
+6. **Release the connection:**  
+   Always call `queryRunner.release()` in a `finally` block to free the connection.
+
+#### Example
+
+```typescript
+const queryRunner = dataSource.createQueryRunner();
+
+await queryRunner.connect();
+await queryRunner.startTransaction();
+
+try {
+  // Perform related DB operations
+  await queryRunner.manager.save(...);
+  await queryRunner.manager.update(...);
+  await queryRunner.manager.delete(...);
+
+  await queryRunner.commitTransaction(); // Success!
+} catch (err) {
+  await queryRunner.rollbackTransaction(); // Undo all changes
+} finally {
+  await queryRunner.release(); // Always release connection
+}
+```
+
+**Summary:**  
+Use QueryRunner when you need full control over transactions in TypeORM. It ensures all your related operations either succeed together or fail together, maintaining
+
+---
+
+### Creating First Transaction
+
+
+
+
 - Why Create Post is Not a Transaction
 - Creating Multiple Providers
 - Updating the DTO
