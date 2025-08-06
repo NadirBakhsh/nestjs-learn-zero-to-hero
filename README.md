@@ -181,6 +181,8 @@ async createMany(createUsersDto: CreateUserDto[]): Promise<User[]> {
 - This approach ensures that either all users are created or none are, preventing partial updates.
 - For proper validation of each user DTO in the array, consider using a custom array DTO with class-validator decorators.
 
+[ GitHub code Commit](https://github.com/NadirBakhsh/nestjs-resources-code/commit/1a54d8d453dd35b36af6f88e9bb2f459d423f113)
+
 ---
 
 - Why Create Post is Not a Transaction
