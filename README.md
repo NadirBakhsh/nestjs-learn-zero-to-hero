@@ -185,7 +185,49 @@ async createMany(createUsersDto: CreateUserDto[]): Promise<User[]> {
 
 ---
 
-- Why Create Post is Not a Transaction
+### Why Create Post is Not a Transaction
+
+#### 🧠 When to Use Transactions in CRUD Operations
+
+**Why not use transactions for every DB operation if they're so useful?**
+
+While **transactions** offer **commit and rollback mechanisms**, using them **everywhere** is unnecessary and can introduce **overhead**.
+
+#### ✅ Simple Create Operation (No Transaction Needed)
+
+```ts
+const post = await this.postRepository.save({ title, content, author, tags });
+```
+
+- Only one write operation.
+- Other operations (like fetching users/tags) are **read-only**.
+- If saving the post fails, it fails entirely — no partial failure possible.
+- ✅ Exception handling is enough here.
+- ❌ No need for a transaction.
+
+#### ⚠️ Bulk or Multi-Entity Insert (Transaction Recommended)
+
+```ts
+await dataSource.transaction(async manager => {
+  await manager.save(User, user1);
+  await manager.save(User, user2);
+  // ...
+});
+```
+
+- Inserting multiple users or modifying multiple entities.
+- Potential for **partial success/failure** (e.g., 3 users created, 7 failed).
+- Hard to monitor without extra logic.
+- ✅ **Use transaction** to ensure all-or-nothing behavior.
+
+---
+
+> 💡 **Use transactions only when needed** — for complex operations involving multiple writes or entities.  
+> For simple operations, transactions are overkill.
+
+---
+
+
 - Creating Multiple Providers
 - Updating the DTO
 - Practice: Handle Exceptions for CreateManyUsers
