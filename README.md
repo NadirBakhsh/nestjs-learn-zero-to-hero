@@ -252,6 +252,13 @@ public async createManyUsers(@Body() createUsersDto: CreateUsersDto[]): Promise<
 
 ---
 
-- Updating the DTO
+### Updating the DTO
+
+The createManyUsers method now uses the CreateManyUsersDTO which is validated against the CreateUserDTO for each user in the array. The CreateManyUsersDTO has a users property which is an array of CreateUserDTO. The isNotEmpty, isArray and ValidateNested decorators are used to validate the users property. The type decorator is used to specify the type of each element in the array as CreateUserDTO.
+
+[GitHub code Commit](https://github.com/NadirBakhsh/nestjs-resources-code/commit/63e6e6b0c71602b31f58ca124c74c1ab48389884)
+
+---
+
 - Practice: Handle Exceptions for CreateManyUsers
 - Solution: Handle Exceptions for CreateManyUsers
