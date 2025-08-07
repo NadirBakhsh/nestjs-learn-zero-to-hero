@@ -260,5 +260,15 @@ The createManyUsers method now uses the CreateManyUsersDTO which is validated ag
 
 ---
 
-- Practice: Handle Exceptions for CreateManyUsers
-- Solution: Handle Exceptions for CreateManyUsers
+### Practice: Handle Exceptions for CreateManyUsers
+
+  /**
+   * This method will create many users at once.
+   * If any of the users to be created already exist, an exception will be thrown.
+   * @param createUsersDto List of users to be created
+   * @returns The created users
+   * @throws BadRequestException if any of the users to be created already exist
+   */
+  
+
+### Solution: Handle Exceptions for CreateManyUsers
