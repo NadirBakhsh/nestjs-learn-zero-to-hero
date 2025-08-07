@@ -272,3 +272,7 @@ The createManyUsers method now uses the CreateManyUsersDTO which is validated ag
   
 
 ### Solution: Handle Exceptions for CreateManyUsers
+
+here is the solution:
+
+[GitHub code Commit](https://github.com/NadirBakhsh/nestjs-resources-code/commit/29adaca8fc6d27ca79d4722dd8bbb52040805617)
