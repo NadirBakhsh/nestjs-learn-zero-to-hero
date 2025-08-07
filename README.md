@@ -228,7 +228,30 @@ await dataSource.transaction(async manager => {
 ---
 
 
-- Creating Multiple Providers
+### Creating Multiple Providers
+
+Create a new endpoint in the UserController to handle the creation of many users:
+
+```ts
+  @Post('create-many')
+public async createManyUsers(@Body() createUsersDto: CreateUsersDto[]): Promise<User[]> {
+  return await this.userService.createMany(createUsersDto);
+}
+```
+
+**Adding a Unique Slug to the Endpoint**
+To avoid conflicts with the existing create endpoint, add a unique slug to the new endpoint:
+
+```ts
+  @Post('create-many')
+public async createManyUsers(@Body() createUsersDto: CreateUsersDto[]): Promise<User[]> {
+  return await this.userService.createMany(createUsersDto);
+}
+```
+[GitHub code Commit](https://github.com/NadirBakhsh/nestjs-resources-code/commit/223fd308a8a4c4b53a2b2278a8b5bebcaf1f9808)
+
+---
+
 - Updating the DTO
 - Practice: Handle Exceptions for CreateManyUsers
 - Solution: Handle Exceptions for CreateManyUsers
