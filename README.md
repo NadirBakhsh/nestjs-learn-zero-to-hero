@@ -14,7 +14,13 @@ Our pagination system will be generic, applicable to any data entity such as pos
 
 Furthermore, the response will include `links` for navigation, such as links to the first, last, next, and previous pages. These links facilitate easy navigation for users and integration for front-end developers.
 
+
+![Pagination Response](./images/pagination-res.png)
+
 In summary, pagination enhances performance and usability by limiting data retrieval and providing structured navigation. Our implementation in NestJS will be versatile, supporting various entities and offering comprehensive pagination information in the response.
+
+
+
 
 ---
 
