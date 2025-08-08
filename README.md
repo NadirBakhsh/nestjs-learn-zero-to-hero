@@ -173,7 +173,117 @@ Response log in controller:
 
 
 
-- Adding Pagination to Query
+### Adding Pagination to Query
+
+#### **1. Goal**
+- Use our previously created **`PaginationQueryDto`** to paginate database queries.
+- Implement `skip` and `take` logic in TypeORM.
+- Make pagination functional so `limit` and `page` query params return the correct subset of posts.
+
+---
+
+#### **2. How Pagination Works in TypeORM**
+- **`take`** → How many records to return (limit).
+- **`skip`** → How many records to skip before starting to return results.
+
+**Skip formula:**
+```
+skip = (page - 1) * limit
+```
+Example:  
+If `page = 3` and `limit = 10` → skip `(3-1) * 10 = 20` records.
+
+---
+
+#### **3. Example Implementation**
+
+##### **Service – Adding Pagination Logic**
+```ts
+// src/posts/posts.service.ts
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Post } from './entities/post.entity';
+import { GetPostsDto } from './dtos/get-posts.dto';
+
+@Injectable()
+export class PostsService {
+  constructor(
+    @InjectRepository(Post)
+    private readonly postRepository: Repository<Post>,
+  ) {}
+
+  async findAll(userId: number, postQuery: GetPostsDto) {
+    const { page, limit } = postQuery;
+
+    return this.postRepository.find({
+      where: { author: { id: userId } }, // Example filter for posts by user
+      take: limit, // limit per page
+      skip: (page - 1) * limit, // skip formula
+      order: { createdAt: 'DESC' }, // optional: newest first
+    });
+  }
+}
+```
+
+---
+
+#### **Controller – Passing Query DTO to Service**
+```ts
+// src/posts/posts.controller.ts
+import { Controller, Get, Query, Param, ParseIntPipe } from '@nestjs/common';
+import { PostsService } from './posts.service';
+import { GetPostsDto } from './dtos/get-posts.dto';
+
+@Controller('posts')
+export class PostsController {
+  constructor(private readonly postsService: PostsService) {}
+
+  @Get(':userId')
+  findAll(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Query() postQuery: GetPostsDto,
+  ) {
+    return this.postsService.findAll(userId, postQuery);
+  }
+}
+```
+
+---
+
+#### **4. Example Requests**
+##### Request:
+```
+GET /posts/1?limit=2&page=1
+```
+### Response (Example):
+```json
+[
+  { "id": 11, "title": "Post Title 1", "content": "..." },
+  { "id": 10, "title": "Post Title 2", "content": "..." }
+]
+```
+
+---
+
+#### **5. Testing Pagination**
+| Page | Limit | Records Returned |
+|------|-------|-----
+ -------------|
+| 1    | 2     | IDs 11, 10       |
+| 2    | 2     | IDs 9, 8         |
+| 3    | 1     | ID 12            |
+
+---
+
+#### **6. Notes & Next Steps**
+- This is **basic pagination**: returns only a list of posts.
+- No metadata (like total items, total pages, current page) is returned yet.
+- Next step → Create a **generic paginated response structure** for all entities.
+
+[code Example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/51ae478ad75bef053d968320220721b6629ae73d)
+---
+
 - Pagination Module and Interface
 - Using `paginateQuery`
 - Building Response Object
