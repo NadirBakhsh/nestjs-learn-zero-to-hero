@@ -401,6 +401,82 @@ return {
 
 ---
 
-- Using `paginateQuery`
+## Using `paginateQuery`
+
+### 1. Export Pagination Provider
+- Open `pagination.module.ts`.
+- Add `PaginationProvider` to the `exports` array so it can be used in other modules:
+
+```ts
+@Module({
+  providers: [PaginationProvider],
+  exports: [PaginationProvider],
+})
+export class PaginationModule {}
+```
+
+Always show details
+
+Copy
+# Create markdown notes for using Pagination Provider in PostService
+
+markdown_content_2 = """
+# Using Pagination Provider in PostService (NestJS)
+
+## Overview
+This section explains how to **inject and use** the Pagination Provider inside the PostService to replace hardcoded pagination logic with a reusable method.
+
+---
+
+
+### 1. Export Pagination Provider
+- Open `pagination.module.ts`.
+- Add `PaginationProvider` to the `exports` array so it can be used in other modules:
+```ts
+@Module({
+  providers: [PaginationProvider],
+  exports: [PaginationProvider],
+})
+export class PaginationModule {}
+```
+
+### 2. Import Pagination Module in Posts Module
+In posts.module.ts, import the Pagination Module:
+
+```ts
+import { PaginationModule } from '../common/pagination/pagination.module';
+
+@Module({
+  imports: [PaginationModule],
+})
+export class PostsModule {}
+```
+
+
+### 3. Inject Pagination Provider into PostService
+In posts.service.ts, inject the provider via constructor dependency injection:
+
+```ts
+constructor(
+  @InjectRepository(Post) private readonly postsRepository: Repository<Post>,
+  private readonly paginationProvider: PaginationProvider,
+) {}
+```
+
+
+### 4. Update findAll Method
+Replace hardcoded repository pagination logic with the paginateQuery method from the provider:
+
+```ts
+async findAll(postQuery: PaginationQueryDto) {
+  return this.paginationProvider.paginateQuery(postQuery, this.postsRepository);
+}
+```
+
+[code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/1f96f8205c57d04f6483b6948bb7963845346732)
+
+---
+
+
 - Building Response Object
 - Complete Paginated Response
