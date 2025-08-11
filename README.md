@@ -284,7 +284,123 @@ GET /posts/1?limit=2&page=1
 [code Example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/51ae478ad75bef053d968320220721b6629ae73d)
 ---
 
-- Pagination Module and Interface
+### Pagination Module and Interface
+
+![Pagination Interface](./images/interface-pagination.png.png)
+
+
+# NestJS Pagination Module Implementation
+
+### Overview
+In this implementation, we create a **Pagination Module** inside a `common` directory to centralize pagination logic.  
+This module contains:
+- **Pagination DTO** (Data Transfer Object) for request structure.
+- **Provider** for reusable pagination logic.
+- **Interface** for structured paginated responses.
+
+---
+
+
+#### 1. Create Pagination Module
+- Inside `common/pagination` directory.
+- Use **NestJS CLI** command with `--flat` for flat structure and `--no-spec` to skip test files:
+```bash
+npx nest g module common/pagination --flat --no-spec
+```
+- This generates and registers the module.
+
+---
+
+#### 2. Create Pagination Provider
+- Add a provider to hold the core pagination logic:
+```bash
+npx nest g provider common/pagination/providers/pagination --flat --no-spec
+```
+- Automatically registered inside `PaginationModule`.
+
+---
+
+#### 3. Create Paginated Interface
+- Directory: `common/pagination/interfaces`
+- File: `paginated.interface.ts`
+- Interface structure:
+```ts
+export interface Paginated<T> {
+  meta: {
+    itemsPerPage: number;
+    totalItems: number;
+    currentPage: number;
+    totalPages: number;
+  };
+  links: {
+    first: string;
+    last: string;
+    current: string;
+    next: string;
+    previous: string;
+  };
+  data: T[];
+}
+```
+**Key Points**:
+- `meta` → Holds pagination metadata.
+- `links` → Holds navigation URLs.
+- `data` → Generic array of the entity being paginated.
+
+---
+
+#### 4. Implement Pagination Provider Method
+**Method Signature:**
+```ts
+public async paginateQuery<T extends ObjectLiteral>(
+  paginationQuery: PaginationQueryDto,
+  repository: Repository<T>
+): Promise<Paginated<T>> { ... }
+```
+- **`paginationQuery`** → Contains `limit` and `page` values.
+- **`repository`** → Generic TypeORM repository for the entity.
+- **Generic `<T>`** → Supports multiple entity types (e.g., Users, Posts).
+
+---
+
+#### 5. Pagination Logic
+Inside `paginateQuery` method:
+1. Accepts pagination parameters and repository.
+2. Runs query with `.skip()` and `.take()` for pagination.
+3. Returns results along with `meta` and `links`.
+
+**Example Return:**
+```ts
+return {
+  meta: {
+    itemsPerPage: limit,
+    totalItems,
+    currentPage: page,
+    totalPages: Math.ceil(totalItems / limit),
+  },
+  links: {
+    first: 'url?page=1',
+    last: 'url?page={last}',
+    current: `url?page=${page}`,
+    next: `url?page=${page+1}`,
+    previous: `url?page=${page-1}`,
+  },
+  data: results,
+};
+```
+
+---
+
+#### Benefits
+- **Reusable** for multiple entities.
+- **Centralized** logic in a single provider.
+- **Generic typing** ensures type safety.
+- **Structured responses** with `meta`, `links`, and `data`.
+
+[Github code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/b0cd415c47b489bcddb147dc7337173710d2f286)
+
+---
+
 - Using `paginateQuery`
 - Building Response Object
 - Complete Paginated Response
