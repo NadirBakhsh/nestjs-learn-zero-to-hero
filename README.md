@@ -575,4 +575,244 @@ providers: [PostsService, PaginationProvider]
 [code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/d6968281e6194906dcc8c3f5eddf9e6b581f4496)
 
 
-- Complete Paginated Response
+## Complete Paginated Response
+
+![Complete Paginated Response](./images/cpr.png)
+
+# Building a Typed Paginated Response in NestJS/TypeScript
+
+This guide explains how to construct a fully-typed paginated response object for any entity in a NestJS app using TypeORM (or similar). It covers the generic `Paginated<T>` interface, the pagination helper method, link generation, and how to consume it from a service like `PostsService`.
+
+---
+
+## 1) Define a Generic `Paginated<T>` Interface
+
+```ts
+// src/common/pagination/paginated.interface.ts
+export interface Paginated<T> {
+  data: T[];
+  meta: {
+    itemsPerPage: number;
+    totalItems: number;
+    currentPage: number;
+    totalPages: number;
+  };
+  links: {
+    first: string;
+    last: string;
+    current: string;
+    next: string;
+    previous: string;
+  };
+}
+```
+
+Why generic? So the same shape works for any entity (e.g., `Post`, `User`, `Product`), while keeping `data` strongly typed as `T[]`.
+
+---
+
+## 2) Pagination DTO (Query Params)
+
+```ts
+// src/common/pagination/pagination-query.dto.ts
+import { Type } from 'class-transformer';
+import { IsInt, Min } from 'class-validator';
+
+export class PaginationQueryDto {
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  page = 1;
+
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  limit = 10;
+}
+```
+
+---
+
+## 3) The Generic Pagination Method
+
+Create a reusable method that:
+- Executes a paginated query,
+- Computes counts,
+- Builds `meta`,
+- Builds HATEOAS-like `links`,
+- Returns a **typed** `Paginated<T>` object,
+- And explicitly types its **return value** as `Promise<Paginated<T>>`.
+
+```ts
+// src/common/pagination/paginate.ts
+import { Request } from 'express';
+import { Paginated } from './paginated.interface';
+import { PaginationQueryDto } from './pagination-query.dto';
+
+export async function paginateQuery<T>(
+  req: Request,
+  findFn: (skip: number, take: number) => Promise<[T[], number]>, // returns [rows, totalCount]
+  paginationQuery: PaginationQueryDto,
+): Promise<Paginated<T>> {
+  const { page = 1, limit = 10 } = paginationQuery;
+
+  // calculate offsets
+  const skip = (page - 1) * limit;
+  const take = limit;
+
+  // run the actual query (repository or query builder)
+  const [results, totalItems] = await findFn(skip, take);
+
+  // total pages (at least 1 to avoid divide-by-zero link building headaches)
+  const totalPages = Math.max(1, Math.ceil(totalItems / limit));
+
+  // derive prev/next with bounds
+  const prevPage = page > 1 ? page - 1 : 1;
+  const nextPage = page < totalPages ? page + 1 : totalPages;
+
+  // build links using request URL parts
+  const url = new URL(`${req.protocol}://${req.get('host')}${req.originalUrl}`);
+  const origin = `${url.origin}`;
+  const pathname = url.pathname; // keep incoming route path
+
+  const base = `${origin}${pathname}?limit=${limit}`;
+
+  const finalResponse: Paginated<T> = {
+    data: results,
+    meta: {
+      itemsPerPage: limit,
+      totalItems,
+      currentPage: page,
+      totalPages,
+    },
+    links: {
+      first: `${base}&page=1`,
+      last: `${base}&page=${totalPages}`,
+      current: `${base}&page=${page}`,
+      next: `${base}&page=${nextPage}`,
+      previous: `${base}&page=${prevPage}`,
+    },
+  };
+
+  return finalResponse;
+}
+```
+
+> **Note:** The TypeScript error you may have seen earlier (while the object was incomplete) disappears after you finish the object to match the `Paginated<T>` shape.
+
+---
+
+## 4) Consuming the Helper in a Service (Example: Posts)
+
+```ts
+// src/posts/posts.service.ts
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Request } from 'express';
+
+import { Post } from './post.entity';
+import { Paginated } from '@/common/pagination/paginated.interface';
+import { PaginationQueryDto } from '@/common/pagination/pagination-query.dto';
+import { paginateQuery } from '@/common/pagination/paginate';
+
+@Injectable()
+export class PostsService {
+  constructor(
+    @InjectRepository(Post) private readonly repo: Repository<Post>,
+  ) {}
+
+  async findAll(
+    req: Request,
+    pagination: PaginationQueryDto,
+  ): Promise<Paginated<Post>> {
+    return paginateQuery<Post>(
+      req,
+      // Adapter function that runs your paginated query
+      async (skip, take) => {
+        // Option A: using repository
+        const [rows, count] = await this.repo.findAndCount({
+          skip,
+          take,
+          order: { createdAt: 'DESC' },
+          relations: ['author'], // if you need relations
+        });
+        return [rows, count];
+      },
+      pagination,
+    );
+  }
+}
+```
+
+---
+
+## 5) Controller Example
+
+```ts
+// src/posts/posts.controller.ts
+import { Controller, Get, Query, Req } from '@nestjs/common';
+import { Request } from 'express';
+import { PostsService } from './posts.service';
+import { PaginationQueryDto } from '@/common/pagination/pagination-query.dto';
+
+@Controller('posts')
+export class PostsController {
+  constructor(private readonly service: PostsService) {}
+
+  @Get()
+  findAll(@Req() req: Request, @Query() query: PaginationQueryDto) {
+    return this.service.findAll(req, query);
+  }
+}
+```
+
+---
+
+## 6) What You’ll See in the Response
+
+Example (with `limit=1&page=4`):
+
+```json
+{
+  "data": [ { /* one Post item */ } ],
+  "meta": {
+    "itemsPerPage": 1,
+    "totalItems": 7,
+    "currentPage": 4,
+    "totalPages": 7
+  },
+  "links": {
+    "first": "https://api.example.com/posts?limit=1&page=1",
+    "last": "https://api.example.com/posts?limit=1&page=7",
+    "current": "https://api.example.com/posts?limit=1&page=4",
+    "next": "https://api.example.com/posts?limit=1&page=5",
+    "previous": "https://api.example.com/posts?limit=1&page=3"
+  }
+}
+```
+
+---
+
+## 7) Common Pitfalls & Tips
+
+- **Incomplete object errors:** If you annotate the variable as `Paginated<T>`, you must provide **all** required properties before the assignment.
+- **Bounds for next/previous:** Clamp them between `1` and `totalPages` to avoid broken links on first/last pages.
+- **Stable base URL:** Use the request’s `origin` + `pathname`, and rebuild query parts (`limit`, `page`) to keep links predictable.
+- **Strong typing everywhere:** Type the helper return as `Promise<Paginated<T>>` and type each service method explicitly (e.g., `Promise<Paginated<Post>>`). This improves IntelliSense and prevents regressions.
+- **Reuse across entities:** The helper is generic — pass different adapter functions for users, posts, products, etc.
+
+---
+
+## 8) Quick Checklist
+
+- [x] `Paginated<T>` interface created
+- [x] Pagination DTO with `page` and `limit`
+- [x] Generic `paginateQuery<T>` helper returns `Promise<Paginated<T>>`
+- [x] Links: `first`, `last`, `current`, `next`, `previous`
+- [x] Service uses helper with explicit generic (`<Post>`)
+- [x] Controller passes `req` and `query`
+- [x] Works for any entity with minimal boilerplate
+
+[Github code commit](https://github.com/NadirBakhsh/nestjs-resources-code/commit/d8939cb1dd11fdfdc0acb08b0f73427f521b68ee)
+
