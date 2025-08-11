@@ -478,5 +478,101 @@ async findAll(postQuery: PaginationQueryDto) {
 ---
 
 
-- Building Response Object
+## Building Response Object
+
+### 1. `src/common/pagination/interfaces/paginated.interface.ts`
+**Changes:**  
+- **1 addition & 1 deletion**: Minor formatting or structural update to the `Paginated<T>` class.
+
+#### Purpose:
+The `Paginated<T>` interface defines the structure for paginated responses, which typically includes:
+- **meta**: Holds pagination metadata (`totalItems`, `currentPage`, `totalPages`).
+- **links**: Provides navigation links (`first`, `last`), useful for frontend pagination UI.
+
+Example structure:
+```ts
+export class Paginated<T> {
+  meta: {
+    totalItems: number;
+    currentPage: number;
+    totalPages: number;
+  };
+  links: {
+    first: string;
+    last: string;
+  };
+}
+```
+
+---
+
+### 2. `src/common/pagination/providers/pagination.provider.ts`
+**Changes:**  
+- **+23 lines, -1 line**: Introduced logic to generate pagination URLs and compute pagination metadata.
+
+#### New Implementation Details:
+- **Dependency Injection**:  
+  ```ts
+  @Inject(REQUEST)
+  private readonly request: Request
+  ```
+  Injects the HTTP request object so pagination logic can generate proper URLs.
+
+- **Pagination Logic**:  
+  The `paginationQuery` method:
+  1. Accepts `PaginationQueryDto` and a TypeORM `Repository`.
+  2. Fetches paginated results using `find()` with `skip` and `take`.
+  3. Calculates:
+     - `totalItems` (count from DB)
+     - `totalPages` (`totalItems / limit`)
+     - `nextPage` & `previousPage`
+  4. Builds **absolute pagination URLs** using `this.request.protocol`, `this.request.headers.host`, and `this.request.url`.
+
+Example snippet:
+```ts
+const baseUrl = this.request.protocol + '://' + this.request.headers.host + '/';
+const newUrl = new URL(this.request.url, baseUrl);
+const totalItems = await repository.count();
+const totalPages = Math.ceil(totalItems / paginationQuery.limit);
+const nextPage = paginationQuery.page === totalPages ? paginationQuery.page : paginationQuery.page + 1;
+const previousPage = paginationQuery.page === 1 ? paginationQuery.page : paginationQuery.page - 1;
+```
+
+---
+
+### 3. `src/posts/posts.module.ts`
+**Changes:**  
+- **+2 lines, -1 line**: Added `PaginationProvider` to the `providers` array.
+
+#### Purpose:
+This makes the `PaginationProvider` available within the **Posts Module**, so the `PostsService` can handle pagination for blog posts.
+
+Before:
+```ts
+providers: [PostsService]
+```
+
+After:
+```ts
+providers: [PostsService, PaginationProvider]
+```
+
+---
+
+#### Summary of Changes
+- **Interface update**: Minor adjustments to `Paginated<T>` for pagination response structure.
+- **Provider enhancement**: Added a `PaginationProvider` service to centralize and standardize pagination logic across the app.
+- **Module integration**: Registered `PaginationProvider` in `PostsModule` so post-related routes can benefit from centralized pagination.
+
+---
+
+### Benefits:
+✅ Centralized pagination logic  
+✅ Automatic pagination metadata (`totalItems`, `totalPages`, `nextPage`, `previousPage`)  
+✅ Clean separation of concerns (pagination handled by a provider, not mixed into services)  
+✅ Consistent pagination structure for frontend consumption
+
+[code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/d6968281e6194906dcc8c3f5eddf9e6b581f4496)
+
+
 - Complete Paginated Response
