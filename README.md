@@ -171,6 +171,65 @@ This approach keeps our authentication logic clean, testable, and easy to update
 
 ---
 ## Implementing Hashing Provider
+
+To implement the hashing provider using bcrypt, follow these steps:
+
+### 1. Install the Bcrypt Package
+
+First, install the bcrypt package in your project.  
+It's recommended to use version `5.1.1` for compatibility:
+
+```bash
+npm install bcrypt@5.1.1
+```
+
+### 2. Import Bcrypt in Your Provider
+
+In your `BcryptProvider` class, import bcrypt like this:
+
+```typescript
+import * as bcrypt from 'bcrypt';
+```
+
+### 3. Implement the `hashPassword` Method
+
+- Mark the method as `async`.
+- Generate a salt using `bcrypt.genSalt()`.
+- Hash the password using `bcrypt.hash(data, salt)`.
+- Return the hashed password.
+
+Example:
+
+```typescript
+public async hashPassword(data: string | Buffer): Promise<string> {
+  const salt = await bcrypt.genSalt();
+  return bcrypt.hash(data, salt);
+}
+```
+
+### 4. Implement the `comparePassword` Method
+
+- Use `bcrypt.compare(data, encrypted)` to compare the plain password with the hashed password.
+- Return the result (a boolean).
+
+Example:
+
+```typescript
+public async comparePassword(data: string | Buffer, encrypted: string): Promise<boolean> {
+  return bcrypt.compare(data, encrypted);
+}
+```
+
+### Why Use Bcrypt?
+
+- Bcrypt automatically handles salt generation and storage.
+- It provides simple methods for hashing and comparing passwords.
+- You don't need to manage salts or store them separately—bcrypt includes the salt in the hash string.
+
+This makes password management secure and straightforward in your NestJS application.
+
+[github code commit][](https://github.com/NadirBakhsh/nestjs-resources-code/commit/57ac9a496c49a65fbb4b4f22b54f502b3cac0c62)
+
 ---
 ## User Signup
 ---
