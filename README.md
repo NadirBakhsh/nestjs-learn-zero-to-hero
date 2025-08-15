@@ -232,6 +232,40 @@ This makes password management secure and straightforward in your NestJS applica
 
 ---
 ## User Signup
+
+### Hashing Passwords When Creating a New User
+
+Now that we have our hashing provider and bcrypt implementation ready, the next step is to ensure that user passwords are hashed before being saved to the database.
+
+#### Refactoring User Creation
+
+Previously, the `createUser` method in the user service saved passwords as plain text. To improve security and code organization:
+
+1. **Encapsulate User Creation Logic:**  
+   Move the `createUser` method into a new provider called `CreateUserProvider` inside the users module. This keeps the user service clean and focused.
+
+2. **Inject Dependencies:**  
+   - Inject the `UsersRepository` using the `@InjectRepository` decorator.
+   - Inject the `HashingProvider` using the `@Inject` decorator with `forwardRef`, since there is a circular dependency between the users and auth modules.
+
+3. **Hash the Password:**  
+   Before saving the user, use the hashing provider to hash the password:
+   ```typescript
+   const hashedPassword = await this.hashingProvider.hashPassword(createUserDto.password);
+   ```
+
+4. **Update User Service:**  
+   Refactor the user service to delegate user creation to the new provider, further simplifying the service.
+
+#### Testing the Implementation
+
+- When you create a new user, the password will now be stored as a hash in the database, not as plain text.
+- You can verify this by checking the users table after creating a user—the password field will contain a bcrypt hash.
+
+This ensures all new users have their passwords securely hashed before storage.
+
+[Github code commit](https://github.com/NadirBakhsh/nestjs-resources-code/commit/0c95f022f7e83d4d28957c422b0f352e4d63348e)
+
 ---
 ## User SignIn Controller
 ---
