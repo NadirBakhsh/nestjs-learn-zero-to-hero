@@ -268,6 +268,23 @@ This ensures all new users have their passwords securely hashed before storage.
 
 ---
 ## User SignIn Controller
+
+### Implementing User Sign-In
+
+To allow users to sign in, we need to:
+
+1. **Create a SignIn DTO:**  
+   - Create a `dtos` directory inside the `auth` module.
+   - Add a `sign-in.dto.ts` file exporting a `SignInDto` class.
+   - The class should have two properties: `email` (validated with `@IsEmail()` and `@IsNotEmpty()`) and `password` (validated with `@IsString()` and `@IsNotEmpty()`).
+
+2. **Add a SignIn Endpoint in Auth Controller:**  
+   - In `auth.controller.ts`, add a `@Post('sign-in')` endpoint.
+   - The method should be `public async signIn(@Body() signInDto: SignInDto)`.
+   - The method should call `this.authService.signIn(signInDto)`.
+
+[Github code commit](https://github.com/NadirBakhsh/nestjs-resources-code/commit/dfd62971e2399acea30bda284b0dea9fcb37d4b0)
+
 ---
 ## Completing the SignIn Method
 ---
