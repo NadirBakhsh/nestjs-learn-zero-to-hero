@@ -114,11 +114,15 @@ When a user creates a password, you hash it and store only the hash in the datab
 ### What is Salting?
 A salt is a random string added to the password before hashing. This makes each hash unique, even if two users have the same password. Salting prevents attacks like "rainbow table" attacks, where hackers use precomputed tables to reverse hashes.
 
+![Salt](./images/salt-hashing.png)
+
 ### How Does Bcrypt Work?
 Bcrypt is a popular hashing algorithm for passwords. It:
 - Adds a salt automatically.
 - Allows you to set a "cost factor" (number of hashing rounds), making it slower and harder to crack.
 - Stores the salt, cost, and hash together in one string.
+
+![Bcrypt](./images/final-string.png)
 
 ### Why is This Secure?
 - Even if someone gets the database, they only see hashes, not passwords.
