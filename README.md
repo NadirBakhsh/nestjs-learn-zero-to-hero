@@ -97,6 +97,8 @@ By the end of this section, you will be able to implement **secure, password-bas
 
 ## Hashing and Salting Passwords: Why and How?
 
+![Hashing](./images/hashing.png)
+
 ### Why Not Store Passwords Directly?
 Storing passwords as plain text in a database is extremely risky. If someone gains access to the database (through hacking or internal misuse), they can see all user passwords. Since many people reuse passwords across sites, this can lead to widespread security breaches.
 
