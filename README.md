@@ -137,6 +137,38 @@ Bcrypt is a popular hashing algorithm for passwords. It:
 
 ---
 ## Create Hashing Providers
+
+### Why Use Providers for Hashing?
+
+
+We start by creating an **abstract class** called `HashingProvider`. This class defines the contract for any hashing provider we want to use. It contains two abstract methods:
+
+- `hashPassword(data: string | Buffer): Promise<string>`  
+  Hashes the provided password and returns the hashed string.
+
+- `comparePassword(data: string | Buffer, encrypted: string): Promise<boolean>`  
+  Compares a plain password with a hashed password and returns `true` if they match.
+
+By using an abstract class, we ensure that any concrete implementation (like bcrypt) must provide these methods.
+
+#### Bcrypt Provider
+
+Next, we create a **BcryptProvider** class that implements the `HashingProvider` abstract class. This class provides the actual logic for hashing and comparing passwords using the bcrypt algorithm.
+
+- The `hashPassword` method uses bcrypt to hash the password.
+- The `comparePassword` method uses bcrypt to compare a plain password with a hashed password.
+
+This setup allows us to inject the `HashingProvider` wherever we need password hashing in our application. If we ever want to switch to a different algorithm (like Argon2), we just create a new provider that implements the same abstract class.
+
+**Summary:**
+- Create an abstract `HashingProvider` with `hashPassword` and `comparePassword` methods.
+- Implement these methods in a concrete `BcryptProvider`.
+- Use dependency injection to use the provider throughout the app.
+
+This approach keeps our authentication logic clean, testable, and easy to update in the future.
+
+[code commit](https://github.com/NadirBakhsh/nestjs-resources-code/commit/b891ea81e1beb865cd9a5d68f5451e22d24acbc3)
+
 ---
 ## Implementing Hashing Provider
 ---
