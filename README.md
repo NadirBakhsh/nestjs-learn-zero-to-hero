@@ -94,7 +94,41 @@ By the end of this section, you will be able to implement **secure, password-bas
 
 
 ---
-## Hashing and Salting Passwords
+
+## Hashing and Salting Passwords: Why and How?
+
+### Why Not Store Passwords Directly?
+Storing passwords as plain text in a database is extremely risky. If someone gains access to the database (through hacking or internal misuse), they can see all user passwords. Since many people reuse passwords across sites, this can lead to widespread security breaches.
+
+### What is Hashing?
+Hashing is a process that transforms any input (like a password) into a fixed-size string of characters, which appears random. This is done using mathematical functions called hash functions. Key points:
+- Hashing is one-way: you cannot reverse a hash to get the original password.
+- The same input always produces the same hash (with the same algorithm and parameters).
+- Hashes are always the same length, regardless of input size.
+
+### How Does Hashing Help?
+When a user creates a password, you hash it and store only the hash in the database. When they log in, you hash the password they enter and compare it to the stored hash. If they match, the password is correct. This way, the actual password is never stored or revealed.
+
+### What is Salting?
+A salt is a random string added to the password before hashing. This makes each hash unique, even if two users have the same password. Salting prevents attacks like "rainbow table" attacks, where hackers use precomputed tables to reverse hashes.
+
+### How Does Bcrypt Work?
+Bcrypt is a popular hashing algorithm for passwords. It:
+- Adds a salt automatically.
+- Allows you to set a "cost factor" (number of hashing rounds), making it slower and harder to crack.
+- Stores the salt, cost, and hash together in one string.
+
+### Why is This Secure?
+- Even if someone gets the database, they only see hashes, not passwords.
+- Salting ensures that identical passwords have different hashes.
+- Bcrypt’s cost factor makes brute-force attacks much harder.
+
+### Summary
+- Never store plain text passwords.
+- Always hash passwords, and use a salt.
+- Use a strong algorithm like bcrypt, which handles salting and hashing securely.
+- When verifying a password, hash the input and compare to the stored hash.
+
 ---
 ## Create Hashing Providers
 ---
