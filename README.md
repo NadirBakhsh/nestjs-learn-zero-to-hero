@@ -321,6 +321,35 @@ This structure keeps your authentication logic clean, testable, and ready for fu
 
 ---
 ## Custom Response Code
+### Setting the Correct HTTP Status for Sign-In
+
+By default, NestJS returns a `201 Created` status code for successful POST requests. However, for a sign-in endpoint, the more appropriate status code is `200 OK`.
+
+To customize the response code:
+
+1. **Use the `@HttpCode` Decorator:**  
+   - In your `auth.controller.ts`, add the `@HttpCode()` decorator above the sign-in endpoint method.
+   - Import `HttpStatus` from `@nestjs/common` and set the code to `HttpStatus.OK` (which is 200).
+
+   Example:
+   ```typescript
+   import { HttpCode, HttpStatus } from '@nestjs/common';
+
+   @Post('sign-in')
+   @HttpCode(HttpStatus.OK)
+   public async signIn(@Body() signInDto: SignInDto) {
+     return this.authService.signIn(signInDto);
+   }
+   ```
+
+2. **Test the Endpoint:**  
+   - When you send a valid sign-in request, you should now receive a `200 OK` response with the result (e.g., `true`).
+   - If the password is incorrect, you should receive a `401 Unauthorized` response.
+
+This ensures your API follows best practices for HTTP status codes, improving clarity for frontend and API consumers.
+
+[Code commit](https://github.com/NadirBakhsh/nestjs-resources-code/commit/3c374b9ddfa890cb5e8aa35785195e313e1842aa)
+
 ---
 ## Understanding JWTs
 ---
