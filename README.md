@@ -287,6 +287,38 @@ To allow users to sign in, we need to:
 
 ---
 ## Completing the SignIn Method
+
+### Encapsulating Sign-In Logic in a Provider
+
+To keep the authentication logic modular and maintainable, encapsulate the sign-in process in a dedicated provider:
+
+1. **Create a SignIn Provider:**  
+   - Use the Nest CLI to generate a new provider: `sign-in.provider.ts` inside the `auth/providers` directory.
+   - This provider will handle the full sign-in flow.
+
+2. **Inject Dependencies:**  
+   - Inject the `UsersService` using the `@Inject` decorator with `forwardRef` to handle circular dependencies.
+   - Inject the `HashingProvider` for password comparison.
+
+3. **Implement the Sign-In Method:**  
+   - The method should accept a `SignInDto`.
+   - Use the users service to find the user by email. If not found, an exception is thrown automatically.
+   - Use the hashing provider's `comparePassword` method to compare the provided password with the stored hash.
+   - If the passwords do not match, throw an `UnauthorizedException` with a message like "Incorrect password".
+   - If the comparison fails due to an error, throw a `RequestTimeoutException`.
+   - If the password matches, return a confirmation (e.g., `true`). Later, this will be replaced with a JWT token.
+
+4. **Update Auth Service:**  
+   - Inject the new sign-in provider into the auth service.
+   - In the `signIn` method, delegate the logic to the sign-in provider.
+
+5. **Update Auth Controller:**  
+   - Ensure the controller's sign-in endpoint calls the updated auth service method.
+
+This structure keeps your authentication logic clean, testable, and ready for future enhancements like JWT token generation.
+
+[Github code commit](https://github.com/NadirBakhsh/nestjs-resources-code/commit/e939e35af0ff231db5c876a62cae4f12aab02ade)
+
 ---
 ## Custom Response Code
 ---
