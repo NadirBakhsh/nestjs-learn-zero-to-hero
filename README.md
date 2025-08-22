@@ -352,6 +352,68 @@ This ensures your API follows best practices for HTTP status codes, improving cl
 
 ---
 ## Understanding JWTs
+
+![JWT](./images/jwt.png)
+
+### What is a JSON Web Token (JWT)?
+
+A **JSON Web Token (JWT)** is an open industry standard (RFC 7519) for securely transmitting information between two parties as a JSON object. JWTs are commonly used for authentication and authorization in web applications.
+
+A JWT consists of three parts, separated by periods (`.`):
+
+1. **Header**  
+   - Contains metadata about the token, such as the signing algorithm (e.g., HS256) and the token type (JWT).
+   - Example (decoded):
+     ```json
+     {
+       "alg": "HS256",
+       "typ": "JWT"
+     }
+     ```
+
+2. **Payload**  
+   - Contains the claims or information you want to transmit (e.g., user ID, email).
+   - The payload can be decoded by anyone, so **never put sensitive information here**.
+   - Example (decoded):
+     ```json
+     {
+       "sub": "1234567890",
+       "email": "user@example.com"
+     }
+     ```
+
+3. **Signature**  
+   - Used to verify that the token has not been altered.
+   - Created by encoding the header and payload, then signing them with a secret key known only to the server.
+   - If the token is tampered with, the signature will not match and the token will be considered invalid.
+
+**JWT Example:**  
+`eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiZW1haWwiOiJ1c2VyQGV4YW1wbGUuY29tIn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c`
+
+### How JWT Authentication Works
+
+![Authentication Works](./images/AP.png)
+
+1. **User Login:**  
+   - The user sends their email and password to the server.
+   - The server verifies the credentials.
+   - If valid, the server generates a JWT and sends it back to the user.
+
+2. **Accessing Protected Resources:**  
+   - The client stores the JWT (usually in local storage or cookies).
+   - For subsequent requests to protected endpoints, the client sends the JWT in the `Authorization` header.
+   - The server verifies the JWT's signature and validity.
+   - If valid, the server processes the request; otherwise, it returns an unauthorized error.
+
+![Accessing Protected](./images/vp.png)
+
+**Important Notes:**
+- The payload of a JWT can be decoded by anyone; do not store sensitive data in it.
+- The signature ensures the token's integrity and authenticity.
+- JWTs have an expiration time (TTL). After expiration, the user must re-authenticate.
+
+This mechanism allows stateless authentication: after login, the server does not need to store session data for each user. The JWT itself carries the necessary information and can be validated using the server's secret key.
+
 ---
 ## Adding JWT Configuration
 ---
