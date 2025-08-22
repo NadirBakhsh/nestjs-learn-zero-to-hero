@@ -416,6 +416,189 @@ This mechanism allows stateless authentication: after login, the server does not
 
 ---
 ## Adding JWT Configuration
+
+### Installing and Configuring JWT in NestJS
+
+To generate and verify JWT tokens in your NestJS application, follow these steps:
+
+1. **Install the JWT Package**  
+   Use npm to install the official NestJS JWT package.  
+   It's recommended to use version `10.2.0` for compatibility:
+   ```bash
+   npm install @nestjs/jwt@10.2.0
+   ```
+
+2. **Add Environment Variables**  
+   In your `.env.development` file, add the following variables:
+   ```
+   JWT_SECRET=your-random-secret-key
+   TOKEN_AUDIENCE=http://localhost:3000
+   TOKEN_ISSUER=http://localhost:3000
+   ACCESS_TOKEN_TTL=3600
+   ```
+   - `JWT_SECRET`: Secret key for signing tokens (use a long, random string).
+   - `TOKEN_AUDIENCE`: The intended audience (usually your app's URL).
+   - `TOKEN_ISSUER`: The issuer of the token (usually your app's URL).
+   - `ACCESS_TOKEN_TTL`: Token expiration time in seconds (e.g., 3600 for 1 hour).
+
+3. **Create a JWT Config File**  
+   Inside the `auth/config` directory, create a `jwt.config.ts` file:
+   ```typescript
+   import { registerAs } from '@nestjs/config';
+
+   export default registerAs('jwt', () => ({
+     secret: process.env.JWT_SECRET,
+     audience: process.env.TOKEN_AUDIENCE,
+     issuer: process.env.TOKEN_ISSUER,
+     accessTokenTtl: parseInt(process.env.ACCESS_TOKEN_TTL ?? '3600', 10),
+   }));
+   ```
+
+4. **Register Config and JWT Modules in Auth Module**  
+   In your `auth.module.ts`:
+   - Import `ConfigModule` and register the JWT config using `forFeature`.
+   - Import `JwtModule` and register it asynchronously using the config provider.
+
+   Example:
+   ```typescript
+   import { Module } from '@nestjs/common';
+   import { ConfigModule } from '@nestjs/config';
+   import jwtConfig from './config/jwt.config';
+   import { JwtModule } from '@nestjs/jwt';
+
+   @Module({
+     imports: [
+       ConfigModule.forFeature(jwtConfig),
+       JwtModule.registerAsync(jwtConfig.asProvider()),
+       // ...other imports...
+     ],
+     // ...existing code...
+   })
+   export class AuthModule {}
+   ```
+
+This setup ensures that your JWT configuration is modular, secure, and ready for use in the authentication flow. You can now inject the JWT service and configuration wherever needed in your auth module to generate and verify tokens.
+
+---
+## Generating JWT
+
+### Using the JWT Service to Generate Tokens
+
+Once the user successfully signs in, you can generate a JWT for them using the JWT service. Here's how:
+
+1. **Inject the JWT Service:**  
+   In your sign-in provider (`sign-in.provider.ts`), inject the `JwtService`:
+
+   ```typescript
+   import { JwtService } from '@nestjs/jwt';
+
+   constructor(
+     private readonly usersService: UsersService,
+     private readonly hashingProvider: HashingProvider,
+     private readonly jwtService: JwtService, // Inject JWT service
+   ) {}
+   ```
+
+2. **Generate the JWT:**  
+   In the sign-in method, after confirming the user's password is correct, generate the JWT:
+
+   ```typescript
+   const token = this.jwtService.sign(
+     { email: user.email, sub: user.id }, // Payload
+     { expiresIn: '1h' }, // Options
+   );
+   ```
+
+   - The payload can contain any data you want to include in the token. Here, we're including the user's email and ID.
+   - The `expiresIn` option sets the token's expiration time. You can also use the TTL from the config: `this.configService.get('jwt.accessTokenTtl')`.
+
+3. **Return the JWT:**  
+   Return the generated token from the sign-in method. The controller can then send this token to the client.
+
+### Example: Complete Sign-In Flow with JWT
+
+Here's how the complete sign-in flow looks with JWT integration:
+
+```typescript
+async signIn(signInDto: SignInDto) {
+  // 1. Find the user by email
+  const user = await this.usersService.findByEmail(signInDto.email);
+
+  // 2. Check if the password matches
+  const isPasswordValid = await this.hashingProvider.comparePassword(
+    signInDto.password,
+    user.password,
+  );
+
+  if (!isPasswordValid) {
+    throw new UnauthorizedException('Incorrect password');
+  }
+
+  // 3. Generate the JWT
+  const token = this.jwtService.sign(
+    { email: user.email, sub: user.id },
+    { expiresIn: '1h' },
+  );
+
+  // 4. Return the token
+  return { access_token: token };
+}
+```
+
+### Testing the JWT Generation
+
+- After a successful sign-in, the response should now include a JWT token.
+- This token can be used to authenticate subsequent requests to protected endpoints.
+
+---
+## JWT Token Signatures
+
+### Understanding JWT Signatures
+
+The signature is a crucial part of the JWT, ensuring its integrity and authenticity. Here's how it works:
+
+1. **Signing the Token:**  
+   When generating a JWT, the server creates a signature by combining the encoded header, encoded payload, and a secret key. This is done using the algorithm specified in the header (e.g., HS256).
+
+2. **Verifying the Token:**  
+   When a client presents a JWT, the server verifies the token by:
+   - Reproducing the signature using the header, payload, and secret key.
+   - Comparing the reproduced signature with the signature in the token.
+
+   If both signatures match, the token is valid and unaltered. If not, the token is rejected.
+
+### Example: HS256 Signature Generation
+
+For the HS256 algorithm, the signature is generated using the HMAC SHA-256 hash function. Here's a simplified example:
+
+```typescript
+import * as crypto from 'crypto';
+
+const header = '{"alg":"HS256","typ":"JWT"}';
+const payload = '{"sub":"1234567890","email":"user@example.com"}';
+const secret = 'your-256-bit-secret';
+
+// 1. Encode Header and Payload
+const encodedHeader = Buffer.from(header).toString('base64url');
+const encodedPayload = Buffer.from(payload).toString('base64url');
+
+// 2. Create Signature
+const signature = crypto
+  .createHmac('sha256', secret)
+  .update(`${encodedHeader}.${encodedPayload}`)
+  .digest('base64url');
+
+// 3. Combine to Form JWT
+const jwt = `${encodedHeader}.${encodedPayload}.${signature}`;
+```
+
+### Important Notes on Signatures
+- The signature ensures that the token has not been tampered with. If any part of the token is altered, the signature will not match, and the token will be considered invalid.
+- Never share your JWT secret key. It should be kept confidential and secure.
+- For added security, regularly rotate your secret keys and implement key expiration and revocation mechanisms.
+
+[Code commit](https://github.com/NadirBakhsh/nestjs-resources-code/commit/a5c31b403d7f3d431cbe969db5f9e7560f9b8f09)
+
 ---
 ## Generating JWT
 ---
