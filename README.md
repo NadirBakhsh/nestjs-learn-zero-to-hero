@@ -601,6 +601,64 @@ const jwt = `${encodedHeader}.${encodedPayload}.${signature}`;
 
 ---
 ## Generating JWT
+
+1. Injecting Dependencies
+
+To generate a JWT token, you need two main dependencies in your provider’s constructor:
+
+JwtService: Provided by @nestjs/jwt, used to sign and verify tokens.
+JWT Configuration: Injected using NestJS’s config system, containing values like secret, audience, issuer, and token TTL.
+
+```typescript
+import { JwtService } from '@nestjs/jwt';
+import { Inject } from '@nestjs/common';
+import { ConfigType } from '@nestjs/config';
+import jwtConfig from '../config/jwt.config';
+
+constructor(
+  private readonly jwtService: JwtService,
+  @Inject(jwtConfig.KEY)
+  private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
+) {}
+```
+
+2. Generating the Token
+After validating the user’s credentials, use jwtService.signAsync() to generate the token.
+
+- **Payload**: Contains user info (e.g., sub for user ID, email).
+- **Options**: Use values from your config (audience, issuer, secret, expiresIn).
+
+```typescript
+// ...existing code...
+const accessToken = await this.jwtService.signAsync(
+  {
+    sub: user.id,
+    email: user.email,
+  },
+  {
+    audience: this.jwtConfiguration.audience,
+    issuer: this.jwtConfiguration.issuer,
+    secret: this.jwtConfiguration.secret,
+    expiresIn: this.jwtConfiguration.accessTokenTtl,
+  },
+);
+```
+
+3. Returning the Token
+Return the token as part of the response:
+
+```typescript
+return { access_token: accessToken };
+```
+
+**Summary**
+- Inject JwtService and your JWT config.
+- Use signAsync() to generate a token with user info and config options.
+- Return the token to the client after successful sign-in.
+
+
+[Code commit](https://github.com/NadirBakhsh/nestjs-resources-code/commit/03685dcaaf11838dbecc9e496e73ca5dd24a94a8)
+
 ---
 ## JWT Token Signatures
 ---
