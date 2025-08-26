@@ -661,4 +661,25 @@ return { access_token: accessToken };
 
 ---
 ## JWT Token Signatures
+
+![JWT Signatures](./images/jwt-signatures.png)
+
+The signature is a crucial part of the JWT, ensuring its integrity and authenticity. Here's how it works:
+
+1. **Signing the Token:**  
+   When generating a JWT, the server creates a signature by combining the encoded header, encoded payload, and a secret key. This is done using the algorithm specified in the header (e.g., HS256).
+
+2. **Verifying the Token:**  
+   When a client presents a JWT, the server verifies the token by:
+   - Reproducing the signature using the header, payload, and secret key.
+   - Comparing the reproduced signature with the signature in the token.
+
+   If both signatures match, the token is valid and unaltered. If not, the token is rejected.
+
+**Example: HS256 Signature Generation**
+
+For the HS256 algorithm, the signature is generated using the HMAC SHA-256 hash function. Here's a simplified example:
+
+[Code commit](https://github.com/NadirBakhsh/nestjs-resources-code/commit/03685dcaaf11838dbecc9e496e73ca5dd24a94a8)
+
 ---
