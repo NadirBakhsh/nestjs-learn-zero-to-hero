@@ -101,6 +101,49 @@ The completed AccessTokenGuard checks for a token, validates it, attaches the us
 ---
 
 ## Testing the AccessTokenGuard
+
+![guards test](./images/guards-test.png)
+
+**Explanation:**  
+To test the AccessTokenGuard, you need to apply it to a route and try accessing that route with and without a valid JWT access token.
+
+**How to Test:**
+1. **Import JWT Config in Target Module:**  
+   If your JWT config is not global, make sure to import the JWT config and JWT module into any module where you want to use the guard (e.g., UsersModule).
+
+2. **Apply the Guard:**  
+   Use the `@UseGuards(AccessTokenGuard)` decorator on a controller method (e.g., `createMany` in UsersController).  
+   ```typescript
+   @UseGuards(AccessTokenGuard)
+   @Post('create-many')
+   createMany(@Body() dto: CreateManyDto) {
+     // ...controller logic...
+   }
+   ```
+
+3. **Test Without Token:**  
+   - Send a request to the guarded endpoint without an Authorization header.
+   - You should receive a 401 Unauthorized error.
+
+4. **Test With Token:**  
+   - First, sign in to get a valid access token from your auth endpoint.
+   - Add the token to the Authorization header as `Bearer <token>`.
+   - Send the request again. If the token is valid, the request should go through (you may get a different error, e.g., duplicate user, but not unauthorized).
+
+5. **Check the Payload:**  
+   - The guard logs the payload to the terminal, showing user info like user ID and email.
+   - You can verify this info in your database.
+
+**Key Points:**  
+- You can apply the guard to a single route, an entire controller, or globally.
+- If applied to a controller, all endpoints in that controller require authentication.
+- The guard blocks unauthorized requests before they reach your controller logic.
+
+**Summary:**  
+Testing the AccessTokenGuard ensures that only authenticated users can access protected endpoints. You can verify its behavior by sending requests with and without valid tokens and observing the responses and logs.
+
+[Code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/bbceb97258cc09ecf9926acd9c103e0de1793b92)
+
 ---
 
 ## Applying AccessTokenGuard Globally
