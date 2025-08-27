@@ -64,6 +64,40 @@ The AccessTokenGuard helps protect your routes by making sure only requests with
 ---
 
 ## Completing AccessTokenGuard Implementation
+
+**Explanation:**  
+To complete the AccessTokenGuard, we need to validate the extracted token and attach the user payload to the request if the token is valid.
+
+**Step-by-step:**
+1. **Check for Token:**  
+   If the token is missing (`undefined`), immediately throw an `UnauthorizedException`.
+
+2. **Validate the Token:**  
+   - Convert the `canActivate` method to `async`.
+   - Use a `try...catch` block.
+   - In the `try` block, use `await this.jwtService.verifyAsync(token, this.jwtConfig)` to verify the token.
+   - If valid, the payload is returned.
+
+3. **Attach Payload to Request:**  
+   - Add the payload to the request object using a constant key (e.g., `REQUEST_USER_KEY`).
+   - This allows controllers to access the authenticated user's info from the request.
+
+4. **Handle Invalid Token:**  
+   - If verification fails, throw an `UnauthorizedException` in the `catch` block.
+
+5. **Return True:**  
+   - If all checks pass, return `true` to allow the request.
+
+**Key Points:**  
+- Use a constant for the request user key (e.g., `REQUEST_USER_KEY`) instead of a hardcoded string.
+- The payload typically contains user info like `sub` (user ID) and `email`.
+- If the token is invalid or missing, the guard throws an unauthorized error.
+
+**Summary:**  
+The completed AccessTokenGuard checks for a token, validates it, attaches the user payload to the request, and ensures only authenticated requests are processed.
+
+[Code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/6e7f722a2c7d1184b3798317be64a186bd72f5a2)
+
 ---
 
 ## Testing the AccessTokenGuard
