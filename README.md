@@ -216,6 +216,25 @@ Refer to how other environment variables are validated in your config directory 
 ---
 
 ## Solution: Validations for JWT Environment Variables
+
+**Solution:**  
+To validate your JWT-related environment variables, open `src/config/environment.validation.ts` and add the following validations using `joi`:
+
+```typescript
+JWT_SECRET: Joi.string().required(),
+JWT_AUDIENCE: Joi.string().required(),
+JWT_ISSUER: Joi.string().required(),
+JWT_EXPIRES_IN: Joi.number().required(),
+```
+
+- `JWT_SECRET`, `JWT_AUDIENCE`, and `JWT_ISSUER` must be strings and are required.
+- `JWT_EXPIRES_IN` must be a number and is required.
+
+If any of these variables are missing or not in the correct format, the application will throw a validation error and not start.  
+Adding these validations ensures your environment is correctly configured and prevents runtime errors.
+
+[Code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/56f05aae458bc5370600b25d6e682d26232e37e9)
+
 ---
 
 ## What are Decorators?
