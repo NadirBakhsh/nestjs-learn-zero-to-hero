@@ -373,6 +373,12 @@ The `AuthenticationGuard` uses route metadata to determine if a route is public 
 ---
 
 ## Create AuthenticationGuard
+
+Item 10. Context from Code Snippet README.md:(0-11)
+Create a new file in `src/auth/guards` called `authentication.guard.ts`:
+
+[Code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/3a6b866ad2b2304f53737d0f2f544ef67b982066)
+
 ---
 
 ## AuthenticationGuard Implementation
