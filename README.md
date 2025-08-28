@@ -239,8 +239,11 @@ Adding these validations ensures your environment is correctly configured and pr
 
 ## What are Decorators?
 
+
 **Explanation:**  
 Decorators in NestJS (and TypeScript) are special functions that can be attached to classes, methods, or parameters to add metadata. This metadata describes or configures how NestJS should treat these elements.
+
+![meta-data](./images/meta-data.png)
 
 **Types of Decorators:**
 - **Class Decorators:** Applied to classes (e.g., `@Controller()`).
@@ -265,6 +268,8 @@ createPublic(@Body() dto: CreateDto) {
 **Why Use Decorators?**  
 - They enable declarative programming by letting you describe behavior directly on classes and methods.
 - They allow NestJS to use reflection to read metadata and apply logic accordingly (e.g., routing, validation, authorization).
+
+![public routes](./images/public-routes.png)
 
 **Summary:**  
 Decorators are a core part of NestJS, enabling you to add metadata to classes, methods, and parameters. This metadata drives much of the framework's behavior, including routing, guards, and custom logic.
