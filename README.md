@@ -345,6 +345,31 @@ By creating a custom decorator, you make your codebase safer and more maintainab
 ---
 
 ## Authentication Guard Strategy
+
+**Explanation:**  
+Now that we have a custom decorator to set authentication metadata on our routes, we can create an `AuthenticationGuard` that uses this metadata to decide if a route is public or protected.
+
+**How it works:**
+- The `AuthenticationGuard` will read the metadata (set by the `@Auth()` decorator) from the route handler or controller.
+- If the metadata indicates `AuthType.NONE`, the guard will allow the request without authentication.
+- If the metadata indicates `AuthType.BEARER`, the guard will delegate to the `AccessTokenGuard` to validate the JWT.
+- This pattern allows you to easily add more authentication strategies in the future (e.g., Google, OAuth).
+
+**App Guard Structure:**
+- The `AuthenticationGuard` becomes the main global guard (app guard).
+- The `AccessTokenGuard` is provided as a dependency and used internally by the `AuthenticationGuard`.
+- This approach centralizes authentication logic and makes it easy to manage public and protected routes.
+
+**Diagram:**
+```
+[Auth Decorator] ---> [AuthenticationGuard] ---> [AccessTokenGuard] (if needed)
+         |                    |                        |
+   (sets metadata)     (reads metadata)         (validates JWT)
+```
+
+**Summary:**  
+The `AuthenticationGuard` uses route metadata to determine if a route is public or protected, and applies the appropriate authentication strategy. This makes your authentication logic flexible and maintainable.
+
 ---
 
 ## Create AuthenticationGuard
