@@ -199,6 +199,20 @@ Protect all routes by default and explicitly mark only the routes you want to be
 ---
 
 ## Practice: Validations for JWT Environment Variables
+
+**Practice:**  
+Add validations for your JWT-related environment variables in your config directory.  
+- Locate your config validation file (commonly `env.validation.ts` or similar).
+- Use a validation library like `joi` to define required JWT environment variables, such as:
+  - `JWT_SECRET`
+  - `JWT_EXPIRES_IN`
+  - `JWT_ISSUER`
+  - `JWT_AUDIENCE`
+- Ensure each variable is present and of the correct type (e.g., string, number).
+
+**Hint:**  
+Refer to how other environment variables are validated in your config directory for guidance.
+
 ---
 
 ## Solution: Validations for JWT Environment Variables
