@@ -147,6 +147,55 @@ Testing the AccessTokenGuard ensures that only authenticated users can access pr
 ---
 
 ## Applying AccessTokenGuard Globally
+
+**Explanation:**  
+You can apply the AccessTokenGuard to an entire module or globally to the whole application. This ensures all routes are protected by default, and only authenticated users can access them.
+
+**How to Apply Globally:**
+1. **Module-Level Guard:**  
+   - In your module (e.g., `UsersModule`), add the following to the `providers` array:
+     ```typescript
+     {
+       provide: APP_GUARD,
+       useClass: AccessTokenGuard,
+     }
+     ```
+   - Import `APP_GUARD` from `@nestjs/core` and `AccessTokenGuard` from your guards.
+   - Make sure `JwtModule` and your JWT config are imported in the module.
+
+2. **Global Guard (Recommended):**  
+   - Instead of applying the guard in a feature module, apply it in the `AppModule`'s `providers` array.  
+   - This protects all routes in your application by default.
+   - Example:
+     ```typescript
+     @Module({
+       imports: [
+         JwtModule.registerAsync({ ... }),
+         ConfigModule.forFeature(jwtConfig),
+         // ...other imports
+       ],
+       providers: [
+         {
+           provide: APP_GUARD,
+           useClass: AccessTokenGuard,
+         },
+         // ...other providers
+       ],
+     })
+     export class AppModule {}
+     ```
+   - Import all necessary modules and providers.
+
+**Important Note:**  
+- Applying the guard in any module using `APP_GUARD` makes it global for the entire application, not just that module.
+- For most use cases, apply the guard in the `AppModule` for clarity and maintainability.
+- After applying globally, all routes require authentication unless explicitly marked as public (you'll learn how to do this with a custom decorator in later sections).
+
+**Best Practice:**  
+Protect all routes by default and explicitly mark only the routes you want to be public. This approach increases security and reduces the risk of accidentally exposing private endpoints.
+
+[Code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/eab2b5eab653177a2e6061ef2b32d7531760a369)
+
 ---
 
 ## Practice: Validations for JWT Environment Variables
