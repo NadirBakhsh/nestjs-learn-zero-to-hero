@@ -277,6 +277,71 @@ Decorators are a core part of NestJS, enabling you to add metadata to classes, m
 ---
 
 ## Our First Decorator
+
+**Explanation:**  
+You can use the built-in `@SetMetadata()` decorator from NestJS to attach custom metadata to your route handlers. For example, you might want to mark a route as public by setting an `authType` metadata key to `'none'`:
+
+```typescript
+import { SetMetadata } from '@nestjs/common';
+
+@SetMetadata('authType', 'none')
+@Post('create')
+createUser(@Body() dto: CreateUserDto) {
+  // This route is public
+}
+```
+
+However, to make this more robust and less error-prone, you can create your own custom decorator and use an enum for allowed authentication types.
+
+**Steps to Create a Custom Decorator:**
+1. **Create an Enum:**  
+   Define an `AuthType` enum (e.g., with values `BEARER` and `NONE`) in `auth/enums/auth-type.enum.ts`:
+   ```typescript
+   export enum AuthType {
+     BEARER = 'bearer',
+     NONE = 'none',
+   }
+   ```
+
+2. **Create a Constant for the Metadata Key:**  
+   In `auth/constants/auth.constants.ts`:
+   ```typescript
+   export const AUTH_TYPE_KEY = 'authType';
+   ```
+
+3. **Create the Decorator:**  
+   In `auth/decorators/auth.decorator.ts`:
+   ```typescript
+   import { SetMetadata } from '@nestjs/common';
+   import { AUTH_TYPE_KEY } from '../constants/auth.constants';
+   import { AuthType } from '../enums/auth-type.enum';
+
+   export const Auth = (type: AuthType) => SetMetadata(AUTH_TYPE_KEY, type);
+   ```
+
+4. **Use the Custom Decorator:**  
+   In your controller:
+   ```typescript
+   import { Auth } from 'auth/decorators/auth.decorator';
+   import { AuthType } from 'auth/enums/auth-type.enum';
+
+   @Auth(AuthType.NONE)
+   @Post('create')
+   createUser(@Body() dto: CreateUserDto) {
+     // This route is public
+   }
+   ```
+
+**Benefits:**  
+- Type safety: Only valid auth types can be used.
+- Centralized logic: All metadata assignment is handled in one place.
+- Cleaner and more readable code.
+
+**Summary:**  
+By creating a custom decorator, you make your codebase safer and more maintainable. You can now easily mark routes as public or protected using your `@Auth()` decorator and the `AuthType` enum.
+
+[Code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/c55168e11cb03ef7ce178bc1c96b92225f036463)
+
 ---
 
 ## Authentication Guard Strategy
