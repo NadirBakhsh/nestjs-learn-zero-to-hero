@@ -238,6 +238,37 @@ Adding these validations ensures your environment is correctly configured and pr
 ---
 
 ## What are Decorators?
+
+**Explanation:**  
+Decorators in NestJS (and TypeScript) are special functions that can be attached to classes, methods, or parameters to add metadata. This metadata describes or configures how NestJS should treat these elements.
+
+**Types of Decorators:**
+- **Class Decorators:** Applied to classes (e.g., `@Controller()`).
+- **Method Decorators:** Applied to methods (e.g., `@Post()`, `@Get()`).
+- **Parameter Decorators:** Applied to method parameters (e.g., `@Body()`, `@Param()`)
+
+**Purpose:**  
+Decorators add metadata to the execution context, which NestJS uses to understand how to route requests, validate data, or apply guards and interceptors. For example, the `@Post('create-many')` decorator adds metadata about the route path and HTTP method.
+
+**Custom Metadata:**  
+You can use the built-in `@SetMetadata()` decorator to add custom metadata to routes or methods. This metadata can be accessed in guards, interceptors, or other NestJS components using the `Reflector` class.
+
+**Example:**  
+```typescript
+@SetMetadata('isPublic', true)
+@Post('public-endpoint')
+createPublic(@Body() dto: CreateDto) {
+  // This route is marked as public
+}
+```
+
+**Why Use Decorators?**  
+- They enable declarative programming by letting you describe behavior directly on classes and methods.
+- They allow NestJS to use reflection to read metadata and apply logic accordingly (e.g., routing, validation, authorization).
+
+**Summary:**  
+Decorators are a core part of NestJS, enabling you to add metadata to classes, methods, and parameters. This metadata drives much of the framework's behavior, including routing, guards, and custom logic.
+
 ---
 
 ## Our First Decorator
