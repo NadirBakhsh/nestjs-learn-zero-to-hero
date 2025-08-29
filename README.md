@@ -411,6 +411,31 @@ This approach centralizes and simplifies authentication logic, making it easy to
 ---
 
 ## Understanding User Payload
+
+**Explanation:**  
+When a user is authenticated, the AccessTokenGuard extracts the payload from the JWT token and attaches it to the request object using a constant key (e.g., `REQUEST_USER_KEY`). This payload contains user information (like user ID and email) and can be accessed in your controllers or services.
+
+**How to Access the User Payload:**
+- In a controller method, you can inject the full request object using the `@Request()` decorator from `@nestjs/common`.
+- The user payload will be available as `request[REQUEST_USER_KEY]`.
+
+**Example:**
+```typescript
+import { Request } from '@nestjs/common';
+import { REQUEST_USER_KEY } from 'auth/constants/auth.constants';
+
+@Post('create')
+createPost(@Request() req) {
+  console.log(req[REQUEST_USER_KEY]); // Access the user payload
+  // ...existing code...
+}
+```
+
+**Note:**  
+While you can access the user payload directly from the request, it's better practice to use a custom parameter decorator for cleaner and more testable code. This leads to the creation of an "Active User" decorator, which will simplify extracting the user payload in your route handlers.
+
+[Code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/8e8b6bb5a877304c7a7ea0f7e1b3c5bb49d38b10)
+
 ---
 
 ## Create Active User Decorator
