@@ -382,6 +382,32 @@ Create a new file in `src/auth/guards` called `authentication.guard.ts`:
 ---
 
 ## AuthenticationGuard Implementation
+
+**Explanation:**  
+The `AuthenticationGuard` checks the metadata set by the `@Auth()` decorator to determine the authentication strategy for each route. Here’s how it works:
+
+1. **Get Auth Types:**  
+   Use the `Reflector` to read all `AuthType` metadata from the route handler and class. If none is set, use the default (`BEARER`)
+
+2. **Resolve Guards:**  
+   Map each `AuthType` to its corresponding guard using the guard map. Flatten the result to get an array of guard instances.
+
+3. **Check Guards:**  
+   Loop through each guard and call its `canActivate` method with the current context. Await the result (handles both sync and async guards).
+
+4. **Authorize or Reject:**  
+   - If any guard returns `true`, allow the request.
+   - If all guards return `false` or throw, throw an `UnauthorizedException`.
+
+**Result:**  
+- All routes are protected by default.
+- Routes decorated with `@Auth(AuthType.NONE)` are public.
+- Routes with `@Auth(AuthType.BEARER)` (or no decorator) require a valid JWT.
+
+This approach centralizes and simplifies authentication logic, making it easy to manage public and protected endpoints.
+
+[Code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/e6be9821627efc89403c7132be3da2d5962b7bf0)
+
 ---
 
 ## Understanding User Payload
