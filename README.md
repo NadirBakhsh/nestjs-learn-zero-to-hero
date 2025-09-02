@@ -439,6 +439,37 @@ While you can access the user payload directly from the request, it's better pra
 ---
 
 ## Create Active User Decorator
+
+This commit adds a custom NestJS parameter decorator called `ActiveUser` for extracting the currently authenticated user's data in controller methods.
+
+**File:** `src/posts/decorators/active-user.decorator.ts`
+
+### Features
+
+- **Injects active user data** into route handlers using `@ActiveUser()`.
+- **Supports extracting a specific field** (e.g., `@ActiveUser('email')`).
+- **Centralizes user extraction logic** for endpoints requiring authentication.
+
+### How It Works
+
+- Retrieves user data from the request object using a predefined key (`REQUEST_USER_KEY`).
+- Returns either the whole user object or a specific property.
+
+### Example Usage
+
+```typescript
+@Get('profile')
+getProfile(@ActiveUser() user: ActiveUserData) {
+  return user;
+}
+
+@Get('email')
+getEmail(@ActiveUser('email') email: string) {
+  return email;
+}
+```
+[code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/aa9b7e65b3868203920cb8219914d9eaec3acb75)
+
 ---
 
 ## Practice: Refactor `createPostDto`
