@@ -473,6 +473,26 @@ getEmail(@ActiveUser('email') email: string) {
 ---
 
 ## Practice: Refactor `createPostDto`
+
+**Practice:**  
+Refactor the `create` method in your post service to:
+- Use the authenticated user from the `@ActiveUser()` decorator instead of relying on `authorId` from the DTO.
+- Encapsulate the creation logic inside a dedicated provider/service method.
+- Add proper exception handling for post creation errors.
+
+**Steps:**
+1. Remove direct usage of `authorId` from the DTO.
+2. Inject the active user into your controller method using `@ActiveUser()`.
+3. Pass the active user to your provider/service for post creation.
+4. Handle exceptions gracefully and return meaningful error responses.
+
+Try implementing these changes before reviewing the solution in the next section.
+
 ---
 
 ## Solution: Refactor `createPostDto`
+
+**Explanation:**  
+The refactor moves the responsibility for determining the post author from the DTO to the controller/service logic. Instead of passing `authorId` in the DTO, the authenticated user is extracted using the `@ActiveUser()` decorator. The post creation logic uses this user as the author, ensuring only authenticated users can create posts and improving security. Exception handling is added to gracefully manage errors during post creation.
+
+[code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/6037110cdb41e4d15cd3a294fc86753cf34f4acb)
