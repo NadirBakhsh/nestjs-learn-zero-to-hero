@@ -62,6 +62,33 @@ Access tokens are short-lived tokens used to authenticate users. Because they ex
 
 ## Generate Tokens Provider
 
+![generate-tokens-provider](./images/generate-tokens-provider.png)
+**Explanation:**  
+To avoid duplicating token generation logic, create a dedicated provider (e.g., `GenerateTokensProvider`) in the `auth/providers` directory. This provider encapsulates the logic for signing both access and refresh tokens.
+
+**Steps:**
+1. **Inject Dependencies:**  
+   - Inject `JwtService` and JWT config into the provider's constructor.
+
+2. **Create a Generic Method:**  
+   - Add a public async method (e.g., `signToken<T>`) that accepts:
+     - `userId: number`
+     - `expiresIn: number`
+     - `payload?: T` (optional, for extra data like email)
+   - Use the method to sign a JWT with the given payload and expiration.
+
+3. **Usage:**  
+   - Use this provider to generate both access and refresh tokens, passing the appropriate payload and TTL.
+
+**Benefits:**  
+- Centralizes token generation logic.
+- Supports flexible payloads for different token types.
+- Reduces code duplication across your authentication flow.
+
+[code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/a683061c96119a0addf5522cb1d9852c455e9b2c)
+
+---
+
 ## Generate Tokens Method
 
 ## Generate Refresh Token on SignIn
