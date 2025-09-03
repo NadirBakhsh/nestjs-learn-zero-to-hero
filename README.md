@@ -122,6 +122,30 @@ Add a `generateTokens` method to your tokens provider to generate both access an
 
 ## Generate Refresh Token on SignIn
 
+**Explanation:**  
+Update your sign-in provider to use the new `GenerateTokensProvider` for generating both access and refresh tokens when a user signs in.
+
+**Steps:**
+1. **Inject Provider:**  
+   - Inject `GenerateTokensProvider` into the sign-in provider's constructor.
+
+2. **Generate Tokens:**  
+   - Replace the old access token generation logic with:
+     ```typescript
+     return await this.generateTokensProvider.generateTokens(user);
+     ```
+   - Pass the authenticated user entity to the method.
+
+3. **Cleanup:**  
+   - Remove unused dependencies (`JwtService`, JWT config) from the constructor.
+
+**Result:**  
+When a user signs in, both an access token and a refresh token are returned in the response.
+
+[code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/da13298a6c3bd4990fc4b59fd547eb834a13ddbe)
+
+---
+
 ## Generate Access Token Using Refresh Token
 
 ## Create Refresh Token Endpoint
