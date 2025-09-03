@@ -24,7 +24,41 @@ Access tokens are short-lived tokens used to authenticate users. Because they ex
 - Improved security: Short-lived access tokens reduce risk if stolen.
 - Better user experience: Users stay logged in without frequent re-authentication.
 
+---
+
 ## Refresh Token Configuration
+
+**Steps:**
+1. **Add Environment Variable:**  
+   - In your `.env` or environment file, add:
+     ```
+     JWT_REFRESH_TOKEN_TTL=86400
+     ```
+     (Represents 24 hours in seconds.)
+
+2. **Add Validation:**  
+   - In `src/config/environment.validation.ts`, add validation for `JWT_REFRESH_TOKEN_TTL` (e.g., required, number).
+
+3. **Update JWT Config:**  
+   - In `src/auth/config/jwt.config.ts`, add a property for `refreshTokenTtl`:
+     ```typescript
+     refreshTokenTtl: parseInt(process.env.JWT_REFRESH_TOKEN_TTL ?? '86400', 10),
+     ```
+
+4. **Create DTO for Refresh Token:**  
+   - In `src/auth/dto/refresh-token.dto.ts`, create:
+     ```typescript
+     export class RefreshTokenDto {
+       @IsNotEmpty()
+       @IsString()
+       refreshToken: string;
+     }
+     ```
+   - This DTO will be used to receive the refresh token from the client when requesting new tokens.
+
+[code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/6eff3ffee9799e37a6efaf799a9e59f445ee39f8)
+
+---
 
 ## Generate Tokens Provider
 
