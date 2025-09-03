@@ -91,6 +91,35 @@ To avoid duplicating token generation logic, create a dedicated provider (e.g., 
 
 ## Generate Tokens Method
 
+![generate-tokens-method](./images/generate-tokens-method.png)
+**Explanation:**  
+Add a `generateTokens` method to your tokens provider to generate both access and refresh tokens together.
+
+**Steps:**
+1. **Method Signature:**  
+   - The method receives a `UserEntity` as a parameter.
+
+2. **Generate Access Token:**  
+   - Use the `signToken` method, passing user ID, access token TTL, and a payload containing the user's email.
+
+3. **Generate Refresh Token:**  
+   - Use the `signToken` method, passing user ID and refresh token TTL (no extra payload).
+
+4. **Promise.all:**  
+   - Use `Promise.all` to run both token generations in parallel and await their results.
+
+5. **Return Tokens:**  
+   - Return an object containing both the access token and refresh token.
+
+**Benefits:**  
+- Centralizes token generation logic.
+- Ensures both tokens are created and returned together.
+- Handles different payloads for access and refresh tokens.
+
+[code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/cc12cf700e4da6b252904476f01c3a741facfae7)
+
+---
+
 ## Generate Refresh Token on SignIn
 
 ## Generate Access Token Using Refresh Token
