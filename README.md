@@ -148,4 +148,27 @@ When a user signs in, both an access token and a refresh token are returned in t
 
 ## Generate Access Token Using Refresh Token
 
+**Explanation:**  
+Create a new provider called `RefreshTokensProvider` with a method `refreshTokens` that takes a `RefreshTokenDto` as input. This method:
+
+1. **Verifies the Refresh Token:**  
+   - Uses `JwtService.verifyAsync` with the secret, audience, and issuer from JWT config.
+   - Extracts the user ID (`sub`) from the token payload.
+
+2. **Fetches the User:**  
+   - Uses `UserService.findOneById` to get the user from the database.
+
+3. **Generates New Tokens:**  
+   - Calls `GenerateTokensProvider.generateTokens(user)` to create fresh access and refresh tokens.
+
+4. **Handles Errors:**  
+   - Wraps logic in a try-catch block and throws an `UnauthorizedException` if verification or user lookup fails.
+
+**Result:**  
+This enables users to obtain new access and refresh tokens by sending a valid refresh token to the backend.
+
+[code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/5861c88526cfafbd2df1b970d605bfd4da34d900)
+
+---
+
 ## Create Refresh Token Endpoint
