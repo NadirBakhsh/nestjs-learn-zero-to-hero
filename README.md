@@ -172,3 +172,22 @@ This enables users to obtain new access and refresh tokens by sending a valid re
 ---
 
 ## Create Refresh Token Endpoint
+
+**Explanation:**  
+Add a new endpoint to your `AuthController` called `refresh-tokens`.  
+- This endpoint accepts a `RefreshTokenDto` in the request body.
+- It calls the `refreshTokens` method in your `AuthService`, which uses the `RefreshTokensProvider` to verify the refresh token and generate new access and refresh tokens.
+- The endpoint returns the new tokens to the client.
+
+**Steps:**
+1. Add a `POST /auth/refresh-tokens` endpoint in `AuthController`.
+2. Inject `RefreshTokensProvider` into `AuthService`.
+3. Implement the `refreshTokens` method in `AuthService` to delegate to the provider.
+4. Test the endpoint by sending a valid refresh token and receiving new tokens in response.
+
+**Result:**  
+Clients can now obtain new access and refresh tokens by calling this endpoint with a valid refresh token.
+
+[code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/9831e23ba2d9375ef8d9c723b4f8aec59031af82)
+
+---
