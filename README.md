@@ -26,7 +26,29 @@ Google authentication allows users to sign in to your application using their Go
 
 ---
 
-- Create Google Project
+## Create Google Project
+
+**Steps:**
+1. Go to [Google Cloud Console](https://console.cloud.google.com) and sign in.
+2. Create a new project (e.g., "Nestjs auth").
+3. In the sidebar, go to "APIs & Services" > "OAuth consent screen".
+   - Select "External" user type.
+   - Fill in required fields (app name, support email, developer contact).
+   - Add scopes for user info and profile.
+   - Add test users (Gmail addresses).
+   - Save and continue through the steps.
+4. Go to "Credentials" and create new credentials:
+   - Choose "OAuth client ID".
+   - Select "Web application".
+   - Add authorized JavaScript origins (e.g., `http://localhost:3500` and `http://localhost`).
+   - Click "Create" to get your client ID and client secret.
+5. Save the client ID and secret for use in your application.
+
+**Result:**  
+You now have a Google project and OAuth credentials ready for implementing Google authentication in your app.
+
+---
+
 - Setting the Configuration
 - Initialize Google Auth Client
 - Implementation Strategy: Google Authentication
