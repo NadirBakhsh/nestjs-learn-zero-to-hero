@@ -101,10 +101,35 @@ Your NestJS app is now configured to support Google authentication and ready for
 
 ---
 
-- Initialize Google Auth Client
+## Initialize Google Auth Client
+
+![init google auth](./images/init-ggogle-auth.png)
+
+**Explanation:**  
+To verify Google tokens on the server, you need to initialize a Google OAuth2 client using the `google-auth-library`.
+
+**Steps:**
+1. **Inject JWT Config:**  
+   - Inject your JWT config into the Google Authentication Service to access the Google client ID and secret.
+
+2. **Create Auth Client Property:**  
+   - Add a private property (e.g., `authClient`) of type `OAuth2Client` from `google-auth-library`.
+
+3. **Implement OnModuleInit:**  
+   - Implement the `OnModuleInit` interface in your service.
+   - In the `onModuleInit` method, instantiate the `OAuth2Client` using the client ID and secret from your config.
+
+**Result:**  
+Your service now has a ready-to-use Google OAuth client for verifying incoming Google tokens.
+
+[Code example]()
+
+---
+
+## Testing Google Authentication
+
 - Implementation Strategy: Google Authentication
 - Implement Authentication with Google Token
 - React App in Front-End
 - `createGoogleUser` Method
 - Complete Google Authentication
-- Testing Google Authentication
