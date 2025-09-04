@@ -49,7 +49,58 @@ You now have a Google project and OAuth credentials ready for implementing Googl
 
 ---
 
-- Setting the Configuration
+## Setting the Configuration
+
+**Steps:**
+1. **Add Environment Variables:**  
+   - In your `.env` or environment file, add:
+     ```
+     GOOGLE_CLIENT_ID=your-google-client-id
+     GOOGLE_CLIENT_SECRET=your-google-client-secret
+     ```
+   - Use the values generated from your Google Cloud project.
+
+2. **Update JWT Config:**  
+   - In `src/auth/config/jwt.config.ts`, add:
+     ```typescript
+     googleClientId: process.env.GOOGLE_CLIENT_ID,
+     googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
+     ```
+
+3. **Install Google Auth Library:**  
+   - Run:
+     ```
+     npm install google-auth-library@9.11.0
+     ```
+
+4. **Create Controller and Service:**  
+   - Use NestJS CLI to generate:
+     - `GoogleAuthenticationController` in `auth/social`
+     - `GoogleAuthenticationService` in `auth/social/providers`
+
+5. **Create DTO:**  
+   - In `auth/social/dtos/google-token.dto.ts`, create:
+     ```typescript
+     export class GoogleTokenDto {
+       @IsNotEmpty()
+       token: string;
+     }
+     ```
+
+6. **Update User Entity:**  
+   - Make `password` nullable and optional.
+   - Add an optional `googleId` property.
+
+7. **Enable CORS:**  
+   - In `main.ts`, call `app.enableCors()` to allow requests from your frontend app.
+
+**Result:**  
+Your NestJS app is now configured to support Google authentication and ready for further implementation.
+
+[Code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/3d93bb7149e2f8f258af322183957bc54731747a)
+
+---
+
 - Initialize Google Auth Client
 - Implementation Strategy: Google Authentication
 - Implement Authentication with Google Token
