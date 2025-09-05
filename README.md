@@ -126,9 +126,37 @@ Your service now has a ready-to-use Google OAuth client for verifying incoming G
 
 ---
 
-## Testing Google Authentication
+## Implementation Strategy: Google Authentication
 
-- Implementation Strategy: Google Authentication
+![Implementation Strategy](./images/Implementation-Strategy-Google-Authentication.png)
+
+**Explanation:**  
+The core of Google authentication in your NestJS backend is the `authenticate` method in the Google Authentication Service. This method:
+
+1. **Verifies the Google Token:**  
+   - Uses the OAuth client to verify the JWT token received from the frontend.
+
+2. **Extracts the Payload:**  
+   - Gets user info (Google ID, email, name, etc.) from the verified token.
+
+3. **Checks for Existing User:**  
+   - Uses a new provider (`FindOneByGoogleIdProvider`) to look up a user by Google ID in the database.
+
+4. **Handles User Existence:**  
+   - If the user exists, generates access and refresh tokens for them.
+   - If not, creates a new user with the Google info, then generates tokens.
+
+5. **Error Handling:**  
+   - If any step fails, throws an unauthorized exception.
+
+**Supporting Providers:**  
+- `FindOneByGoogleIdProvider` (in users/providers): Finds a user by Google ID.
+- UserService: Proxies the provider for easy access in other services.
+
+[Code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/a40ce8f4865d71f2e9bef17695083c71376aa774)
+
+---
+
 - Implement Authentication with Google Token
 - React App in Front-End
 - `createGoogleUser` Method
