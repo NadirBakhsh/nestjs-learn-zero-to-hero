@@ -177,6 +177,16 @@ The `authenticate` method in the Google Authentication Service handles Google lo
 
 [code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/68481513aed27004b78a2ff34b43c9acf1640d7b)
 
-- React App in Front-End
+---
+
+## React App in Front-End
+
+**Explanation:**  
+A simple React app is used to handle Google authentication on the frontend. It uses a Google login button (from a React Google auth library) to let users sign in with their Google account. Upon successful login, Google returns a JWT token (login ticket) to the frontend. The React app then sends this token to the NestJS backend's Google authentication endpoint. The backend verifies the token, extracts user info from the payload, and proceeds with authentication or user creation as needed.
+
+[backend code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/f7ba022016e157f6eeab280e3288344c83c9ddd2)
+
+[frontend code example](https://github.com/manikbajaj/nestjs-tutorial-react-app/blob/master/src/App.js)
+
 - `createGoogleUser` Method
 - Complete Google Authentication
