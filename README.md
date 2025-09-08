@@ -157,7 +157,26 @@ The core of Google authentication in your NestJS backend is the `authenticate` m
 
 ---
 
-- Implement Authentication with Google Token
+## Implement Authentication with Google Token
+
+**Explanation:**  
+The `authenticate` method in the Google Authentication Service handles Google login as follows:
+
+1. **Verify Google Token:**
+   - Uses the OAuth client to verify the JWT token (login ticket) received from the frontend.
+
+2. **Extract Payload:**
+   - Extracts user info (email, Google ID) from the token payload.
+
+3. **Check for Existing User:**
+   - Uses the UserService to find a user by Google ID in the database.
+
+4. **Generate Tokens:**
+   - If the user exists, generates and returns access and refresh tokens using the GenerateTokensProvider.
+   - If not, the next step is to create a new user and then generate tokens (handled in the next steps).
+
+[code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/68481513aed27004b78a2ff34b43c9acf1640d7b)
+
 - React App in Front-End
 - `createGoogleUser` Method
 - Complete Google Authentication
