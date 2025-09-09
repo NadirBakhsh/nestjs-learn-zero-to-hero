@@ -188,5 +188,11 @@ A simple React app is used to handle Google authentication on the frontend. It u
 
 [frontend code example](https://github.com/manikbajaj/nestjs-tutorial-react-app/blob/master/src/App.js)
 
-- `createGoogleUser` Method
+- `createGoogleUser ` Method
+
+**Explanation:**
+The `createGoogleUser` method is responsible for creating a new user in the database using information extracted from the Google login ticket (email, first name, last name, Google ID). It uses a dedicated provider in the users module, which receives a Google user interface object and saves the new user via the users repository. This method ensures new Google users are properly registered in your system.
+
+[code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/9dfc242ca89876e13837256289df8b2e109ed979)
+
 - Complete Google Authentication
