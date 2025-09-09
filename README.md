@@ -195,4 +195,11 @@ The `createGoogleUser` method is responsible for creating a new user in the data
 
 [code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/9dfc242ca89876e13837256289df8b2e109ed979)
 
-- Complete Google Authentication
+
+## Complete Google Authentication
+![complete google auth](./images/complete-google-auth.png)
+
+**Explanation:**
+The `authenticate` method in the Google Authentication Service is now complete. If a user with the given Google ID exists, it generates and returns access and refresh tokens. If the user does not exist, it creates a new user using the extracted Google info (email, first name, last name, Google ID), then generates and returns the tokens. All logic is wrapped in a try-catch block to handle errors and throw an unauthorized exception if authentication fails.
+
+[code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/9dfc242ca89876e13837256289df8b2e109ed979)
