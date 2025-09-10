@@ -7,7 +7,7 @@
 Interceptors in NestJS are executed twice in the request-response lifecycle: once before the controller method runs, and once after the controller returns a response. This unique placement allows interceptors 
 
 
-![life cycle](./images/interceptors-life-cycle.png)
+![life cycle](./images/Req-res-lifecyce.png)
 
 to:
 - Transform or filter outgoing responses (e.g., remove sensitive fields like passwords or Google IDs)
