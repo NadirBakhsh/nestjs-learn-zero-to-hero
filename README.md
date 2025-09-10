@@ -27,5 +27,11 @@ Serialization in NestJS allows you to control which properties are included in A
 [Code Example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/07789d7adf6b6732b2622600c424ff275552692d)
 
 
-- Global Data Interceptor
+## Global Data Interceptor
+
+**Explanation:**
+You can create your own custom interceptor in NestJS to transform the shape of API responses globally. By implementing the `intercept` method, you can access the response before it is sent to the client and modify it as needed (e.g., wrap data in a `data` property, add API version info, or filter properties). Applying the interceptor globally ensures consistent response formatting across your application without changing every controller.
+
+[code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/1f86a5793c8156c91b5e50160a2c11752d0d5950)
+
 - Adding API Version
