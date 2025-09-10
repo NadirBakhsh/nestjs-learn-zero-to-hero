@@ -34,4 +34,9 @@ You can create your own custom interceptor in NestJS to transform the shape of A
 
 [code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/1f86a5793c8156c91b5e50160a2c11752d0d5950)
 
-- Adding API Version
+## Adding API Version
+
+**Explanation:**
+Enhance your global data interceptor to wrap all responses in a `data` property and include the API version. Use the RxJS `map` operator to transform the outgoing response, and inject `ConfigService` to access the API version from your environment variables. Apply this interceptor globally in the app module using the `APP_INTERCEPTOR` provider. This ensures every response is consistently formatted and includes version info, without changing your controller methods.
+
+[code example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/e1205113f32000d3e734da6ed9049289eaf6b49c)
