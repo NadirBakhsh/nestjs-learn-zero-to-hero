@@ -19,6 +19,13 @@ Interceptors help you apply consistent logic across your app without modifying e
 
 
 
-- Serializing User Entity
+## Serializing User Entity
+
+**Explanation:**
+Serialization in NestJS allows you to control which properties are included in API responses. By using the built-in `ClassSerializerInterceptor` and the `@Exclude` decorator in your entity (e.g., User), you can easily hide sensitive fields like `password` and `googleId` from outgoing responses. Apply the interceptor to a controller method or class, and mark properties to exclude in your entity. This approach keeps your API responses secure and clean without manual filtering in every controller method.
+
+[Code Example](https://github.com/NadirBakhsh/nestjs-resources-code/commit/07789d7adf6b6732b2622600c424ff275552692d)
+
+
 - Global Data Interceptor
 - Adding API Version
