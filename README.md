@@ -67,7 +67,57 @@ You now have an S3 bucket for file storage, an IAM user with upload permissions,
 ---
 
 ## Uploads Module and Configuration
+
+**Steps:**
+1. **Install Dependencies:**  
+   - Install AWS SDK:  
+     ```
+     npm install aws-sdk@2.1643.0
+     ```
+   - Install Multer types for file upload support:  
+     ```
+     npm install --save-dev @types/multer@1.4.11
+     ```
+
+2. **Add Environment Variables:**  
+   - In your `.env` file, add:
+     ```
+     AWS_PUBLIC_BUCKET_NAME=your-bucket-name
+     AWS_REGION=your-bucket-region
+     AWS_CLOUDFRONT_URL=your-cloudfront-url
+     AWS_ACCESS_KEY_ID=your-access-key-id
+     AWS_SECRET_ACCESS_KEY=your-secret-access-key
+     ```
+
+3. **Update App Config:**  
+   - In `src/config/app.config.ts`, add properties for all AWS-related variables, reading from `process.env`.
+
+4. **Configure AWS SDK in main.ts:**  
+   - Import `config` from `aws-sdk` and set credentials and region using values from the config service.
+   - Example:
+     ```typescript
+     import { config as awsConfig } from 'aws-sdk';
+     // ...get configService from app...
+     awsConfig.update({
+       credentials: {
+         accessKeyId: configService.get(AppConfig.AWS_ACCESS_KEY_ID),
+         secretAccessKey: configService.get(AppConfig.AWS_SECRET_ACCESS_KEY),
+       },
+       region: configService.get(AppConfig.AWS_REGION),
+     });
+     ```
+
+5. **Generate Uploads Module, Controller, and Service:**  
+   - Use NestJS CLI to generate:
+     - `uploads` module
+     - `uploads` controller
+     - `uploads/providers/upload.service.ts` service
+
+**Result:**  
+Your NestJS app is now ready to handle file uploads to S3, with all configuration and infrastructure in place.
+
 ---
+
 ## Create Upload Entity
 ---
 ## Upload File Service and Controller
