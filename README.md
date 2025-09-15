@@ -21,8 +21,51 @@ CloudFront helps deliver files quickly to users by caching them in multiple loca
 
 This section will guide you through each step, from receiving the file in your API to storing and serving it efficiently.
 
-## Setup S3 and CloudFront
 ---
+
+## Setup S3 and CloudFront
+
+**Step-by-step:**
+
+1. **Create an S3 Bucket:**
+   - Log in to your AWS console and go to the S3 dashboard.
+   - Click "Create Bucket", choose a unique name (e.g., `blog-images-nest`), and select your region.
+   - Set Object Ownership to "ACLs disabled".
+   - Disable "Block all public access" so files can be accessed publicly.
+   - Acknowledge the warning and create the bucket.
+
+2. **Set S3 Bucket Policy:**
+   - Go to the bucket's "Permissions" tab.
+   - Use the Policy Generator to create a policy that allows `s3:GetObject` for everyone (`Principal: *`) on all objects in your bucket (`arn:aws:s3:::your-bucket-name/*`).
+   - Paste the generated JSON policy into the Bucket Policy section and save.
+
+3. **Create an IAM User for Uploads:**
+   - Go to the IAM dashboard and create a new user (e.g., `nest-blog-images-s3`).
+   - Do not enable console access.
+   - Attach the following policies:
+     - `AmazonS3FullAccess`
+     - `IAMUserSSHKeys`
+     - `IAMFullAccess`
+   - Complete the user creation.
+
+4. **Generate Access Keys:**
+   - After creating the user, go to the user details and create a new access key.
+   - Choose "Local code" as the use case.
+   - Copy the access key and secret; you will use these in your NestJS app to upload files.
+
+5. **Create a CloudFront Distribution:**
+   - Go to the CloudFront dashboard and create a new distribution.
+   - Set the origin to your S3 bucket.
+   - Keep the origin access as public.
+   - Use default settings for cache and security.
+   - (Optional) Add a custom domain (CNAME) if needed.
+   - Create the distribution and copy the distribution domain name for your config.
+
+**Result:**  
+You now have an S3 bucket for file storage, an IAM user with upload permissions, and a CloudFront distribution to serve files globally with low latency.
+
+---
+
 ## Uploads Module and Configuration
 ---
 ## Create Upload Entity
