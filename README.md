@@ -154,6 +154,30 @@ Your `Upload` entity is ready to store all relevant file metadata in the databas
 ---
 
 ## Upload File Service and Controller
+
+**Step-by-step:**
+
+1. **Create the Upload Endpoint in Controller:**
+   - Add a `POST /uploads/file` endpoint in your uploads controller.
+   - Use the `@UseInterceptors(FileInterceptor('file'))` decorator to extract the file from the request.
+   - Use the `@UploadedFile()` decorator to access the uploaded file in the method.
+   - Add Swagger decorators (`@ApiHeaders`, `@ApiOperation`) to document required headers and describe the endpoint.
+
+2. **Inject the Uploads Service:**
+   - In the controller's constructor, inject the `UploadsService` as a dependency.
+
+3. **Call the Service Method:**
+   - In the controller method, call `this.uploadService.uploadFile(file)` and return its result.
+
+4. **Define the Service Method:**
+   - In `UploadsService`, create an async `uploadFile(file: Express.Multer.File)` method.
+   - Outline the steps:
+     - Upload the file to AWS S3.
+     - Save file metadata (including the CloudFront URL) to the database.
+
+**Result:**  
+Your controller and service are now connected and ready to handle file uploads, extract file data, and prepare for integration with AWS S3 and your database.
+
 ---
 ## `UploadToAwsProvider`
 ---
