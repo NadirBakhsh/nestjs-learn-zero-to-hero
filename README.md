@@ -119,7 +119,40 @@ Your NestJS app is now ready to handle file uploads to S3, with all configuratio
 ---
 
 ## Create Upload Entity
+
+**Explanation:**  
+Create an `Upload` entity to store file information in your database. This entity will include properties such as ID, name, path, type (using an enum), MIME type, size, and timestamps.
+
+**Steps:**
+1. **Create Entity File:**  
+   - In the `uploads` directory, create `upload.entity.ts`.
+
+2. **Define the Entity:**  
+   - Use the `@Entity()` decorator from TypeORM.
+   - Add properties:
+     - `id`: Primary generated column.
+     - `name`: String, varchar(1024), not nullable.
+     - `path`: String, varchar(1024), not nullable.
+     - `type`: Enum column using `FileTypes` enum, default to `image`, not nullable.
+     - `mimeType`: String, varchar(128), not nullable.
+     - `size`: Number, not nullable.
+     - `createDate`: Use `@CreateDateColumn()`.
+     - `updateDate`: Use `@UpdateDateColumn()`.
+
+3. **Create Enum:**  
+   - In `uploads/enums/file-types.enum.ts`, define:
+     ```typescript
+     export enum FileTypes {
+       IMAGE = 'image',
+       // Add more types as needed
+     }
+     ```
+
+**Result:**  
+Your `Upload` entity is ready to store all relevant file metadata in the database, supporting future extensibility for more file types.
+
 ---
+
 ## Upload File Service and Controller
 ---
 ## `UploadToAwsProvider`
