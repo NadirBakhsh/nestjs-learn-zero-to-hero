@@ -3,7 +3,7 @@
 Welcome to the NestJS Learning Repository! This repository contains a comprehensive guide and structured learning material for mastering NestJS, including key topics like modules, validation, dependency injection, testing, database management, and more.
 
 ### What Will We Build in This Course
-1. Rest APIs ( CURD )
+1. [Rest APIs campus connect ( CURD )](https://github.com/NadirBakhsh/campus-backend)
 2. Authentication and authorization
 3. Expense tracker 
 4. Blog APIs
