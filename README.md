@@ -179,7 +179,42 @@ Your `Upload` entity is ready to store all relevant file metadata in the databas
 Your controller and service are now connected and ready to handle file uploads, extract file data, and prepare for integration with AWS S3 and your database.
 
 ---
-## `UploadToAwsProvider`
+## Upload To Aws Provider
+
+![upload-to-aws-provider](./images/upload-to-aws-provider.png)
+
+1. **Generate Provider:**  
+   - Use NestJS CLI to create `upload-to-aws.provider.ts` in `uploads/providers`.
+
+2. **Inject Config Service:**  
+   - Inject `ConfigService` to access AWS credentials and bucket name.
+
+3. **Create File Upload Method:**  
+   - Add a public async `fileUpload(file: Express.Multer.File)` method.
+   - Inside this method:
+     - Create a new instance of `S3` from the AWS SDK.
+     - Use the `upload` method on the S3 instance to upload the file.
+     - Pass required properties:
+       - `Bucket`: Get from config service.
+       - `Body`: Use `file.buffer`.
+       - `Key`: Generate a unique file name.
+       - `ContentType`: Use `file.mimetype`.
+
+4. **Generate Unique File Name:**  
+   - Create a private `generateFileName(file: Express.Multer.File)` method.
+   - Steps:
+     - Extract the base name (without extension) and remove whitespaces.
+     - Get the file extension using Node's `path.extname`.
+     - Generate a timestamp and a UUID (using the `uuid` package).
+     - Concatenate name, timestamp, UUID, and extension for uniqueness.
+
+5. **Handle Errors:**  
+   - Wrap the upload logic in a try-catch block.
+   - On error, throw a `RequestTimeoutException`.
+
+6. **Return Uploaded File Key:**  
+   - On success, return the uploaded file's key (name).
+
 ---
 ## Complete Uploads Service
 ---
