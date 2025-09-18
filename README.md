@@ -253,3 +253,42 @@ Your upload service now validates file types, uploads files to S3, generates Clo
 ---
 
 ## Testing File Uploads
+
+![testing](./images/testing.png)
+
+**Step-by-step:**
+
+1. **Prepare Test Image:**
+   - Place a test image (e.g., `test-image.jpeg`) in the `uploads/http` directory.
+
+2. **Create HTTP Endpoint File:**
+   - In `uploads/http`, create `uploads.post.endpoints.http` for your test request.
+
+3. **Compose Multipart Request:**
+   - Set the request method to POST and the URL to `http://localhost:3000/uploads/file`.
+   - Set the `Content-Type` header to `multipart/form-data` with a boundary (e.g., `WebKitFormBoundary`).
+   - Add an `Authorization` header with a valid bearer token.
+   - Define the form field for the file:
+     - Use `Content-Disposition` to specify the field name (`file`) and filename.
+     - Set the field's `Content-Type` (e.g., `image/jpeg`).
+     - Reference the test image file path.
+
+4. **Send the Request:**
+   - End the multipart form with the boundary.
+   - Send the request using your HTTP client (e.g., httpyac, Postman).
+
+5. **Verify the Response:**
+   - You should receive a `201 Created` response with file details, including the CloudFront URL.
+
+6. **Check S3 and CloudFront:**
+   - Copy the returned file path and open it in your browser to verify the image is served via CloudFront.
+
+7. **Check Database:**
+   - Query the uploads table to confirm the file metadata is saved.
+
+**Result:**  
+Your file upload flow is working: files are uploaded to S3, served via CloudFront, and metadata is stored in your database.
+
+[code example](https://github.com/manikbajaj/nestjs-intro/tree/main/src/uploads)
+---
+
