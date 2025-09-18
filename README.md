@@ -217,5 +217,39 @@ Your controller and service are now connected and ready to handle file uploads, 
 
 ---
 ## Complete Uploads Service
+
+1. **Inject Dependencies:**
+   - Inject `uploadsRepository` (TypeORM repository for the Upload entity).
+   - Inject `UploadToAwsProvider` for S3 uploads.
+   - Inject `ConfigService` for accessing CloudFront URL.
+
+2. **Validate Mime Type:**
+   - Allow only supported image mime types (`image/gif`, `image/jpeg`, `image/jpg`, `image/png`).
+   - Throw a `BadRequestException` if the file's mime type is not supported.
+
+3. **Upload File to S3:**
+   - Use `UploadToAwsProvider.fileUpload(file)` to upload the file.
+   - Get the unique file name returned from S3.
+
+4. **Prepare File Metadata:**
+   - Build an object with:
+     - `name`: S3 file name.
+     - `path`: CloudFront URL + file name.
+     - `type`: Use `FileTypes.IMAGE`.
+     - `mimeType`: From the file.
+     - `size`: From the file.
+
+5. **Save to Database:**
+   - Use `uploadsRepository.create()` to create an entity instance.
+   - Use `uploadsRepository.save()` to persist it.
+
+6. **Error Handling:**
+   - Wrap logic in a try-catch block.
+   - Throw a `ConflictException` if saving fails.
+
+**Result:**  
+Your upload service now validates file types, uploads files to S3, generates CloudFront URLs, and saves metadata to the database with proper error handling.
+
 ---
+
 ## Testing File Uploads
