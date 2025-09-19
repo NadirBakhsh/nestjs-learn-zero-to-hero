@@ -33,6 +33,67 @@ You can use other SMTP servers for testing if you prefer, but Mailtrap is recomm
 
 ## Configuration for Notification Emails
 
+To enable notification emails in your NestJS application, follow these steps:
+
+**1. Create the Mail Module and Service**
+- Use the NestJS CLI to generate a new module:
+  ```
+  nest generate module mail --no-spec
+  ```
+- Generate the mail service inside the mail module:
+  ```
+  nest generate service mail --flat --no-spec
+  ```
+- The mail module will be automatically added to your app module. No controller is needed for the mail module, as it won't expose any endpoints.
+
+**2. Install Required NPM Dependencies**
+- Install the following packages:
+  ```
+  npm install @nestjs-modules/mailer@2.0.2 nodemailer@6.9.13 ejs@3.1.10
+  ```
+- `@nestjs-modules/mailer`: NestJS mailer integration.
+- `nodemailer`: Underlying email sending library.
+- `ejs`: Templating engine for email content.
+
+**3. Add Environment Variables**
+- In your `.env.development` file, add:
+  ```
+  MAIL_HOST=<your-mailtrap-host>
+  SMTP_USERNAME=<your-mailtrap-username>
+  SMTP_PASSWORD=<your-mailtrap-password>
+  ```
+  Replace values with those from your Mailtrap account.
+
+**4. Update App Config**
+- In `config/app.config.ts`, add properties for the new environment variables:
+  ```typescript
+  // ...existing code...
+  mailHost: process.env.MAIL_HOST,
+  smtpUsername: process.env.SMTP_USERNAME,
+  smtpPassword: process.env.SMTP_PASSWORD,
+  // ...existing code...
+  ```
+
+**5. Add Environment Variable Validations**
+- In `config/environment.validation.ts`, add validations for the new variables:
+  ```typescript
+  // ...existing code...
+  MAIL_HOST: Joi.string().required(),
+  SMTP_USERNAME: Joi.string().required(),
+  SMTP_PASSWORD: Joi.string().required(),
+  // ...existing code...
+  ```
+
+**6. Create Templates Directory**
+- Inside the `mail` module directory, create a `templates` folder.
+- Add a sample template file named `welcome.ejs`:
+  ```html
+  <p>Welcome email</p>
+  ```
+  This will be used for the welcome email and can be customized later.
+
+With these steps, your application is ready to send notification emails using Mailtrap and EJS templates.
+
 ## Configure NestJS Mailer
 
 ## Creating `MailService`
