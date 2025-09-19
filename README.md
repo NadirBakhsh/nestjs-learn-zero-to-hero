@@ -96,6 +96,75 @@ With these steps, your application is ready to send notification emails using Ma
 
 ## Configure NestJS Mailer
 
+To configure the mailer module in your NestJS application:
+
+**1. Make the Mail Module Global**
+- In `mail.module.ts`, add the `@Global()` decorator to the `MailModule` class.
+- This allows the mail service to be injected anywhere in your app without explicitly importing the mail module.
+
+**2. Export the Mail Service**
+- Add `MailService` to both the `providers` and `exports` arrays in `MailModule`.
+- This makes the service available for dependency injection in other modules.
+
+**3. Configure the Mailer Module**
+- Import and configure `MailerModule` using `MailerModule.forRootAsync` in the `imports` array.
+- Inject `ConfigService` and use a factory function to provide configuration options using environment variables.
+
+Example configuration in `mail.module.ts`:
+```typescript
+import { Global, Module } from '@nestjs/common';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { join } from 'path';
+import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
+import { MailService } from './mail.service';
+
+@Global()
+@Module({
+  imports: [
+    MailerModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: async (config: ConfigService) => ({
+        transport: {
+          host: config.get('app.mailHost'),
+          port: 2525,
+          secure: false,
+          auth: {
+            user: config.get('app.smtpUsername'),
+            pass: config.get('app.smtpPassword'),
+          },
+        },
+        defaults: {
+          from: `"My Blog" <no-reply@nestjs-blog.com>`,
+        },
+        template: {
+          dir: join(__dirname, 'templates'),
+          adapter: new EjsAdapter(),
+          options: {
+            strict: false,
+          },
+        },
+      }),
+    }),
+    ConfigModule,
+  ],
+  providers: [MailService],
+  exports: [MailService],
+})
+export class MailModule {}
+```
+
+**Notes:**
+- Ensure you import `join` from `path` and `EjsAdapter` from the correct location.
+- The template directory should be set to the path where your EJS templates are stored.
+- Update any misspelled environment variables in your config and validation files as needed.
+
+With this setup, your mail service is globally available and ready to send emails using Mailtrap and EJS templates.
+
+[Source Code](https://github.com/NadirBakhsh/nestjs-resources-code/commit/82c5b6966b497a9d59c877dd5a397b73cb3bde0d)
+
+---
+
 ## Creating `MailService`
 
 ## Testing Email Service
