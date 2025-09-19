@@ -19,6 +19,18 @@ In this section, we'll set up a welcome email that is sent to new users upon reg
 
 ## Setup a Mailtrap Account
 
+To test notification emails during development, we'll use a service called Mailtrap. Mailtrap offers a free tier that allows you to send up to 1000 test emails per month, making it convenient for most development needs.
+
+To get started:
+1. Sign up for a free account at [Mailtrap.io](https://mailtrap.io).
+2. After registration, you'll be greeted with a dashboard for email testing.
+3. Click on "Start Testing" to access your inbox and settings.
+4. In the settings section, you'll find the SMTP credentials needed to configure your application.
+
+Mailtrap's interface may change over time, but the key feature you need is "Email Testing" and the SMTP details. These credentials will allow your NestJS application to send emails to Mailtrap, where you can view and debug them without sending emails to real users.
+
+You can use other SMTP servers for testing if you prefer, but Mailtrap is recommended for its ease of use and generous free tier. There are no affiliate links—this is simply a tool that works well for development.
+
 ## Configuration for Notification Emails
 
 ## Configure NestJS Mailer
