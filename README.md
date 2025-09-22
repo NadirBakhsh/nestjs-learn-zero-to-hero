@@ -167,6 +167,70 @@ With this setup, your mail service is globally available and ready to send email
 
 ## Creating `MailService`
 
+Now that the mailer module is configured, we can implement the mail service to send welcome emails to newly registered users.
+
+**1. Inject the MailerService**
+- In `mail.service.ts`, inject the `MailerService` using dependency injection:
+  ```typescript
+  import { Injectable } from '@nestjs/common';
+  import { MailerService } from '@nestjs-modules/mailer';
+  import { User } from '../user/entities/user.entity';
+
+  @Injectable()
+  export class MailService {
+    constructor(private readonly mailerService: MailerService) {}
+  }
+  ```
+
+**2. Create the Welcome Email Method**
+- Add a method to send welcome emails:
+  ```typescript
+  public async sendUserWelcome(user: User): Promise<void> {
+    await this.mailerService.sendMail({
+      to: user.email,
+      from: '"Onboarding Team" <support@nestjs-blog.com>',
+      subject: 'Welcome to NestJS Blog',
+      template: 'welcome',
+      context: {
+        name: user.firstName,
+        email: user.email,
+        loginUrl: 'http://localhost:3000',
+      },
+    });
+  }
+  ```
+
+**3. Update the Welcome Template**
+- Replace the content in `templates/welcome.ejs` with proper HTML:
+  ```html
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <title>Welcome Email</title>
+  </head>
+  <body>
+    <h1>Welcome <%= name %>!</h1>
+    <p>Thank you for registering with our NestJS Blog platform.</p>
+    <p>You registered using the email address: <strong><%= email %></strong></p>
+    <p>You can log in to your account using the following link:</p>
+    <a href="<%= loginUrl %>">Login to your account</a>
+    <p>We're excited to have you on board!</p>
+  </body>
+  </html>
+  ```
+
+**Key Features:**
+- **Dependency Injection**: The `MailerService` is injected to handle email sending.
+- **Template Variables**: Use EJS syntax `<%= variable %>` to insert dynamic content from the context.
+- **Context Object**: Pass data like user name, email, and login URL to the template.
+- **Template Override**: You can override default settings like the "from" address for specific emails.
+
+The mail service is now ready to send welcome emails. The `sendUserWelcome` method can be called from other services (like the user service) when a new user registers.
+
+[code source](https://github.com/NadirBakhsh/nestjs-resources-code/commit/29ed831287aa7279d85606ad831c5344a7aa3b73)
+
+---
+
 ## Testing Email Service
 
 ## Enabling Inline CSS
