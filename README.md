@@ -233,4 +233,154 @@ The mail service is now ready to send welcome emails. The `sendUserWelcome` meth
 
 ## Testing Email Service
 
+Now that the mail service is implemented, let's test it by sending welcome emails to newly registered users.
+
+**1. Integrate Mail Service with User Creation**
+- In `create-user.provider.ts`, inject the `MailService` using dependency injection:
+  ```typescript
+  // ...existing code...
+  constructor(
+    // ...existing dependencies...
+    private readonly mailService: MailService,
+  ) {}
+  ```
+
+- Add email sending logic after user creation:
+  ```typescript
+  // ...existing code...
+  // After saving the new user to database
+  
+  // Send welcome email
+  try {
+    await this.mailService.sendUserWelcome(newUser);
+  } catch (error) {
+    throw new RequestTimeoutException(error);
+  }
+  
+  return newUser;
+  ```
+
+**2. Configure Static Assets for Templates**
+- Templates need to be copied to the build directory. Update `nestjs-cli.json`:
+  ```json
+  {
+    "$schema": "https://json.schemastore.org/nest-cli",
+    "collection": "@nestjs/schematics",
+    "sourceRoot": "src",
+    "compilerOptions": {
+      "deleteOutDir": true,
+      "assets": [
+        {
+          "include": "mail/templates/**/*",
+          "outDir": "dist"
+        }
+      ],
+      "watchAssets": true
+    }
+  }
+  ```
+
+- The `assets` configuration ensures template files are copied to the `dist` directory during build.
+- `watchAssets: true` enables automatic recompilation when template files change.
+
+**3. Test the Email Service**
+- Restart your NestJS application to apply the asset configuration.
+- Verify that the `templates` directory exists in `dist/mail/templates/`.
+- Create a new user using the POST `/users` endpoint.
+- Check your Mailtrap inbox for the welcome email.
+
+**4. Verify Email Content**
+- The email should contain:
+  - Dynamic user name from the context
+  - User's email address
+  - Login URL
+  - Proper HTML structure
+
+**Benefits of Global Mail Module:**
+- No need to import `MailModule` in other modules
+- `MailService` can be injected directly anywhere in the application
+- Centralized email configuration and management
+
+The email service is now fully functional, but the emails lack styling. This will be addressed in the next section.
+
+---
+
 ## Enabling Inline CSS
+
+To enhance the appearance of our emails, we can enable inline CSS. This ensures that our email templates look good across different email clients, which may have varying levels of support for CSS styles.
+
+**1. Install Juice Package**
+- Install the `juice` package, which inlines CSS styles into HTML:
+  ```
+  npm install juice
+  ```
+
+**2. Update Mailer Configuration**
+- In `mail.module.ts`, update the mailer configuration to use `juice`:
+  ```typescript
+  import * as juice from 'juice';
+
+  // ...existing code...
+
+  template: {
+    dir: join(__dirname, 'templates'),
+    adapter: new EjsAdapter(),
+    options: {
+      strict: false,
+      inlineCss: true, // Enable inline CSS
+      inlineCssOptions: {
+        url: 'http://localhost:3000', // Base URL for relative paths
+      },
+    },
+  },
+  ```
+
+**3. Update Welcome Template with CSS**
+- Modify `templates/welcome.ejs` to include CSS styles:
+  ```html
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <title>Welcome Email</title>
+    <style>
+      body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+      .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+      h1 { color: #333; }
+      p { line-height: 1.5; }
+      a { color: #007bff; text-decoration: none; }
+      a:hover { text-decoration: underline; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Welcome <%= name %>!</h1>
+      <p>Thank you for registering with our NestJS Blog platform.</p>
+      <p>You registered using the email address: <strong><%= email %></strong></p>
+      <p>You can log in to your account using the following link:</p>
+      <a href="<%= loginUrl %>">Login to your account</a>
+      <p>We're excited to have you on board!</p>
+    </div>
+  </body>
+  </html>
+  ```
+
+[code source](https://github.com/NadirBakhsh/nestjs-resources-code/commit/cb387fdd22f54643d2820e67d248968a97eb893c)
+
+---
+**4. Test the Email with Inline CSS**
+- Repeat the user creation and email testing steps.
+- Check the email in Mailtrap and verify the CSS styles are applied.
+
+Enabling inline CSS improves the email's appearance, making it more visually appealing and easier to read for users.
+
+---
+
+## Conclusion
+
+In this step, we implemented notification emails in our NestJS application. We configured Mailtrap for safe email testing, set up the mailer module, and created a mail service to send welcome emails to new users.
+
+We also learned how to integrate the mail service with user creation, configure static assets for email templates, and enable inline CSS for better email styling.
+
+With these features, our application can now send well-formatted notification emails to users, enhancing user engagement and providing important updates.
+
+In the next steps, we will continue to improve our application by adding more features and refining the existing ones. Stay tuned!
