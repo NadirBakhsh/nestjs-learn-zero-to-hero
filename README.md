@@ -104,6 +104,92 @@ Make sure both configurations are in place before proceeding with writing tests 
 
 ## Understanding Unit Tests
 
+![understanding-unit-tests](./images/understanding-unit-tests.png)
+
+Let's examine the default test file created by NestJS to understand the structure and components of unit tests.
+
+**Test File Structure**
+All unit test files have a `.spec.ts` extension and follow a consistent pattern. The default `app.controller.spec.ts` provides a great example:
+
+**1. Describe Blocks**
+```typescript
+describe('AppController', () => {
+  // Test content goes here
+});
+```
+- `describe()` defines the module or component being tested
+- Can contain nested describe blocks for better organization
+- Helps organize tests by functionality (e.g., POST endpoints, PATCH endpoints)
+
+**2. Lifecycle Methods**
+Four lifecycle methods are available within describe blocks:
+
+- **`beforeEach()`**: Runs before each individual test
+- **`beforeAll()`**: Runs once before all tests in the describe block
+- **`afterEach()`**: Runs after each individual test  
+- **`afterAll()`**: Runs once after all tests complete
+
+**3. Module Setup (beforeEach)**
+```typescript
+beforeEach(async () => {
+  const app: TestingModule = await Test.createTestingModule({
+    controllers: [AppController],
+    providers: [AppService],
+  }).compile();
+
+  appController = app.get<AppController>(AppController);
+});
+```
+
+This pattern:
+- Creates a testing module using `Test.createTestingModule()`
+- Includes necessary controllers and providers (dependencies)
+- Compiles the module for testing
+- Extracts the controller instance for use in tests
+
+**4. Individual Tests (it blocks)**
+```typescript
+it('controller should be defined', () => {
+  expect(appController).toBeDefined();
+});
+```
+
+Each test:
+- Uses `it()` to define what is being tested
+- Contains assertions using `expect()` statements
+- Should test one specific behavior or outcome
+
+**5. Assertions and Expectations**
+Jest provides many assertion methods:
+- `toBeDefined()`: Checks if value is not undefined
+- `toBeNull()`: Checks if value is null
+- `toBe()`: Checks for exact equality
+- `toEqual()`: Checks for deep equality
+- Many more available for different scenarios
+
+**Running Tests**
+Use the following npm scripts:
+- `npm run test`: Run all tests once
+- `npm run test:watch`: Run tests in watch mode (reruns on file changes)
+- `npm run test -- --testNamePattern="AppController"`: Run specific test files
+
+**Watch Mode with File Patterns**
+```bash
+npm run test:watch -- --testNamePattern="app.controller"
+```
+This runs only tests matching the specified pattern, useful during development to focus on specific components.
+
+**Test Results**
+Jest provides detailed feedback:
+- ✅ **Passing tests**: Shows green checkmarks with test descriptions
+- ❌ **Failing tests**: Shows detailed error messages with:
+  - Breadcrumb path to the failing test
+  - Exact line of code that failed
+  - Expected vs actual values
+  - Clear error descriptions
+
+This structure and pattern will be consistent across all test files we create, making it easy to write and maintain comprehensive test suites.
+
 ## Testing `UsersService`
 
 ## Mocking Providers
