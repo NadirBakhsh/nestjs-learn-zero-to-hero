@@ -53,6 +53,55 @@ Whether you're new to testing or have previous experience, this section will tra
 
 ## Test Settings
 
+Before writing and running tests, ensure you have the correct Jest configuration in place. Proper configuration is essential for Jest to locate and execute your test files correctly.
+
+**1. Configure package.json**
+In your `package.json` file, add or verify the Jest configuration:
+
+```json
+{
+  "jest": {
+    "rootDir": ".",
+    "modulePaths": ["<rootDir>"]
+  }
+}
+```
+
+**Key points:**
+- `rootDir`: Set to "." since package.json is in the project root
+- `modulePaths`: Uses the root directory as a placeholder for module resolution
+- This configuration helps Jest find all `.spec.ts` files throughout your project
+
+**2. Configure jest-e2e.json**
+In the `test/jest-e2e.json` file, ensure the following configuration:
+
+```json
+{
+  "rootDir": "..",
+  "modulePaths": ["<rootDir>"]
+}
+```
+
+**Key points:**
+- `rootDir`: Set to ".." because this file is inside the `test` directory, one level below the project root
+- `modulePaths`: Uses the same pattern but relative to the test directory location
+
+**Why This Configuration Matters:**
+- **Module Resolution**: Jest needs to know where to find your modules and dependencies
+- **Test Discovery**: Proper root directory helps Jest locate all test files
+- **Import Paths**: Ensures that imports in your test files resolve correctly
+- **Error Prevention**: Incorrect configuration leads to module resolution errors during test execution
+
+**Verification:**
+After setting up these configurations, Jest will be able to:
+- Find and execute all `.spec.ts` files in your project
+- Resolve module imports correctly
+- Run both unit tests and end-to-end tests without path-related errors
+
+Make sure both configurations are in place before proceeding with writing tests to avoid common Jest setup issues.
+
+---
+
 ## Understanding Unit Tests
 
 ## Testing `UsersService`
