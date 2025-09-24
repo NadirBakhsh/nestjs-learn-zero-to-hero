@@ -192,6 +192,80 @@ This structure and pattern will be consistent across all test files we create, m
 
 ## Testing `UsersService`
 
+![testing-users-service](./images/testing-users-service.png)
+
+Now let's create a test file for a more complex service that has dependencies. We'll test the `UsersService` to understand how to handle dependency injection in unit tests.
+
+**1. Create the Test File**
+Create a new file `users.service.spec.ts` in the `src/users/providers/` directory alongside the `users.service.ts` file.
+
+**2. Basic Test Structure**
+Start with the boilerplate test structure:
+
+```typescript
+import { Test, TestingModule } from '@nestjs/testing';
+import { UsersService } from './users.service';
+
+describe('UsersService', () => {
+  let service: UsersService;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [UsersService],
+    }).compile();
+
+    service = module.get<UsersService>(UsersService);
+  });
+
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
+});
+```
+
+**3. The Dependency Problem**
+Running this test will fail with an error like:
+```
+Nest can't resolve dependencies of the UsersService
+```
+
+This happens because `UsersService` has constructor dependencies:
+- `UsersRepository` (TypeORM repository)
+- `CreateUserProvider`
+- Other injected providers
+
+**4. Understanding the Issue**
+When you examine `users.service.ts`, you'll see the constructor:
+
+```typescript
+constructor(
+  @InjectRepository(User) private usersRepository: Repository<User>,
+  private readonly createUserProvider: CreateUserProvider,
+  // ... other dependencies
+) {}
+```
+
+The testing module can't instantiate `UsersService` without these dependencies being available.
+
+**5. Running the Test**
+Try running the test to see the dependency error:
+
+```bash
+npm run test:watch -- --testNamePattern="users.service"
+```
+
+The test will fail because Jest can't resolve the required dependencies.
+
+**Key Learning Points:**
+- **Dependency Injection in Tests**: Services with dependencies need those dependencies to be available during testing
+- **Isolation Challenge**: Unit tests should test components in isolation, but dependencies create coupling
+- **Real Dependencies Problems**: Using real repositories would require database connections and actual data
+- **Next Step**: We need to use mocking to replace real dependencies with controlled test doubles
+
+This dependency resolution error demonstrates why mocking is essential for unit testing in NestJS applications. In the next section, we'll learn how to mock these dependencies.
+
+[See the commit for changes](https://github.com/NadirBakhsh/nestjs-resources-code/commit/172cc490e5db88783f69812aedb0b4128008ded7)
+
 ## Mocking Providers
 
 ## Testing Service Method
