@@ -364,6 +364,42 @@ Practice writing these mocks to get comfortable with unit testing in NestJS.
 
 ## Testing Service Method
 
+![Testing Service Method](./images/testing-service-method.png)
+
+
+```typescript
+import { CreateUserDto } from '../dto/create-user.dto';
+
+// Mock implementation for CreateUserProvider
+const mockCreateUserProvider = {
+  createUser: (dto: CreateUserDto) =>
+    Promise.resolve({
+      id: 1,
+      firstName: dto.firstName,
+      lastName: dto.lastName,
+      email: dto.email,
+      password: dto.password,
+    }),
+};
+
+describe('createUser', () => {
+  it('should be defined', () => {
+    expect(service.createUser).toBeDefined();
+  });
+
+  it('should call createUser on CreateUserProvider', async () => {
+    const user = await service.createUser({
+      firstName: 'John',
+      lastName: 'Doe',
+      email: 'john@example.com',
+      password: 'securepassword',
+    });
+    expect(user.firstName).toEqual('John');
+  });
+});
+```
+[See the commit for changes](https://github.com/NadirBakhsh/nestjs-resources-code/commit/c32cdd12fa4f4b1b5fb669e66cb682f2397a98e3)
+
 ## New Spec File for `CreateUserProvider`
 
 ## Mocking Repositories
