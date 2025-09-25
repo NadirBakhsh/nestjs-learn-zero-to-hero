@@ -268,6 +268,100 @@ This dependency resolution error demonstrates why mocking is essential for unit 
 
 ## Mocking Providers
 
+To test services with dependencies, you need to mock those dependencies so your unit test can focus on the service logic itself.
+
+**1. Mocking Custom Providers**
+For each provider required by `UsersService`, use the following pattern in your test file:
+
+```typescript
+{
+  provide: CreateGoogleUserProvider,
+  useValue: {},
+},
+{
+  provide: FindOneByGoogleIdProvider,
+  useValue: {},
+},
+{
+  provide: FindOneUserByEmailProvider,
+  useValue: {},
+},
+{
+  provide: CreateUserProvider,
+  useValue: {},
+},
+{
+  provide: CreateManyUserProvider,
+  useValue: {},
+},
+```
+- `provide`: The class or token to inject
+- `useValue`: The mock value (empty object for basic tests)
+
+**2. Mocking TypeORM Repository and DataSource**
+Repositories and data sources require special handling:
+
+```typescript
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
+import { User } from '../entities/user.entity';
+
+{
+  provide: DataSource,
+  useValue: {},
+},
+{
+  provide: getRepositoryToken(User),
+  useValue: {},
+},
+```
+- Use `getRepositoryToken(User)` to mock the User repository
+
+**3. Complete Providers Array Example**
+Your providers array in `users.service.spec.ts` should look like:
+
+```typescript
+providers: [
+  UsersService,
+  { provide: CreateGoogleUserProvider, useValue: {} },
+  { provide: FindOneByGoogleIdProvider, useValue: {} },
+  { provide: FindOneUserByEmailProvider, useValue: {} },
+  { provide: CreateUserProvider, useValue: {} },
+  { provide: CreateManyUserProvider, useValue: {} },
+  { provide: DataSource, useValue: {} },
+  { provide: getRepositoryToken(User), useValue: {} },
+],
+```
+
+**4. Why Use Mocks?**
+- You are not testing the dependencies themselves—those should have their own unit tests.
+- Mocks allow you to instantiate the service and test its methods in isolation.
+- No real database or external service is involved.
+
+**5. Running the Test**
+With all dependencies mocked, your test should now pass:
+
+```bash
+npm run test:watch -- --testNamePattern="users.service"
+```
+
+**6. Assertion Example**
+```typescript
+it('should be defined', () => {
+  expect(service).toBeDefined();
+});
+```
+
+**Summary**
+- Mock all dependencies using `provide` and `useValue`
+- Use `getRepositoryToken` for repositories
+- Use empty objects for basic mocks
+- Focus your tests on the service logic, not its dependencies
+
+Practice writing these mocks to get comfortable with unit testing in NestJS.
+
+[See the commit for changes](https://github.com/NadirBakhsh/nestjs-resources-code/commit/a7683886dfc45ff69757e95350358dd92fc5a06e)
+
 ## Testing Service Method
 
 ## New Spec File for `CreateUserProvider`
