@@ -402,6 +402,60 @@ describe('createUser', () => {
 
 ## New Spec File for `CreateUserProvider`
 
+To unit test the `CreateUserProvider`, create a new spec file and mock its dependencies.
+
+**1. Create the Spec File**
+- In the same directory as `create-user.provider.ts`, create `create-user.provider.spec.ts`.
+
+**2. Boilerplate Test Setup**
+- Copy the basic test structure from your previous service spec files.
+- Remove unnecessary imports and logic, keeping only the essentials.
+
+**3. Mock Dependencies**
+- Identify dependencies from the constructor: `MailService`, `HashingProvider`, and the user repository.
+- Add each dependency to the providers array using `{ provide, useValue: {} }`.
+- For the repository, use `getRepositoryToken(User)` and also mock `DataSource`.
+
+Example providers array:
+```typescript
+providers: [
+  CreateUserProvider,
+  { provide: MailService, useValue: {} },
+  { provide: HashingProvider, useValue: {} },
+  { provide: DataSource, useValue: {} },
+  { provide: getRepositoryToken(User), useValue: {} },
+],
+```
+
+**4. Extract the Provider Instance**
+- Declare a variable in the describe scope:
+  ```typescript
+  let provider: CreateUserProvider;
+  ```
+- In `beforeEach`, assign the instance:
+  ```typescript
+  provider = module.get<CreateUserProvider>(CreateUserProvider);
+  ```
+
+**5. Basic Assertion**
+- Add a simple test to verify the provider is defined:
+  ```typescript
+  it('should be defined', () => {
+    expect(provider).toBeDefined();
+  });
+  ```
+
+**6. Run the Test**
+- Use watch mode to run the test:
+  ```bash
+  npm run test:watch -- --testNamePattern="create-user.provider"
+  ```
+- The test should pass, confirming dependencies are injected correctly.
+
+With this setup, you have a working spec file for `CreateUserProvider` and can proceed to write more detailed tests using Jest's mocking features.
+
+[commit changes](https://github.com/NadirBakhsh/nestjs-resources-code/commit/ba4e0ce0546dee688dcca0ad244fdc3027270236)
+
 ## Mocking Repositories
 
 ## Mocking Other Providers
