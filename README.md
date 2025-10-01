@@ -457,6 +457,50 @@ With this setup, you have a working spec file for `CreateUserProvider` and can p
 [commit changes](https://github.com/NadirBakhsh/nestjs-resources-code/commit/ba4e0ce0546dee688dcca0ad244fdc3027270236)
 
 ## Mocking Repositories
+![Mocking Repositories](./images/mocking-repositories.png)
+
+  
+  ## Mocking a Repository with Jest in TypeORM-based Applications
+
+  This section explains how to mock a TypeORM repository using Jest's native mocking methods, enabling effective and type-safe unit testing of providers or services that depend on repository methods.
+
+  ### 1. Creating a Mock Repository Type
+
+  We define a generic `MockRepository<T>` type that can be applied to any TypeORM repository. This type uses TypeScript's utility types to create a partial mapping of all repository methods to Jest mock functions. This allows us to mock only the methods we need for our tests, rather than the entire repository interface.
+
+  - **Generic Type**: The type is generic (`<T>`) so it can be used with any entity repository (e.g., `UserRepository`, `PostRepository`).
+  - **Partial Mapping**: By using `Partial`, we ensure that only the required methods need to be mocked.
+  - **Record Type**: We use `Record<keyof Repository<T>, jest.Mock>` to map each method/property of the repository to a Jest mock function.
+
+  ### 2. Creating a Mock Repository Factory Function
+
+  A factory function, `createMockRepository`, is implemented to generate a mock repository object. This function returns an object with only the necessary methods mocked using `jest.fn()`. For example, if the provider under test uses `findOne`, `create`, and `save`, only these methods are mocked.
+
+  - **Type Safety**: The returned object is typed as `MockRepository<T>`, ensuring type safety in tests.
+  - **Customizable**: You can easily extend the factory to mock additional methods as needed.
+
+  ### 3. Using the Mock Repository in Tests
+
+  - **Assignment**: The mock repository is assigned to a variable (e.g., `usersRepository`) and provided to the testing module.
+  - **Dependency Injection**: When the provider (e.g., `CreateUserProvider`) is instantiated in the test, it receives the mock repository instead of the real one.
+  - **Jest Integration**: The mocked methods (`findOne`, `create`, `save`) can be configured in each test to return specific values or behaviors using Jest's API.
+
+  ### 4. Extracting the Mock Repository from the Testing Module
+
+  To perform assertions or further configure the mock repository, it is extracted from the testing module using `module.get(getRepositoryToken(User))`. This ensures that the mock repository used in the provider is accessible in the test scope.
+
+  ### 5. Extending to Other Providers
+
+  The same approach can be used to mock other dependencies, such as mail services or hashing providers, by creating similar mock factory functions and types.
+
+  ---
+
+  **Summary:**  
+  By defining a generic mock repository type and a factory function, we can efficiently and type-safely mock only the required repository methods for our tests. This approach leverages Jest's mocking capabilities and TypeScript's type system, resulting in maintainable and robust unit tests for providers and services that depend on TypeORM repositories.
+
+[See the commit for changes](https://github.com/NadirBakhsh/nestjs-resources-code/commit/81aed682fffc7f52be34a6b026864f7e426116c8)
+
+
 
 ## Mocking Other Providers
 
