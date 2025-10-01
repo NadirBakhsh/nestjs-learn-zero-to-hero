@@ -504,6 +504,60 @@ With this setup, you have a working spec file for `CreateUserProvider` and can p
 
 ## Mocking Other Providers
 
+![mocking](./images/mocking-other-providers.png)
+To mock only the specific methods used by `CreateUserProvider`, define mock implementations for `MailService` and `HashingProvider` in your test setup.
+
+**1. Mocking MailService**
+
+Since only the `sendUserWelcome` method is used, provide a mock implementation that returns a resolved promise:
+
+```typescript
+const mockMailService = {
+  sendUserWelcome: jest.fn().mockResolvedValue(undefined),
+};
+```
+
+**2. Mocking HashingProvider**
+
+Only the `hashPassword` method is needed. You can mock it to return the password as-is or any string, since the actual hashing logic is not under test:
+
+```typescript
+const mockHashingProvider = {
+  hashPassword: jest.fn((password: string) => password),
+};
+```
+
+**3. Using the Mocks in the Providers Array**
+
+Update your providers array in the test file:
+
+```typescript
+providers: [
+  CreateUserProvider,
+  { provide: MailService, useValue: mockMailService },
+  { provide: HashingProvider, useValue: mockHashingProvider },
+  { provide: DataSource, useValue: {} },
+  { provide: getRepositoryToken(User), useValue: mockUsersRepository },
+],
+```
+
+**4. Example User Object for Testing**
+
+Declare a mock user object for use in your tests:
+
+```typescript
+const user = {
+  firstName: 'John',
+  lastName: 'Doe',
+  email: 'john@dotcom',
+  password: 'password',
+};
+```
+
+With these mocks, your tests will focus on the logic inside `CreateUserProvider` without relying on the actual implementations of `MailService` or `HashingProvider`.
+
+[See the commit for changes](https://github.com/NadirBakhsh/nestjs-resources-code/commit/e353afcbcc0cddd62061646fd0d6650cbca508c2)
+
 ## Using Mock Repository to Test
 
 ## Running Tests
