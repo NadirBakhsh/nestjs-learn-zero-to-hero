@@ -560,4 +560,136 @@ With these mocks, your tests will focus on the logic inside `CreateUserProvider`
 
 ## Using Mock Repository to Test
 
+![using-mock-repository](./images/using-mock-repository.png)
+
+Now that we have our mock repository and mock providers set up, let's write actual test cases that use these mocks to verify our `CreateUserProvider` behavior in different scenarios.
+
+**1. Testing the createUser Method**
+Create a new describe block to organize tests for the `createUser` method:
+
+```typescript
+describe('createUser', () => {
+  // Test cases will go here
+});
+```
+
+**2. Testing When User Does Not Exist**
+Test the scenario where a new user is successfully created:
+
+```typescript
+describe('when user does not exist in database', () => {
+  it('should create the new user', async () => {
+    // Mock repository methods to simulate user not existing
+    usersRepository.findOne.mockResolvedValue(null);
+    usersRepository.create.mockReturnValue(user);
+    usersRepository.save.mockResolvedValue(user);
+
+    // Execute the method under test
+    const newUser = await provider.createUser(user);
+
+    // Assert that repository methods were called correctly
+    expect(usersRepository.findOne).toHaveBeenCalledWith({
+      where: { email: user.email }
+    });
+    expect(usersRepository.create).toHaveBeenCalledWith(user);
+    expect(usersRepository.save).toHaveBeenCalledWith(user);
+  });
+});
+```
+
+**3. Testing When User Already Exists**
+Test the scenario where user creation should fail due to duplicate email:
+
+```typescript
+describe('when user exists in database', () => {
+  it('should throw BadRequestException', async () => {
+    // Mock repository to return existing user
+    usersRepository.findOne.mockResolvedValue(user);
+    usersRepository.create.mockReturnValue(user);
+    usersRepository.save.mockResolvedValue(user);
+
+    try {
+      // This should throw an exception
+      await provider.createUser(user);
+    } catch (error) {
+      // Assert that the correct exception is thrown
+      expect(error).toBeInstanceOf(BadRequestException);
+    }
+  });
+});
+```
+
+**4. Understanding the Mock Configuration**
+
+**For New User Creation:**
+- `findOne.mockResolvedValue(null)`: Simulates user not found in database
+- `create.mockReturnValue(user)`: Returns the user object when create is called
+- `save.mockResolvedValue(user)`: Returns the saved user object
+
+**For Existing User:**
+- `findOne.mockResolvedValue(user)`: Simulates user already exists in database
+- The provider should throw `BadRequestException` before calling create/save
+
+**5. Key Testing Concepts**
+
+**Method Call Verification:**
+```typescript
+expect(usersRepository.findOne).toHaveBeenCalledWith({
+  where: { email: user.email }
+});
+```
+- Verifies the method was called with correct parameters
+- Ensures your provider interacts with dependencies correctly
+
+**Exception Testing:**
+```typescript
+try {
+  await provider.createUser(user);
+} catch (error) {
+  expect(error).toBeInstanceOf(BadRequestException);
+}
+```
+- Tests error handling paths in your code
+- Ensures proper exceptions are thrown for invalid scenarios
+
+**6. Why This Approach Works**
+
+**Isolation**: Tests focus only on `CreateUserProvider` logic, not external dependencies
+
+**Control**: Mock return values let you test different scenarios (user exists/doesn't exist)
+
+**Verification**: You can verify that your provider calls repository methods correctly
+
+**Speed**: No real database calls make tests fast and reliable
+
+**7. Complete Test Structure**
+Your final test file structure should look like:
+
+```typescript
+describe('CreateUserProvider', () => {
+  // Setup code...
+
+  it('should be defined', () => {
+    expect(provider).toBeDefined();
+  });
+
+  describe('createUser', () => {
+    describe('when user does not exist in database', () => {
+      it('should create the new user', async () => {
+        // Test implementation
+      });
+    });
+
+    describe('when user exists in database', () => {
+      it('should throw BadRequestException', async () => {
+        // Test implementation
+      });
+    });
+  });
+});
+```
+[View Commit](https://github.com/NadirBakhsh/nestjs-resources-code/commit/e353afcbcc0cddd62061646fd0d6650cbca508c2)
+
+---
+
 ## Running Tests
