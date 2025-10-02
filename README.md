@@ -693,3 +693,127 @@ describe('CreateUserProvider', () => {
 ---
 
 ## Running Tests
+
+We have written comprehensive unit tests for our NestJS application. Now let's explore how to run all tests together and create a verbose script for better test output visibility.
+
+**1. Current Test Scripts**
+By default, NestJS provides these test scripts in `package.json`:
+
+```json
+{
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage",
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "test:e2e": "jest --config ./test/jest-e2e.json"
+  }
+}
+```
+
+**2. Adding a Verbose Test Script**
+Create a new script for verbose test output. Add this to your `package.json`:
+
+```json
+{
+  "scripts": {
+    "test": "jest",
+    "test:verbose": "jest --verbose",
+    "test:watch": "jest --watch",
+    // ...other scripts
+  }
+}
+```
+
+**3. Difference Between Regular and Verbose Output**
+
+**Regular Test Output (`npm run test`):**
+```bash
+PASS src/users/providers/users.service.spec.ts
+PASS src/users/providers/create-user.provider.spec.ts  
+PASS src/app.controller.spec.ts
+
+Test Suites: 3 passed, 3 total
+Tests:       6 passed, 6 total
+```
+
+**Verbose Test Output (`npm run test:verbose`):**
+```bash
+PASS src/users/providers/users.service.spec.ts
+  UsersService
+    ✓ should be defined
+    createUser
+      ✓ should call createUser on CreateUserProvider
+
+PASS src/users/providers/create-user.provider.spec.ts
+  CreateUserProvider
+    ✓ should be defined
+    createUser
+      when user does not exist in database
+        ✓ should create the new user
+      when user exists in database
+        ✓ should throw BadRequestException
+
+PASS src/app.controller.spec.ts
+  AppController
+    ✓ should be defined
+
+Test Suites: 3 passed, 3 total
+Tests:       6 passed, 6 total
+```
+
+**4. Benefits of Verbose Output**
+- **Detailed Test Description**: Shows the actual test descriptions and nested structure
+- **Clear Test Organization**: Displays how `describe` blocks organize your tests
+- **Better Debugging**: Makes it easier to identify which specific tests are failing
+- **Documentation**: Serves as living documentation of what your application tests
+
+**5. Running All Tests Together**
+When you run tests without watch mode, Jest automatically:
+- Discovers all `.spec.ts` files in your project
+- Runs them in parallel for better performance
+- Provides a summary of all test results
+- Doesn't require your application to be running
+
+**6. Key Advantages of Unit Testing**
+- **No Application Bootstrap Required**: Tests run in isolation without needing the full application
+- **Fast Execution**: No database connections or external dependencies
+- **Independent Modules**: Each test file loads only the modules it needs
+- **Parallel Execution**: Multiple test files can run simultaneously
+
+**7. Best Practices for Test Organization**
+- **Descriptive `describe` blocks**: Use clear, nested descriptions for better output
+- **Meaningful test names**: Write test descriptions that explain expected behavior
+- **Logical grouping**: Group related tests under appropriate describe blocks
+- **Consistent structure**: Follow the same pattern across all test files
+
+**8. Example of Well-Organized Test Output**
+```bash
+CreateUserProvider
+  ✓ should be defined
+  createUser
+    when user does not exist in database
+      ✓ should create the new user
+      ✓ should call repository methods correctly
+      ✓ should hash the password
+      ✓ should send welcome email
+    when user exists in database
+      ✓ should throw BadRequestException
+```
+
+This structure clearly shows what component is being tested, what method is under test, and what scenarios are covered.
+
+**9. Running Specific Test Patterns**
+You can also run specific tests using patterns:
+
+```bash
+# Run all tests with "user" in the name
+npm run test -- --testNamePattern="user"
+
+# Run tests in verbose mode with coverage
+npm run test:verbose -- --coverage
+
+# Run tests and watch for changes
+npm run test:watch
+```
+
