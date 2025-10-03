@@ -156,6 +156,186 @@ You are now ready to configure and run end-to-end tests using this isolated envi
 
 ## Encapsulate App Creation Logic
 
+To avoid code duplication between production and testing environments, we need to extract the application configuration logic into a reusable function. This ensures both production and test applications use identical middleware configurations.
+
+**The Problem**
+In your `main.ts` file, you likely have middleware configuration like this:
+
+```typescript
+// main.ts - Before refactoring
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  
+  // Multiple middleware configurations
+  app.useGlobalPipes(new ValidationPipe());
+  
+  // Swagger configuration
+  const config = new DocumentBuilder()
+    .setTitle('NestJS Blog API')
+    .setDescription('Use the base API URL as http://localhost:3000')
+    .setTermsOfService('http://localhost:3000/terms-of-service')
+    .setLicense('MIT License', 'https://github.com/git/git-scm.com/blob/main/MIT-LICENSE.txt')
+    .addServer('http://localhost:3000')
+    .setVersion('1.0')
+    .build();
+  
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
+  
+  // AWS SDK Configuration
+  AWS.config.update({
+    credentials: {
+      accessKeyId: configService.get('appConfig.awsAccessKeyId'),
+      secretAccessKey: configService.get('appConfig.awsSecretAccessKey'),
+    },
+    region: configService.get('appConfig.awsRegion'),
+  });
+  
+  // Enable CORS
+  app.enableCors();
+  
+  await app.listen(3000);
+}
+```
+
+**The Solution: Create a Reusable Function**
+
+1. **Create `src/app.create.ts`**:
+
+```typescript
+import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as AWS from 'aws-sdk';
+import { DataResponseInterceptor } from './common/interceptors/data-response/data-response.interceptor';
+
+export function appCreate(app: INestApplication): void {
+  const configService = app.get(ConfigService);
+
+  // Global Validation Pipe
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
+    }),
+  );
+
+  // Global Data Response Interceptor
+  app.useGlobalInterceptors(new DataResponseInterceptor());
+
+  // Swagger Configuration
+  const config = new DocumentBuilder()
+    .setTitle('NestJS Blog API')
+    .setDescription('Use the base API URL as http://localhost:3000')
+    .setTermsOfService('http://localhost:3000/terms-of-service')
+    .setLicense(
+      'MIT License',
+      'https://github.com/git/git-scm.com/blob/main/MIT-LICENSE.txt',
+    )
+    .addServer('http://localhost:3000')
+    .setVersion('1.0')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
+
+  // AWS SDK Configuration
+  AWS.config.update({
+    credentials: {
+      accessKeyId: configService.get('appConfig.awsAccessKeyId'),
+      secretAccessKey: configService.get('appConfig.awsSecretAccessKey'),
+    },
+    region: configService.get('appConfig.awsRegion'),
+  });
+
+  // Enable CORS
+  app.enableCors();
+}
+```
+
+2. **Refactor `main.ts`**:
+
+```typescript
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { appCreate } from './app.create';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  
+  // Add all middleware using the reusable function
+  appCreate(app);
+  
+  await app.listen(3000);
+}
+bootstrap();
+```
+
+**Benefits of This Approach**
+
+**Code Reusability**: 
+- Same configuration logic used in both production and testing
+- Eliminates duplicate middleware setup code
+
+**Consistency**:
+- Ensures test environment mirrors production exactly
+- Reduces configuration drift between environments
+
+**Maintainability**:
+- Single place to update middleware configuration
+- Easier to add new middleware across all environments
+
+**Reduced Errors**:
+- Less chance of forgetting middleware in test setup
+- Consistent behavior across environments
+
+**How to Use in Tests**
+In your E2E tests, you can now use the same function:
+
+```typescript
+// In your E2E test setup
+import { Test } from '@nestjs/testing';
+import { AppModule } from '../src/app.module';
+import { appCreate } from '../src/app.create';
+
+let app: INestApplication;
+
+beforeAll(async () => {
+  const moduleFixture = await Test.createTestingModule({
+    imports: [AppModule],
+  }).compile();
+
+  app = moduleFixture.createNestApplication();
+  
+  // Apply the same middleware as production
+  appCreate(app);
+  
+  await app.init();
+});
+```
+
+**Key Points**
+- **Function Type**: `appCreate(app: INestApplication): void`
+- **Parameter**: Receives the NestJS application instance
+- **Purpose**: Configures all middleware consistently
+- **Return**: Void - modifies the app instance in place
+
+**What Gets Configured**
+- Global validation pipes with transformation options
+- Global response interceptors
+- Swagger documentation setup
+- AWS SDK configuration
+- CORS enabling
+- Any other global middleware
+
+This pattern ensures your E2E tests run against an application configured identically to production, providing confidence that your tests reflect real-world behavior.
+
+---
+
 - Creating First E2E Test
 - Completing App Loading Lifecycle
 - Encapsulate Application Bootstrap
