@@ -110,9 +110,52 @@ const testUser = {
 - Clean up test data after each test to ensure isolation
 
 This section will guide you through setting up and writing comprehensive E2E tests that validate your NestJS application's behavior from the user's perspective, ensuring your APIs work correctly in real-world scenarios.
+---
 
-- Test Database and Configuration
-- Encapsulate App Creation Logic
+## Test Database and Configuration
+
+![Test Database Configuration](./images/test-db-configuration.png)
+
+Before writing any end-to-end tests, you need to set up a dedicated test database and environment configuration. This ensures your tests run in isolation and do not affect your development data.
+
+### 1. Create a Test Database
+
+1. **Open pgAdmin** and navigate to the **Databases** section.
+2. **Right-click** on `Databases` and select **Create > Database...**
+3. **Enter a name** for your test database, e.g., `nestjs_blog_test`.
+4. **Set the owner** (e.g., `postgres`).
+5. **Click Save** to create the database.
+
+Your test database is now ready for use.
+
+### 2. Duplicate Environment Configuration
+
+1. In your project, **locate** the `.env.development` file.
+2. **Duplicate** this file and rename the copy to `.env.test`.
+3. **Edit** the `DATABASE_NAME` (or equivalent variable) in `.env.test` to match your new test database name (e.g., `nestjs_blog_test`).
+
+Example:
+```env
+# .env.test
+DATABASE_HOST=localhost
+DATABASE_PORT=5432
+DATABASE_USER=postgres
+DATABASE_PASSWORD=yourpassword
+DATABASE_NAME=nestjs_blog_test
+```
+
+### 3. How It Works
+
+- When running tests, set `NODE_ENV=test`. Your application will automatically load `.env.test`.
+- All test operations will use the test database, keeping your development data safe.
+
+You are now ready to configure and run end-to-end tests using this isolated environment.
+
+---
+
+
+## Encapsulate App Creation Logic
+
 - Creating First E2E Test
 - Completing App Loading Lifecycle
 - Encapsulate Application Bootstrap
