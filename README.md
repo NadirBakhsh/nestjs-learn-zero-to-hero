@@ -336,7 +336,166 @@ This pattern ensures your E2E tests run against an application configured identi
 
 ---
 
-- Creating First E2E Test
+## Creating First E2E Test
+
+![Creating First E2E Test](./images/creating-first-e2e-test.png)
+
+Now that we have our configuration in place, let's create our first end-to-end test file. We'll start by creating a test for the Users POST endpoint to understand the E2E testing structure.
+
+**1. Create Test Directory Structure**
+Navigate to the `test/` directory and create a module-specific directory:
+
+```
+test/
+├── users/                          # Users module tests
+│   └── users.post.e2e-spec.ts     # POST endpoint tests
+└── jest-e2e.json                  # E2E Jest config
+```
+
+**2. Create the Test File**
+Create `test/users/users.post.e2e-spec.ts`:
+
+```typescript
+import { Test, TestingModule } from '@nestjs/testing';
+import { INestApplication } from '@nestjs/common';
+import * as request from 'supertest';
+import { AppModule } from '../../src/app.module';
+import { appCreate } from '../../src/app.create';
+
+describe('UsersController [POST] endpoints', () => {
+  let app: INestApplication;
+
+  beforeEach(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
+
+    app = moduleFixture.createNestApplication();
+    
+    // Apply the same middleware as production
+    appCreate(app);
+    
+    await app.init();
+  });
+
+  afterEach(async () => {
+    // Important: Close the app after each test
+    await app.close();
+  });
+
+  // Test cases using it.todo for planning
+  it.todo('should be a public endpoint');
+  it.todo('should validate that firstName is mandatory');
+  it.todo('should validate that email is mandatory');  
+  it.todo('should validate that password is mandatory');
+  it.todo('should create a new user when valid data is provided');
+  it.todo('should not return password in the response');
+  it.todo('should not return googleId in the response');
+});
+```
+
+**3. Key Differences from Unit Tests**
+
+**Module Setup**:
+- **Full Application**: Creates the complete NestJS application
+- **Real Dependencies**: Uses actual database connections and services
+- **Complete Module**: Imports the entire `AppModule`
+
+**Application Lifecycle**:
+- **`beforeEach`**: Creates and initializes the full application
+- **`afterEach`**: Closes the application to prevent memory leaks
+- **`app.init()`**: Initializes the application (different from `app.listen()`)
+
+**Test Structure**:
+```typescript
+describe('Component [HTTP_METHOD] endpoints', () => {
+  // Setup and teardown
+  // Test cases
+});
+```
+
+**4. Using `it.todo()` for Test Planning**
+`it.todo()` is a powerful Jest feature for planning tests:
+
+```typescript
+it.todo('should validate that firstName is mandatory');
+```
+
+**Benefits**:
+- **Planning**: Outline all tests you need to write
+- **Reminders**: Jest shows pending todos in test results
+- **Documentation**: Serves as specification for endpoint behavior
+- **Progress Tracking**: Easy to see which tests are completed
+
+**5. Test Categories for POST Endpoints**
+
+**Public Access Testing**:
+- Verify endpoint doesn't require authentication
+- Test that requests succeed without tokens
+
+**Validation Testing**:
+- Required fields validation (firstName, email, password)
+- Field format validation (email format, password strength)
+- Request body structure validation
+
+**Success Scenarios**:
+- Valid user creation
+- Correct response structure
+- Proper status codes (201 Created)
+
+**Security Testing**:
+- Sensitive data not returned (passwords, internal IDs)
+- Response data sanitization
+
+**6. Running E2E Tests**
+Execute your E2E tests with:
+
+```bash
+# Run all E2E tests
+npm run test:e2e
+
+# Run specific test file
+npm run test:e2e -- --testNamePattern="users.post"
+
+# Run with verbose output
+npm run test:e2e -- --verbose
+```
+
+**7. Expected Output**
+When you run the test, Jest will show:
+
+```bash
+ RUNS  test/users/users.post.e2e-spec.ts
+  UsersController [POST] endpoints
+    ✓ should be a public endpoint (todo)
+    ✓ should validate that firstName is mandatory (todo)
+    ✓ should validate that email is mandatory (todo)
+    ✓ should validate that password is mandatory (todo)
+    ✓ should create a new user when valid data is provided (todo)
+    ✓ should not return password in the response (todo)
+    ✓ should not return googleId in the response (todo)
+
+Test Suites: 1 passed, 1 total
+Tests:       0 passed, 7 todo, 7 total
+```
+
+**8. Next Steps**
+With this foundation in place, you can:
+- Complete the application loading lifecycle
+- Implement actual test assertions
+- Add request/response validation
+- Test different scenarios and edge cases
+
+**Important Notes**:
+- **App Initialization**: Always call `app.init()` for E2E tests, not `app.listen()`
+- **Cleanup**: Always close the app in `afterEach` to prevent resource leaks
+- **Import Paths**: Adjust import paths based on your file location
+- **Middleware**: Use the `appCreate()` function to ensure consistent configuration
+
+This structure provides a solid foundation for comprehensive E2E testing of your NestJS endpoints.
+
+--
+
 - Completing App Loading Lifecycle
 - Encapsulate Application Bootstrap
 - Introduction to Faker
