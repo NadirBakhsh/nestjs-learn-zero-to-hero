@@ -837,6 +837,94 @@ Failing to initialize the connection will result in errors during test runs.
 
 With SuperTest, you can now send real HTTP requests to your NestJS app and assert on the results, enabling robust end-to-end testing of your API endpoints.
 
-- Introduction to Faker
+## Introduction to Faker
+
+
+## Using SuperTest for Assertions
+
+Now that you have SuperTest set up, let's see how to use it for making requests and writing assertions in your E2E tests.
+
+### Example: Testing the Users POST Endpoint
+
+Here's how you can write your first real test using SuperTest:
+
+```typescript
+import * as request from 'supertest';
+import { bootstrapNestApplication } from '../helpers/bootstrap-nest-application.helper';
+import { INestApplication } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { dropDatabase } from '../helpers/drop-database.helper';
+
+describe('UsersController [POST] endpoints', () => {
+  let app: INestApplication;
+  let config: ConfigService;
+  let httpServer: any;
+
+  beforeEach(async () => {
+    app = await bootstrapNestApplication();
+    config = app.get<ConfigService>(ConfigService);
+    httpServer = app.getHttpServer();
+  });
+
+  afterEach(async () => {
+    await dropDatabase(config);
+    await app.close();
+  });
+
+  it('should be a public endpoint', () => {
+    return request(httpServer)
+      .post('/users')
+      .send({})
+      .expect(400) // Expect Bad Request due to missing required fields
+      .then(({ body }) => {
+        console.log(body); // Inspect the response body
+      });
+  });
+});
+```
+
+**Key Points:**
+
+- `httpServer = app.getHttpServer();` extracts the HTTP server for SuperTest.
+- `request(httpServer).post('/users')` sends a POST request to the `/users` endpoint.
+- `.send({})` sends an empty request body.
+- `.expect(400)` asserts that the response status code is 400 (Bad Request).
+- `.then(({ body }) => { ... })` allows you to inspect the response body.
+
+### Initializing TypeORM DataSource
+
+If you use a custom database drop helper, ensure you call `.initialize()` on your `DataSource` before dropping the database:
+
+```typescript
+const appDataSource = new DataSource({ /* ... */ });
+await appDataSource.initialize();
+await appDataSource.dropDatabase();
+await appDataSource.destroy();
+```
+
+This ensures the database connection is properly established before cleanup.
+
+### Writing Assertions
+
+You can chain multiple `.expect()` calls to check status codes, response bodies, and headers. For example:
+
+```typescript
+return request(httpServer)
+  .post('/users')
+  .send({})
+  .expect(400)
+  .expect((res) => {
+    expect(res.body.statusCode).toBe(400);
+    expect(res.body.message).toContain('firstName should not be empty');
+  });
+```
+
+This pattern lets you verify both the HTTP status and the actual error message returned by your API.
+
+---
+
+With SuperTest, you can now send HTTP requests to your endpoints and write assertions to validate your API's behavior in real-world scenarios.
+
+
 - Testing Validations
 - Completing All Test Cases
