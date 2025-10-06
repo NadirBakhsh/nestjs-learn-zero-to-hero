@@ -696,7 +696,71 @@ This setup ensures your E2E tests run against a fully configured application tha
 
 ---
 
-- Encapsulate Application Bootstrap
+## Encapsulate Application Bootstrap
+
+### Encapsulating Application Bootstrap Logic
+
+As your test suite grows, you'll notice that the code for bootstrapping the NestJS application is repeated in every E2E test file. To avoid duplication and ensure consistency, it's best to encapsulate this logic in a reusable helper function.
+
+#### Creating the Bootstrap Helper
+
+Inside your `test/helpers` directory, create a new file named:
+
+```
+bootstrap-nest-application.helper.ts
+```
+
+Add the following code to encapsulate the application bootstrap logic:
+
+```typescript
+import { Test, TestingModule } from '@nestjs/testing';
+import { INestApplication } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { AppModule } from '../../src/app.module';
+import { appCreate } from '../../src/app.create';
+
+export async function bootstrapNestApplication(): Promise<INestApplication> {
+  const moduleFixture: TestingModule = await Test.createTestingModule({
+    imports: [AppModule],
+    providers: [ConfigService],
+  }).compile();
+
+  const app = moduleFixture.createNestApplication();
+  appCreate(app);
+  await app.init();
+  return app;
+}
+```
+
+- **Purpose:** This function creates and initializes a fully configured NestJS application instance, ready for E2E testing.
+- **Return Type:** `Promise<INestApplication>` — the initialized application.
+
+#### Using the Helper in Your Tests
+
+Now, in your E2E test files, you can replace the repetitive setup code with a simple call to your new helper:
+
+```typescript
+import { bootstrapNestApplication } from '../helpers/bootstrap-nest-application.helper';
+import { ConfigService } from '@nestjs/config';
+
+let app: INestApplication;
+let config: ConfigService;
+
+beforeEach(async () => {
+  app = await bootstrapNestApplication();
+  config = app.get<ConfigService>(ConfigService);
+});
+```
+
+- **Benefits:**
+  - **DRY Principle:** Eliminates repeated setup code across test files.
+  - **Consistency:** Ensures all tests use the exact same application configuration.
+  - **Maintainability:** Any changes to the bootstrap process need to be made in only one place.
+
+With this approach, your test files become much cleaner and easier to maintain, focusing only on the test logic rather than setup boilerplate.
+
+---
+
 - Introduction to Faker
 - Testing Validations
 - Completing All Test Cases
