@@ -494,9 +494,208 @@ With this foundation in place, you can:
 
 This structure provides a solid foundation for comprehensive E2E testing of your NestJS endpoints.
 
---
+---
 
-- Completing App Loading Lifecycle
+## Completing App Loading Lifecycle
+
+![Completing App Loading Lifecycle](./images/completing-app-lifecycle.png)
+
+To properly execute our E2E tests, we need to complete the application loading lifecycle. This involves three essential steps: injecting ConfigService, adding middleware, and implementing database cleanup between tests.
+
+**The Three Required Steps:**
+
+1. **Inject ConfigService**: Make configuration available to the test application
+2. **Add Middleware**: Apply the same middleware as production using `appCreate()`  
+3. **Database Cleanup**: Clear database after each test to prevent conflicts
+
+**1. Inject ConfigService into Test Module**
+
+Update your test file to include ConfigService:
+
+```typescript
+import { Test, TestingModule } from '@nestjs/testing';
+import { INestApplication } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
+import * as request from 'supertest';
+import { AppModule } from '../../src/app.module';
+import { appCreate } from '../../src/app.create';
+
+describe('UsersController [POST] endpoints', () => {
+  let app: INestApplication;
+  let config: ConfigService;
+
+  beforeEach(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [
+        AppModule,
+        ConfigModule, // Import ConfigModule
+      ],
+      providers: [
+        ConfigService, // Provide ConfigService
+      ],
+    }).compile();
+
+    app = moduleFixture.createNestApplication();
+    
+    // Extract ConfigService from the app
+    config = app.get<ConfigService>(ConfigService);
+    
+    // Apply the same middleware as production
+    appCreate(app);
+    
+    await app.init();
+  });
+
+  // ...rest of test code
+});
+```
+
+**2. Create Database Drop Helper**
+
+Create `test/helpers/drop-database.helper.ts`:
+
+```typescript
+import { ConfigService } from '@nestjs/config';
+import { DataSource } from 'typeorm';
+
+export async function dropDatabase(config: ConfigService): Promise<void> {
+  // Step 1: Create connection with the data source
+  const appDataSource = await new DataSource({
+    type: 'postgres',
+    host: config.get('database.host'),
+    port: +config.get('database.port'),
+    username: config.get('database.user'),
+    password: config.get('database.password'),
+    database: config.get('database.name'),
+    synchronize: config.get('database.synchronize'),
+    // Note: autoLoadEntities is removed as it's not needed for DataSource
+  });
+
+  // Step 2: Drop all tables
+  await appDataSource.dropDatabase();
+
+  // Step 3: Close the connection
+  await appDataSource.destroy();
+}
+```
+
+**3. Implement Database Cleanup in Tests**
+
+Update your test file to include database cleanup:
+
+```typescript
+import { dropDatabase } from '../helpers/drop-database.helper';
+
+describe('UsersController [POST] endpoints', () => {
+  let app: INestApplication;
+  let config: ConfigService;
+
+  beforeEach(async () => {
+    // ...existing setup code
+  });
+
+  afterEach(async () => {
+    // Drop database before closing the app
+    await dropDatabase(config);
+    
+    // Close the app after each test
+    await app.close();
+  });
+
+  // ...test cases
+});
+```
+
+**Why Each Step is Critical:**
+
+**ConfigService Injection:**
+- **Environment Access**: Provides test environment configuration
+- **Database Connection**: Required for connecting to test database
+- **Service Dependencies**: Many services depend on configuration values
+
+**Middleware Addition:**
+- **Production Parity**: Tests run with same setup as production
+- **Validation Active**: Global validation pipes process requests
+- **Interceptors Applied**: Response formatting and other interceptors work
+
+**Database Cleanup:**
+- **Test Isolation**: Each test starts with clean database state
+- **No Side Effects**: Prevents data from one test affecting another
+- **Consistent Results**: Eliminates conflicts between test runs
+
+**Verification: Testing Environment Loading**
+
+To verify your test loads the correct environment:
+
+1. **Modify `.env.test`**: Temporarily change a variable name
+2. **Run Test**: Should fail with "missing environment variable" error
+3. **Revert Change**: Fix variable name and test should pass
+
+This proves your test is loading from `.env.test` when `NODE_ENV=test`.
+
+**Full Application vs Module Loading**
+
+**Why Load Entire Application:**
+- **Complete Dependencies**: All modules and services available
+- **No Dependency Injection Issues**: Don't need to manually wire dependencies
+- **Real Behavior**: Tests reflect actual application behavior
+- **Easier Testing**: Less complexity in test setup
+
+**Trade-offs:**
+- **Performance**: Loading entire application takes more time
+- **Large Applications**: Consider loading specific modules for very large apps
+- **Test Speed vs Confidence**: Slower tests but higher confidence in results
+
+**Complete Test File Structure:**
+```typescript
+import { Test, TestingModule } from '@nestjs/testing';
+import { INestApplication } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
+import * as request from 'supertest';
+import { AppModule } from '../../src/app.module';
+import { appCreate } from '../../src/app.create';
+import { dropDatabase } from '../helpers/drop-database.helper';
+
+describe('UsersController [POST] endpoints', () => {
+  let app: INestApplication;
+  let config: ConfigService;
+
+  beforeEach(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule, ConfigModule],
+      providers: [ConfigService],
+    }).compile();
+
+    app = moduleFixture.createNestApplication();
+    config = app.get<ConfigService>(ConfigService);
+    
+    appCreate(app);
+    
+    await app.init();
+  });
+
+  afterEach(async () => {
+    await dropDatabase(config);
+    await app.close();
+  });
+
+  // Test cases here...
+});
+```
+
+**Best Practices:**
+- Always extract ConfigService after creating the app
+- Use `appCreate()` to ensure consistent middleware setup
+- Clean database after each test, not before
+- Import correct ConfigService from `@nestjs/config`, not AWS SDK
+- Test environment loading by temporarily breaking config
+
+This setup ensures your E2E tests run against a fully configured application that mirrors production, providing maximum confidence in test results while maintaining isolation between tests.
+
+---
+
 - Encapsulate Application Bootstrap
 - Introduction to Faker
 - Testing Validations
