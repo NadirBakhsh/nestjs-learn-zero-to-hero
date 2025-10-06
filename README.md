@@ -761,6 +761,82 @@ With this approach, your test files become much cleaner and easier to maintain, 
 
 ---
 
+## Introduction To SuperTest
+
+### What is SuperTest?
+
+[SuperTest](https://github.com/ladjs/supertest) is a powerful HTTP assertion library for Node.js, designed to test API endpoints by sending HTTP requests directly to your running server instance. It integrates seamlessly with Jest and other test runners, allowing you to write expressive, end-to-end tests for your REST APIs.
+
+### How SuperTest Works
+
+SuperTest allows you to:
+- Spin up your NestJS app in memory (no need to listen on a real port)
+- Send HTTP requests (GET, POST, PUT, DELETE, etc.) to your endpoints
+- Assert on the response status, headers, and body
+
+### Example: Sending a Request with SuperTest
+
+Here's how you can use SuperTest in your E2E test:
+
+```typescript
+import * as request from 'supertest';
+
+describe('UsersController [POST] endpoints', () => {
+  let app: INestApplication;
+  let httpServer: any;
+
+  beforeEach(async () => {
+    app = await bootstrapNestApplication();
+    httpServer = app.getHttpServer();
+  });
+
+  afterEach(async () => {
+    await app.close();
+  });
+
+  it('should be a public endpoint', () => {
+    return request(httpServer)
+      .post('/users')
+      .send({})
+      .expect(400) // Expecting Bad Request due to missing required fields
+      .then(({ body }) => {
+        console.log(body); // Inspect the response body
+      });
+  });
+});
+```
+
+**Key Points:**
+- `app.getHttpServer()` extracts the underlying HTTP server instance for SuperTest.
+- `request(httpServer)` creates a SuperTest client targeting your app.
+- `.post('/users')` sends a POST request to the `/users` endpoint.
+- `.send({})` sends an empty request body.
+- `.expect(400)` asserts that the response status code is 400 (Bad Request).
+- `.then(({ body }) => { ... })` allows you to inspect or further assert on the response body.
+
+### Common SuperTest Patterns
+
+- Chain `.expect()` for status codes or response properties.
+- Use `.send()` to provide request bodies for POST/PUT requests.
+- Use `.then()` or `await` to handle asynchronous assertions.
+
+### Important: TypeORM Initialization
+
+If you use a custom database drop helper, ensure you call `.initialize()` on your `DataSource` before dropping the database:
+
+```typescript
+const appDataSource = new DataSource({ /* ... */ });
+await appDataSource.initialize();
+await appDataSource.dropDatabase();
+await appDataSource.destroy();
+```
+
+Failing to initialize the connection will result in errors during test runs.
+
+---
+
+With SuperTest, you can now send real HTTP requests to your NestJS app and assert on the results, enabling robust end-to-end testing of your API endpoints.
+
 - Introduction to Faker
 - Testing Validations
 - Completing All Test Cases
