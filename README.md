@@ -875,7 +875,7 @@ describe('UsersController [POST] endpoints', () => {
     return request(httpServer)
       .post('/users')
       .send({})
-      .expect(400) // Expect Bad Request due to missing required fields
+      .expect(400) // Expecting Bad Request due to missing required fields
       .then(({ body }) => {
         console.log(body); // Inspect the response body
       });
@@ -926,5 +926,236 @@ This pattern lets you verify both the HTTP status and the actual error message r
 With SuperTest, you can now send HTTP requests to your endpoints and write assertions to validate your API's behavior in real-world scenarios.
 
 
-- Testing Validations
-- Completing All Test Cases
+## Testing Validations
+
+![Testing Validations](./images/testing-validations.png)
+
+With SuperTest, you can send HTTP requests to your API endpoints and perform assertions on the responses, making it ideal for testing validation logic in your E2E tests.
+
+**How to Use SuperTest for Validation Testing**
+
+1. **Extract the HTTP Server**
+   - After bootstrapping your NestJS app, use `app.getHttpServer()` to get the HTTP server instance for SuperTest.
+
+   ```typescript
+   let httpServer: any;
+   beforeEach(async () => {
+     app = await bootstrapNestApplication();
+     httpServer = app.getHttpServer();
+   });
+   ```
+
+2. **Send Requests and Inspect Responses**
+   - Use SuperTest's `request()` function, passing the HTTP server.
+   - Chain `.post('/users')` to target the endpoint.
+   - Use `.send({})` to provide the request body.
+   - Chain `.expect(400)` to assert the response status code.
+   - Use `.then(({ body }) => { ... })` to inspect the response body.
+
+   ```typescript
+   it('should validate required fields', () => {
+     return request(httpServer)
+       .post('/users')
+       .send({})
+       .expect(400)
+       .then(({ body }) => {
+         console.log(body); // Inspect the validation error response
+       });
+   });
+   ```
+
+3. **Focus on the Response Body**
+   - The `body` property contains the actual validation errors returned by your API.
+   - You can destructure the response to get just the body and log or assert on it.
+
+   ```typescript
+   .then(({ body }) => {
+     expect(body.statusCode).toBe(400);
+     expect(body.message).toContain('firstName should not be empty');
+   });
+   ```
+
+4. **TypeORM DataSource Initialization**
+   - If you use a custom database drop helper, always call `.initialize()` on your `DataSource` before dropping the database.
+   - Without initialization, TypeORM will throw connection errors.
+
+   ```typescript
+   const appDataSource = new DataSource({ /* ... */ });
+   await appDataSource.initialize();
+   await appDataSource.dropDatabase();
+   await appDataSource.destroy();
+   ```
+
+**Best Practices**
+- Use `.expect()` for status code assertions.
+- Use `.then()` or async/await to inspect and assert on the response body.
+- Log the response body during development to understand validation error formats.
+- Always initialize your TypeORM DataSource before performing database operations in tests.
+
+**Summary**
+SuperTest makes it easy to test validation logic by sending requests and asserting on the exact error messages and status codes returned by your API. This approach ensures your endpoints enforce required fields and return meaningful validation errors.
+
+---
+
+## Completing All Test Cases
+
+![Completing All Test Cases](./images/completing-all-test-cases.png)
+
+Now that you have a solid understanding of how to set up and write E2E tests, it's time to complete all the test cases for the Users POST endpoint. This section will guide you through writing comprehensive tests that cover all aspects of your endpoint's behavior.
+
+### 1. Test File Structure
+
+Ensure your test file is structured as follows:
+
+```typescript
+import { Test, TestingModule } from '@nestjs/testing';
+import { INestApplication } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
+import * as request from 'supertest';
+import { AppModule } from '../../src/app.module';
+import { appCreate } from '../../src/app.create';
+import { dropDatabase } from '../helpers/drop-database.helper';
+
+describe('UsersController [POST] endpoints', () => {
+  let app: INestApplication;
+  let config: ConfigService;
+  let httpServer: any;
+
+  beforeEach(async () => {
+    app = await bootstrapNestApplication();
+    config = app.get<ConfigService>(ConfigService);
+    httpServer = app.getHttpServer();
+  });
+
+  afterEach(async () => {
+    await dropDatabase(config);
+    await app.close();
+  });
+
+  // Test cases
+});
+```
+
+### 2. Test Cases Overview
+
+For the Users POST endpoint, you should cover the following test cases:
+
+1. **Public Access**: Ensure the endpoint is publicly accessible.
+2. **Validation**: Test all validation rules for required fields and formats.
+3. **Success**: Validate successful user creation with correct data.
+4. **Security**: Ensure sensitive data is not exposed in the response.
+
+### 3. Writing the Test Cases
+
+Here's how you can implement each test case:
+
+```typescript
+describe('UsersController [POST] endpoints', () => {
+  // ...setup code
+
+  it('should be a public endpoint', () => {
+    return request(httpServer)
+      .post('/users')
+      .send({})
+      .expect(400); // Expecting Bad Request due to missing required fields
+  });
+
+  it('should validate that firstName is mandatory', () => {
+    return request(httpServer)
+      .post('/users')
+      .send({
+        lastName: 'Doe',
+        email: 'john@example.com',
+        password: 'Password123',
+      })
+      .expect(400)
+      .expect((res) => {
+        expect(res.body.message).toContain('firstName should not be empty');
+      });
+  });
+
+  it('should validate that email is mandatory', () => {
+    return request(httpServer)
+      .post('/users')
+      .send({
+        firstName: 'John',
+        lastName: 'Doe',
+        password: 'Password123',
+      })
+      .expect(400)
+      .expect((res) => {
+        expect(res.body.message).toContain('email should not be empty');
+      });
+  });
+
+  it('should validate that password is mandatory', () => {
+    return request(httpServer)
+      .post('/users')
+      .send({
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'john@example.com',
+      })
+      .expect(400)
+      .expect((res) => {
+        expect(res.body.message).toContain('password should not be empty');
+      });
+  });
+
+  it('should create a new user when valid data is provided', () => {
+    return request(httpServer)
+      .post('/users')
+      .send({
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'john@example.com',
+        password: 'Password123',
+      })
+      .expect(201)
+      .expect((res) => {
+        expect(res.body.email).toBe('john@example.com');
+        expect(res.body).not.toHaveProperty('password');
+        expect(res.body).not.toHaveProperty('googleId');
+      });
+  });
+});
+```
+
+### 4. Running All Tests
+
+To run all your E2E tests, use the following command:
+
+```bash
+npm run test:e2e
+```
+
+### 5. Expected Test Results
+
+When you run the tests, you should see output indicating all tests have passed:
+
+```bash
+ RUNS  test/users/users.post.e2e-spec.ts
+  UsersController [POST] endpoints
+    ✓ should be a public endpoint (todo)
+    ✓ should validate that firstName is mandatory (todo)
+    ✓ should validate that email is mandatory (todo)
+    ✓ should validate that password is mandatory (todo)
+    ✓ should create a new user when valid data is provided (todo)
+    ✓ should not return password in the response (todo)
+    ✓ should not return googleId in the response (todo)
+
+Test Suites: 1 passed, 1 total
+Tests:       0 passed, 7 todo, 7 total
+```
+
+### 6. Next Steps
+
+With all test cases implemented, you can now:
+- Run your tests to ensure everything works as expected.
+- Debug any failing tests by inspecting the logs and response bodies.
+- Refactor your code with confidence, knowing that your tests will catch any regressions.
+
+---
+
+By following this guide, you have successfully set up and executed end-to-end tests for your NestJS application, ensuring your API endpoints function correctly and reliably.
