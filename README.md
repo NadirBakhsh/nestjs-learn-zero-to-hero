@@ -1159,3 +1159,52 @@ With all test cases implemented, you can now:
 ---
 
 By following this guide, you have successfully set up and executed end-to-end tests for your NestJS application, ensuring your API endpoints function correctly and reliably.
+
+## Completing All Test Cases
+
+In this section, you'll learn how to write an E2E test that creates a valid user and verifies the returned properties match the request. This is a critical "happy path" scenario that ensures your API correctly handles user creation.
+
+### Test Objective
+
+- **Create a valid user** via the POST `/users` endpoint.
+- **Verify** the response contains the expected properties and values.
+- **Ensure** sensitive fields (like `password` and `googleId`) are not returned.
+
+### Example Test Case
+
+```typescript
+it('should create a new user when valid data is provided', () => {
+  const userData = {
+    firstName: 'Jane',
+    lastName: 'Smith',
+    email: 'jane.smith@example.com',
+    password: 'StrongPassword123',
+  };
+
+  return request(httpServer)
+    .post('/users')
+    .send(userData)
+    .expect(201)
+    .expect((res) => {
+      // Response should match the request data
+      expect(res.body.firstName).toBe(userData.firstName);
+      expect(res.body.lastName).toBe(userData.lastName);
+      expect(res.body.email).toBe(userData.email);
+
+      // Sensitive fields should not be present
+      expect(res.body).not.toHaveProperty('password');
+      expect(res.body).not.toHaveProperty('googleId');
+    });
+});
+```
+
+### Key Points
+
+- **Status Code**: Expect `201 Created` for successful user creation.
+- **Response Validation**: Assert that the returned user data matches the request.
+- **Security**: Confirm that sensitive fields are excluded from the response.
+
+### Why This Matters
+
+Testing the creation of a valid user ensures your endpoint works as intended and that your API does not leak sensitive information. This builds confidence in your application's correctness and security.
+
