@@ -33,7 +33,57 @@ Use Case: Great for unstructured or semi-structured data, scalability, and rapid
 
 To start working with MongoDB, create a free account at mongodb.com and set up a cloud cluster using the M0 free tier. This approach avoids local installation and provides access to features available only in clusters. After registration, whitelist your IP address for access, create a database user, and copy your connection string. You can use MongoDB Compass (GUI tool) to connect and browse your cluster, similar to how PgAdmin works for PostgreSQL. Create your database and collections (e.g., users) in Compass for development.
 
-- MongoDB Configuration
+## MongoDB Configuration
+
+![MongoDB Configuration](./images/mongodb-configuration.png)
+
+### Setting Up MongoDB with NestJS
+
+To integrate MongoDB with your NestJS application, you need to install the required dependencies and configure the connection. This section assumes you already have a MongoDB Atlas account and cluster set up.
+
+### Required Dependencies
+
+Install two essential packages:
+
+```bash
+npm install @nestjs/mongoose@10.0.6 mongoose@8.4.4
+```
+
+- **@nestjs/mongoose**: Official NestJS adapter for Mongoose
+- **mongoose**: MongoDB object modeling library for Node.js
+
+### Application Configuration
+
+In your `app.module.ts`, import and configure the MongooseModule:
+
+```typescript
+import { MongooseModule } from '@nestjs/mongoose';
+
+@Module({
+  imports: [
+    MongooseModule.forRoot('your-mongodb-connection-string', {
+      dbName: 'nestjs-blog'
+    }),
+    // ... other modules
+  ],
+})
+export class AppModule {}
+```
+
+### Configuration Options
+
+**Connection String**: Use the connection string from MongoDB Atlas dashboard
+**Database Name**: Specify `dbName` to target a specific database instead of the default 'test' database
+**Async Configuration**: For production, use `forRootAsync()` with ConfigService for environment variables
+
+### Key Points
+
+- The connection string connects to your MongoDB cluster
+- `dbName` parameter ensures collections are created in the specified database
+- Without `dbName`, MongoDB creates a default 'test' database
+- Use MongoDB Compass to verify your database connection and view collections
+- The configuration is similar to TypeORM but simpler with fewer required parameters
+
 - First Schema - User
 - Post Schema
 - Create Using Model
