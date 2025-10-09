@@ -163,13 +163,104 @@ export class UsersModule {}
 
 Use MongoDB Compass to verify that your users collection has been created successfully in your database.
 
-- Post Schema
-- Create Using Model
-- Mongoose Sub Documents
-- Single Sub Document
-- Practice: Tags Module
-- Solution: Tags Module
-- Practice: Tags Service + Controller
-- Solution: Tags Service + Controller
-- Array of Sub Documents
-- Querying Sub Documents
+## Post Schema
+
+![Post Schema](./images/post-schema.png)
+
+### Creating a More Complex Schema
+
+The Post schema demonstrates advanced Mongoose features including enums, optional properties, and different data types. This provides a comprehensive example of schema creation.
+
+### Post Schema Structure
+
+Create `post.schema.ts` in your posts module:
+
+```typescript
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
+import { PostType } from '../enums/post-type.enum';
+import { PostStatus } from '../enums/post-status.enum';
+
+@Schema()
+export class Post extends Document {
+  @Prop({ type: String, required: true })
+  title: string;
+
+  @Prop({ 
+    type: String, 
+    required: true, 
+    enum: PostType, 
+    default: PostType.POST 
+  })
+  postType: PostType;
+
+  @Prop({ type: String, required: true })
+  slug: string;
+
+  @Prop({ 
+    type: String, 
+    required: true, 
+    enum: PostStatus, 
+    default: PostStatus.DRAFT 
+  })
+  status: PostStatus;
+
+  @Prop({ type: String, required: false })
+  content?: string;
+
+  @Prop({ type: String, required: false })
+  featuredImageUrl?: string;
+
+  @Prop({ type: Date, required: false })
+  publishedOn?: Date;
+}
+
+export const PostSchema = SchemaFactory.createForClass(Post);
+```
+
+### Advanced Schema Features
+
+**Enum Properties**: Use `enum` option to restrict values to predefined constants
+**Default Values**: Set `default` to provide fallback values when properties are not specified
+**Optional Properties**: Mark with `required: false` and TypeScript optional operator `?`
+**Date Types**: Use `Date` type for timestamp fields
+**Mixed Types**: Support for various data types (String, Number, Date, Boolean, Array, etc.)
+
+### Key Differences from TypeORM
+
+**No ID Property**: MongoDB automatically creates `_id` field - don't define it manually
+**Automatic Pluralization**: Post schema creates "posts" collection
+**Enum Handling**: Enums are stored as strings with validation constraints
+**Type Flexibility**: More flexible typing system compared to SQL databases
+
+### Module Registration
+
+Register the Post schema in your posts module:
+
+```typescript
+import { MongooseModule } from '@nestjs/mongoose';
+import { Post, PostSchema } from './post.schema';
+
+@Module({
+  imports: [
+    MongooseModule.forFeature([
+      { name: Post.name, schema: PostSchema }
+    ])
+  ],
+})
+export class PostsModule {}
+```
+
+### Schema Property Options
+
+Common `@Prop()` decorator options:
+- **type**: Data type (String, Number, Date, Boolean, Array, etc.)
+- **required**: Field validation (true/false)
+- **enum**: Restricts values to enum constants
+- **default**: Default value when not provided
+- **unique**: Ensures field uniqueness across collection
+- **index**: Creates database index for faster queries
+
+### Verification
+
+Check MongoDB Compass to confirm your posts collection has been created automatically when the schema is registered.
