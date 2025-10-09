@@ -84,7 +84,85 @@ export class AppModule {}
 - Use MongoDB Compass to verify your database connection and view collections
 - The configuration is similar to TypeORM but simpler with fewer required parameters
 
-- First Schema - User
+
+## First Schema - User
+
+![First Schema - User](./images/first-schema.png)
+
+### Creating Your First Schema
+
+A schema in Mongoose is equivalent to an entity in TypeORM - it defines the structure of your MongoDB collection. Let's create a User schema to understand the process.
+
+### Schema File Structure
+
+Create `user.schema.ts` in your users module:
+
+```typescript
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
+
+@Schema()
+export class User extends Document {
+  @Prop({ type: String, required: true })
+  firstName: string;
+
+  @Prop({ type: String, required: false })
+  lastName?: string;
+
+  @Prop({ type: String, required: true })
+  email: string;
+
+  @Prop({ type: String, required: true })
+  password: string;
+}
+
+export const UserSchema = SchemaFactory.createForClass(User);
+```
+
+### Key Components Explained
+
+**@Schema() Decorator**: Marks the class as a Mongoose schema
+**Document Extension**: All schemas must extend Mongoose's Document class
+**@Prop() Decorator**: Defines schema properties with constraints (similar to @Column in TypeORM)
+**SchemaFactory**: Creates the actual schema object needed for module registration
+
+### Schema Property Configuration
+
+The `@Prop()` decorator accepts various options:
+- **type**: Defines the data type (String, Number, Date, Array, etc.)
+- **required**: Makes the field mandatory
+- **unique**: Ensures field uniqueness
+- **default**: Sets default values
+
+### Module Registration
+
+Register the schema in your module's imports:
+
+```typescript
+import { MongooseModule } from '@nestjs/mongoose';
+import { User, UserSchema } from './user.schema';
+
+@Module({
+  imports: [
+    MongooseModule.forFeature([
+      { name: User.name, schema: UserSchema }
+    ])
+  ],
+})
+export class UsersModule {}
+```
+
+### Important Notes
+
+- **Collection Naming**: MongoDB automatically pluralizes schema names (User → users collection)
+- **Automatic Creation**: Collections are created automatically when the schema is registered
+- **Schema Export**: Always export both the class and the schema constant
+- **Boilerplate Pattern**: The SchemaFactory.createForClass() pattern is required for every schema
+
+### Verification
+
+Use MongoDB Compass to verify that your users collection has been created successfully in your database.
+
 - Post Schema
 - Create Using Model
 - Mongoose Sub Documents
