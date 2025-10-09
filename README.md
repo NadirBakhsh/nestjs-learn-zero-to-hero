@@ -264,3 +264,13 @@ Common `@Prop()` decorator options:
 ### Verification
 
 Check MongoDB Compass to confirm your posts collection has been created automatically when the schema is registered.
+
+- Create Using Model
+- Mongoose Sub Documents
+- Single Sub Document
+- Practice: Tags Module
+- Solution: Tags Module
+- Practice: Tags Service + Controller
+- Solution: Tags Service + Controller
+- Array of Sub Documents
+- Querying Sub Documents
