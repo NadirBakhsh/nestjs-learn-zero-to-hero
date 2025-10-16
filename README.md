@@ -265,7 +265,88 @@ Common `@Prop()` decorator options:
 
 Check MongoDB Compass to confirm your posts collection has been created automatically when the schema is registered.
 
-- Create Using Model
+## Create Using Model
+
+This section explains how to inject a Mongoose model into a NestJS service and use it to create documents.
+
+### Overview
+- When a schema is registered with MongooseModule.forFeature(...) in a module, you can inject the corresponding model into providers (services/controllers) using @InjectModel.
+- Models are analogous to repositories in TypeORM. Use `new this.userModel(dto)` then `.save()` to persist documents.
+
+### UsersService — inject model and add createUser
+Example service constructor + create method:
+
+```typescript
+// Example: users.service.ts
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { User } from './user.schema';
+import { CreateUserDto } from './dto/create-user.dto';
+
+@Injectable()
+export class UsersService {
+  constructor(
+    @InjectModel(User.name) private readonly userModel: Model<User>,
+  ) {}
+
+  // Create a new user and save to MongoDB
+  async createUser(dto: CreateUserDto): Promise<User> {
+    const newUser = new this.userModel(dto); // instantiate model
+    return await newUser.save(); // persist to DB (async)
+  }
+}
+```
+
+Notes:
+- Use `@InjectModel(User.name)` (pass the schema class name) and `Model<User>` from mongoose.
+- Unlike TypeORM repository.create/save, for Mongoose you `new` the model instance and call `.save()` on it.
+- Wrap operations in try/catch in real code to handle DB errors gracefully.
+
+### UsersController — call the service
+Update controller create endpoint to call service:
+
+```typescript
+// Example: users.controller.ts
+import { Body, Controller, Post } from '@nestjs/common';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UsersService } from './users.service';
+
+@Controller('users')
+export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
+
+  @Post()
+  async createUser(@Body() dto: CreateUserDto) {
+    return this.usersService.createUser(dto);
+  }
+}
+```
+
+### Module registration (reminder)
+Ensure your UsersModule registers the schema:
+
+```typescript
+// Example snippet in users.module.ts
+import { MongooseModule } from '@nestjs/mongoose';
+import { User, UserSchema } from './user.schema';
+
+@Module({
+  imports: [
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    // ...other imports
+  ],
+  providers: [UsersService],
+  controllers: [UsersController],
+})
+export class UsersModule {}
+```
+
+### Helpful notes
+- MongoDB adds _id automatically; do not define it in schema manually.
+- Mongoose documents include `__v` (versionKey). To hide it in responses:
+  - Option A: set schema option `UserSchema.set('toJSON', { versionKey: false })` or `schema.set('versionKey', false)`.
+
 - Mongoose Sub Documents
 - Single Sub Document
 - Practice: Tags Module
