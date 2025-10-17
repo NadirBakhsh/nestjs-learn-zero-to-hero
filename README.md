@@ -528,7 +528,93 @@ Testing and verification
 - To fetch full author details in queries, use populate: this.postModel.find().populate('author').exec().
 - Consider DTO validation and try/catch for production; consider setting schema toJSON options to hide __v if needed.
 
-- Practice: Tags Module
+## Practice: Tags Module
+![Practice: Tags Module](./images/practice-tags-module.png)
+
+Goal: implement a Tags feature and use it as an array of subdocument references on Post.
+
+Steps
+1. Create a TagsModule with TagsController, TagsService.
+2. Add CreateTagDto (name, slug) and Tag schema (name, slug).
+3. Register the Tag schema with MongooseModule.forFeature(...) in TagsModule.
+4. Add `tags` to Post schema as an array of ObjectId references to Tag.
+5. Update CreatePostDto to accept `tags?: string[]`.
+6. Implement POST /tags and GET /tags; create posts with tag IDs in the request body.
+7. Verify in MongoDB Compass and use `.populate('tags')` when needed.
+
+Minimal example snippets (copy into your project files)
+
+- Tag schema (src/tags/tag.schema.ts)
+```typescript
+// filepath: e:\Nadir Projects\nestjs-learn-zero-to-hero\src\tags/tag.schema.ts
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
+
+@Schema()
+export class Tag extends Document {
+  @Prop({ type: String, required: true })
+  name: string;
+
+  @Prop({ type: String, required: true })
+  slug: string;
+}
+
+export const TagSchema = SchemaFactory.createForClass(Tag);
+```
+
+- CreateTagDto (src/tags/dto/create-tag.dto.ts)
+```typescript
+// filepath: e:\Nadir Projects\nestjs-learn-zero-to-hero\src/tags/dto/create-tag.dto.ts
+import { IsString, IsNotEmpty } from 'class-validator';
+
+export class CreateTagDto {
+  @IsString() @IsNotEmpty()
+  name: string;
+
+  @IsString() @IsNotEmpty()
+  slug: string;
+}
+```
+
+- Post schema: add tags field (snippet for post.schema.ts)
+```typescript
+// filepath: e:\Nadir Projects\nestjs-learn-zero-to-hero\src/posts/post.schema.ts
+// ...existing code...
+import { Types } from 'mongoose';
+import { Tag } from '../tags/tag.schema';
+
+@Schema()
+export class Post extends Document {
+  // ...existing props...
+
+  @Prop({ type: [{ type: Types.ObjectId, ref: Tag.name }], default: [] })
+  tags: Types.ObjectId[];
+}
+export const PostSchema = SchemaFactory.createForClass(Post);
+```
+
+- CreatePostDto: accept tags (snippet)
+```typescript
+// filepath: e:\Nadir Projects\nestjs-learn-zero-to-hero\src/posts/dto/create-post.dto.ts
+// ...existing code...
+import { IsOptional, IsArray, IsString } from 'class-validator';
+
+export class CreatePostDto {
+  // ...existing props...
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  tags?: string[]; // array of Tag _id strings
+}
+```
+
+Verification & tips
+- Create tags first (POST /tags), copy their _id values.
+- Send POST /posts with tags: ["<tagId1>", "<tagId2>"].
+- In queries, use `.populate('tags')` to return full tag documents.
+- Consider validating tag IDs with IsMongoId and adding unique index on slug if needed.
+
 - Solution: Tags Module
 - Practice: Tags Service + Controller
 - Solution: Tags Service + Controller
