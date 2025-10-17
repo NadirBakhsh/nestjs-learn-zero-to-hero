@@ -730,7 +730,78 @@ Verification
 - Create post using those tag ids.
 - Inspect collections in MongoDB Compass; posts will show tag ObjectId array and populate returns full tag objects.
 
-- Practice: Tags Service + Controller
+## Practice: Tags Service + Controller
+![Practice: Tags Service + Controller](./images/practice-service+coontroller.png)
+
+Goal
+- Create a create tag method in TagsService, expose it via TagsController, and test with HTTP requests to create TypeScript and JavaScript tags.
+
+Steps
+1. TagsService: add create(dto) that instantiates and saves a new tag.
+2. TagsController: add POST /tags endpoint calling the service.
+3. HTTP: add a .http file in tags module to send two POST requests for TypeScript and JavaScript.
+
+Hints
+- Ensure Tag schema is registered with MongooseModule.forFeature in TagsModule.
+- Use DTO CreateTagDto with name and slug.
+- Add basic try/catch and validation in real projects.
+
+Minimal snippets (for reference)
+```typescript
+// filepath: e:\Nadir Projects\nestjs-learn-zero-to-hero\src\tags\tags.service.ts
+// ...existing code...
+@Injectable()
+export class TagsService {
+  // ...existing code...
+  constructor(@InjectModel(Tag.name) private readonly tagModel: Model<Tag>) {}
+  // ...existing code...
+  async create(dto: CreateTagDto) {
+    const tag = new this.tagModel(dto);
+    return await tag.save();
+  }
+  // ...existing code...
+}
+```
+
+```typescript
+// filepath: e:\Nadir Projects\nestjs-learn-zero-to-hero\src\tags\tags.controller.ts
+// ...existing code...
+@Controller('tags')
+export class TagsController {
+  // ...existing code...
+  @Post()
+  create(@Body() dto: CreateTagDto) {
+    return this.tagsService.create(dto);
+  }
+  // ...existing code...
+}
+```
+
+HTTP requests (use an HTTP client)
+```http
+# filepath: e:\Nadir Projects\nestjs-learn-zero-to-hero\src\tags\http\create-tags.http
+### Create TypeScript tag
+POST http://localhost:3000/tags
+Content-Type: application/json
+
+{
+  "name": "TypeScript",
+  "slug": "typescript"
+}
+
+### Create JavaScript tag
+POST http://localhost:3000/tags
+Content-Type: application/json
+
+{
+  "name": "JavaScript",
+  "slug": "javascript"
+}
+```
+
+Verify
+- After sending requests, check MongoDB Compass for the tags collection and confirm two documents exist.
+
 - Solution: Tags Service + Controller
 - Array of Sub Documents
 - Querying Sub Documents
