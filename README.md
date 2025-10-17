@@ -439,7 +439,95 @@ Embedded docs are fetched with the parent — no populate needed.
   - Use populate in your queries to fetch full related documents.
 
 
-- Single Sub Document
+## Single Sub Document
+![Single Sub Document](./images/single-sub-doc.png)
+
+A single subdocument is a reference to one related document (stored as an ObjectId). Common pattern: Post has one author (User). Below are minimal examples to implement this.
+
+Post schema (add author reference):
+
+```typescript
+// example: post.schema.ts
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import mongoose, { Document, Types } from 'mongoose';
+import { User } from '../users/user.schema'; // adjust import path
+
+@Schema()
+export class Post extends Document {
+  // ...existing props...
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: User.name, required: true })
+  author: Types.ObjectId;
+}
+
+export const PostSchema = SchemaFactory.createForClass(Post);
+```
+
+CreatePost DTO (add author field as string):
+
+```typescript
+// example: create-post.dto.ts
+import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
+
+export class CreatePostDto {
+  // ...existing props...
+
+  @ApiProperty({ description: 'Author id (ObjectId as string)' })
+  @IsString()
+  @IsNotEmpty()
+  author: string;
+}
+```
+
+PostsService — inject model and create post:
+
+```typescript
+// example: posts.service.ts
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Post } from './post.schema';
+import { CreatePostDto } from './dto/create-post.dto';
+
+@Injectable()
+export class PostsService {
+  constructor(
+    @InjectModel(Post.name) private readonly postModel: Model<Post>,
+  ) {}
+
+  async createPost(dto: CreatePostDto): Promise<Post> {
+    const newPost = new this.postModel(dto);
+    return await newPost.save();
+  }
+}
+```
+
+PostsController — forward DTO to service:
+
+```typescript
+// example: posts.controller.ts
+import { Body, Controller, Post } from '@nestjs/common';
+import { CreatePostDto } from './dto/create-post.dto';
+import { PostsService } from './posts.service';
+
+@Controller('posts')
+export class PostsController {
+  constructor(private readonly postsService: PostsService) {}
+
+  @Post()
+  async createPost(@Body() dto: CreatePostDto) {
+    return this.postsService.createPost(dto);
+  }
+}
+```
+
+Testing and verification
+- Use MongoDB Compass to copy a user's _id and include it in the create-post request body as the author string.
+- After creating a post, Compass will show author as an ObjectId in the post document.
+- To fetch full author details in queries, use populate: this.postModel.find().populate('author').exec().
+- Consider DTO validation and try/catch for production; consider setting schema toJSON options to hide __v if needed.
+
 - Practice: Tags Module
 - Solution: Tags Module
 - Practice: Tags Service + Controller
