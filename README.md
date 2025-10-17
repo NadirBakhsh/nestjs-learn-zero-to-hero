@@ -347,7 +347,98 @@ export class UsersModule {}
 - Mongoose documents include `__v` (versionKey). To hide it in responses:
   - Option A: set schema option `UserSchema.set('toJSON', { versionKey: false })` or `schema.set('versionKey', false)`.
 
-- Mongoose Sub Documents
+## Mongoose Sub Documents
+
+![Understanding Mongoose Sub Documents](./images/understanding-sub-doc.png)
+
+
+### What are Subdocuments?
+Subdocuments let you express relationships inside MongoDB documents. You can either:
+- Reference other documents by storing their ObjectId (normalized, like SQL foreign keys), or
+- Embed documents directly (denormalized, nested objects/arrays).
+
+Both patterns are supported and have trade-offs — choose based on access patterns and data reuse.
+
+### Single subdocument (reference)
+Store a single related document as an ObjectId reference (one-to-one / many-to-one).
+
+Example (Post -> author reference):
+
+```typescript
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document, Types } from 'mongoose';
+
+@Schema()
+export class Post extends Document {
+  @Prop({ type: String, required: true })
+  title: string;
+
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+  author: Types.ObjectId;
+}
+
+export const PostSchema = SchemaFactory.createForClass(Post);
+```
+
+Query with populate:
+
+```ts
+this.postModel.find().populate('author').exec();
+```
+
+### Array of subdocuments (references)
+Store many related documents as an array of ObjectIds (one-to-many):
+
+```ts
+@Prop({ type: [{ type: Types.ObjectId, ref: 'Tag' }], default: [] })
+tags: Types.ObjectId[];
+```
+
+Populate tags similarly: .populate('tags')
+
+### Embedded subdocuments (denormalized)
+Embed the whole object (useful when data is small and not reused elsewhere):
+
+```ts
+// TagSchema example (embedded)
+@Schema()
+export class Tag {
+  @Prop({ type: String, required: true })
+  name: string;
+}
+export const TagSchema = SchemaFactory.createForClass(Tag);
+
+@Schema()
+export class Post extends Document {
+  // ...
+  @Prop({ type: [TagSchema], default: [] })
+  tags: Tag[];
+}
+```
+
+Embedded docs are fetched with the parent — no populate needed.
+
+### When to reference vs embed
+- Use references when:
+  - The related data is reused across many documents (authors, global tags).
+  - You need to update the related data independently.
+- Use embedded documents when:
+  - The related data is small and tightly coupled to the parent.
+  - You prefer fewer queries and denormalized reads.
+
+### Practical notes / best practices
+- Use populate to resolve ObjectId references at query time.
+- Be aware of the 16MB document size limit when embedding large arrays.
+- Index referenced fields if you query by them often.
+- Consider partial population or projection to limit returned data.
+- Wrap DB operations in try/catch and validate DTOs before saving.
+
+### Quick verification
+- Create a post via API, then refresh MongoDB Compass:
+  - If you used references, Compass will show ObjectId(s) in the post document.
+  - Use populate in your queries to fetch full related documents.
+
+
 - Single Sub Document
 - Practice: Tags Module
 - Solution: Tags Module
