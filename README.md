@@ -615,7 +615,121 @@ Verification & tips
 - In queries, use `.populate('tags')` to return full tag documents.
 - Consider validating tag IDs with IsMongoId and adding unique index on slug if needed.
 
-- Solution: Tags Module
+## Solution: Tags Module
+
+This section shows the exact steps and minimal code to implement the Tags feature (module, controller, service, DTO, schema) and register the Tag schema with Mongoose.
+
+Steps (CLI)
+1. Generate module, controller, service:
+   - npx nest g module tags --no-spec
+   - npx nest g controller tags --no-spec
+   - npx nest g service tags --no-spec
+
+Files to add/modify (minimal examples)
+
+- create-tag DTO
+```typescript
+// e:\Nadir Projects\nestjs-learn-zero-to-hero\src\tags\dto\create-tag.dto.ts
+export class CreateTagDto {
+  name: string;
+  slug: string;
+}
+```
+
+- tag schema
+```typescript
+// e:\Nadir Projects\nestjs-learn-zero-to-hero\src\tags\tag.schema.ts
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
+
+@Schema()
+export class Tag extends Document {
+  @Prop({ type: String, required: true })
+  name: string;
+
+  @Prop({ type: String, required: true })
+  slug: string;
+}
+
+export const TagSchema = SchemaFactory.createForClass(Tag);
+```
+
+- register schema in TagsModule
+```typescript
+// e:\Nadir Projects\nestjs-learn-zero-to-hero\src\tags\tags.module.ts
+import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+import { Tag, TagSchema } from './tag.schema';
+import { TagsService } from './tags.service';
+import { TagsController } from './tags.controller';
+
+@Module({
+  imports: [MongooseModule.forFeature([{ name: Tag.name, schema: TagSchema }])],
+  providers: [TagsService],
+  controllers: [TagsController],
+  exports: [TagsService],
+})
+export class TagsModule {}
+```
+
+- TagsService (create & list)
+```typescript
+// e:\Nadir Projects\nestjs-learn-zero-to-hero\src\tags\tags.service.ts
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Tag } from './tag.schema';
+import { CreateTagDto } from './dto/create-tag.dto';
+
+@Injectable()
+export class TagsService {
+  constructor(@InjectModel(Tag.name) private readonly tagModel: Model<Tag>) {}
+
+  async create(dto: CreateTagDto): Promise<Tag> {
+    const tag = new this.tagModel(dto);
+    return tag.save();
+  }
+
+  async findAll(): Promise<Tag[]> {
+    return this.tagModel.find().exec();
+  }
+}
+```
+
+- TagsController (POST /tags, GET /tags)
+```typescript
+// e:\Nadir Projects\nestjs-learn-zero-to-hero\src\tags\tags.controller.ts
+import { Body, Controller, Get, Post } from '@nestjs/common';
+import { CreateTagDto } from './dto/create-tag.dto';
+import { TagsService } from './tags.service';
+
+@Controller('tags')
+export class TagsController {
+  constructor(private readonly tagsService: TagsService) {}
+
+  @Post()
+  create(@Body() dto: CreateTagDto) {
+    return this.tagsService.create(dto);
+  }
+
+  @Get()
+  findAll() {
+    return this.tagsService.findAll();
+  }
+}
+```
+
+Using tags with Post (quick notes)
+- Add tags field to Post schema as array of ObjectId refs:
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: Tag.name }], default: [] }) tags: Types.ObjectId[];
+- Update CreatePostDto to accept tags?: string[].
+- When creating a post include tag _id strings; call .populate('tags') when you need full tag documents.
+
+Verification
+- Create tags via POST /tags, copy tag _id(s).
+- Create post using those tag ids.
+- Inspect collections in MongoDB Compass; posts will show tag ObjectId array and populate returns full tag objects.
+
 - Practice: Tags Service + Controller
 - Solution: Tags Service + Controller
 - Array of Sub Documents
