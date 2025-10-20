@@ -922,40 +922,54 @@ Best practices
 - Prefer lean() for read-only lists to reduce overhead.
 - Avoid over-populating deep graphs; populate only what is required.
 
-## Array of Sub Documents — Notes
-![Array of Sub Documents](./images/array-of-sub.png)
+## Querying Sub Documents — Notes
 
-- What/Why
-  - Use an array of ObjectId references to relate many documents (Post → many Tags).
-  - Prefer references when tags are reused and independently updated.
+Purpose
+- Replace referenced ObjectIds with full documents using populate.
+- Typical use: Post.author (User) and Post.tags (Tag[]) as referenced subdocuments.
 
-- DTO (create-post.dto.ts)
-  - tags?: string[]
-  - Decorators: ApiPropertyOptional, IsOptional, IsArray, IsString({ each: true })
-  - Optional stricter validation: IsMongoId({ each: true })
+Controller (simplified GET)
+```typescript
+// ...existing code...
+@Get()
+getPosts() {
+  return this.postsService.findAll();
+}
+// ...existing code...
+```
 
-- Schema (post.schema.ts)
-  - @Prop({ type: [{ type: Types.ObjectId, ref: Tag.name }], default: [] })
-  - Ref uses schema class name (Tag.name). Keep tags optional with default: [].
+Service (populate author and tags)
+```typescript
+// ...existing code...
+async findAll() {
+  return this.postModel
+    .find()
+    .populate('tags')     // Tag docs
+    .populate('author')   // User doc
+    .exec();
+}
+// ...existing code...
+```
 
-- Minimal request example
-  - Include tag ids (as strings) and author:
-    - "tags": ["<tagObjectId1>", "<tagObjectId2>"], "author": "<authorObjectId>"
+Optional (projection + lean for performance)
+```typescript
+// ...existing code...
+async findSummaries() {
+  return this.postModel
+    .find({}, { title: 1, slug: 1, status: 1 })
+    .populate({ path: 'author', select: 'firstName lastName email' })
+    .populate({ path: 'tags', select: 'name slug' })
+    .lean()
+    .exec();
+}
+// ...existing code...
+```
 
-- Querying/Populate
-  - Populate tags and author in reads: .populate('tags').populate('author')
-  - Use projection to limit payload: .populate({ path: 'tags', select: 'name slug' })
-  - Use .lean() for read-only lists to reduce overhead.
+Test
+- Send GET /posts and verify tags/author are populated (objects, not IDs).
 
-- Pitfalls
-  - Invalid ObjectIds → validate with IsMongoId.
-  - Duplicate slugs/tags → consider unique index (e.g., slug) and ArrayUnique in DTO if needed.
-  - Over-populating deep graphs hurts performance → populate only what’s needed.
-  - 16MB document size limit → avoid embedding large arrays; references scale better.
+Tips
+- Always call .exec() to execute the query.
+- Use projection (select) to reduce payload size.
+- Avoid over-populating deep relations; populate only needed paths.
 
-- Test/Verify
-  - Create tags via POST /tags, copy _id(s) from Compass.
-  - Create a post with tags array; refresh posts collection in Compass to see ObjectId array.
-  - Read with populate to retrieve full tag/user documents.
-
-  - Querying Sub Documents
