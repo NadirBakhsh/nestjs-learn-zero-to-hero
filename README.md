@@ -802,6 +802,125 @@ Content-Type: application/json
 Verify
 - After sending requests, check MongoDB Compass for the tags collection and confirm two documents exist.
 
-- Solution: Tags Service + Controller
+## Solution: Tags Service + Controller
+![Solution: Tags Service + Controller](./images/tags-service+controller.png)
+
+
+
+## Array of Sub Documents
+![Array of Sub Documents](./images/array-sub-docs.png)
+
+Use an array of ObjectId references to relate many documents (Post -> many Tags).
+
+Post schema (add tags as references):
+```typescript
+// filepath: e:\Nadir Projects\nestjs-learn-zero-to-hero\src\posts\post.schema.ts
+// ...existing code...
+import { Types } from 'mongoose';
+import { Tag } from '../tags/tag.schema';
+
+@Schema()
+export class Post extends Document {
+  // ...existing props...
+
+  @Prop({ type: [{ type: Types.ObjectId, ref: Tag.name }], default: [] })
+  tags: Types.ObjectId[];
+}
+
+export const PostSchema = SchemaFactory.createForClass(Post);
+```
+
+CreatePostDto (accept tag ids):
+```typescript
+// filepath: e:\Nadir Projects\nestjs-learn-zero-to-hero\src\posts\dto\create-post.dto.ts
+// ...existing code...
+import { IsOptional, IsArray, IsMongoId } from 'class-validator';
+
+export class CreatePostDto {
+  // ...existing props...
+
+  @IsOptional()
+  @IsArray()
+  @IsMongoId({ each: true })
+  tags?: string[];
+}
+```
+
+Example request body (create a post with tags):
+```http
+# filepath: e:\Nadir Projects\nestjs-learn-zero-to-hero\src\posts\http\create-post-with-tags.http
+POST http://localhost:3000/posts
+Content-Type: application/json
+
+{
+  "title": "My first post with tags",
+  "postType": "POST",
+  "slug": "my-first-post-with-tags",
+  "status": "DRAFT",
+  "author": "<authorObjectId>",
+  "tags": ["<tagObjectId1>", "<tagObjectId2>"]
+}
+```
+
+Notes
+- Create tags first via POST /tags, then use their _id values in the post request.
+- Keep tags optional so posts can be created without tags and updated later.
+
+## Querying Sub Documents
+![Querying Sub Documents](./images/querying-sub-docs.png)
+
+Populate references to fetch related documents in a single query.
+
+Populate author and tags:
+```typescript
+// filepath: e:\Nadir Projects\nestjs-learn-zero-to-hero\src\posts\posts.service.ts
+// ...existing code...
+async findAll() {
+  return this.postModel
+    .find()
+    .populate('author')       // full User doc
+    .populate('tags')         // full Tag docs
+    .exec();
+}
+// ...existing code...
+```
+
+Select only required fields (projection) and use lean for performance:
+```typescript
+// filepath: e:\Nadir Projects\nestjs-learn-zero-to-hero\src\posts\posts.service.ts
+// ...existing code...
+async findSummaries() {
+  return this.postModel
+    .find({}, { title: 1, slug: 1, status: 1 }) // include fields
+    .populate({ path: 'author', select: 'firstName lastName email' })
+    .lean() // return plain objects (faster, no Mongoose doc methods)
+    .exec();
+}
+// ...existing code...
+```
+
+Filter and paginate:
+```typescript
+// filepath: e:\Nadir Projects\nestjs-learn-zero-to-hero\src\posts\posts.service.ts
+// ...existing code...
+async findByStatus(status: string, page = 1, limit = 10) {
+  const skip = (page - 1) * limit;
+  return this.postModel
+    .find({ status })
+    .populate('author')
+    .populate('tags')
+    .skip(skip)
+    .limit(limit)
+    .exec();
+}
+// ...existing code...
+```
+
+Best practices
+- Index frequently queried fields (e.g., slug, status) and referenced fields when needed.
+- Use projection (select) to limit payload from populate.
+- Prefer lean() for read-only lists to reduce overhead.
+- Avoid over-populating deep graphs; populate only what is required.
+
 - Array of Sub Documents
 - Querying Sub Documents
